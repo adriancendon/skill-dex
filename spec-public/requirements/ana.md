@@ -360,9 +360,9 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-025 A discard without a written reason shows the report's verdict
 - pattern: unwanted
 - statement: If a **descartada** entry has no recorded discard reason, then Skill Dex shall show the verdict of its report as the reason.
-- rationale: D-044 makes the report verdict the reason of <skill>, <skill>, <skill>, squeez, keploy and <skill>. Built: `Tecnico/web/catalog.js` (`card`, `runAnalyze`) shows `discard_reason || verdict`.
+- rationale: D-044 makes the report verdict the reason of <skill>, <skill>, <skill>, <private>, <private> and <skill>. Built: `Tecnico/web/catalog.js` (`card`, `runAnalyze`) shows `discard_reason || verdict`.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN the Descartadas tab WHEN <private> looks at keploy THEN its card shows the verdict of its report as the reason
+  - AC1 [judgement] GIVEN the Descartadas tab WHEN <private> looks at <private> THEN its card shows the verdict of its report as the reason
 - scope: The Descartadas tab and the "Ya investigada" dialog.
 - conditions: none
 - exceptions: none

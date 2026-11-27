@@ -35,7 +35,8 @@ function clean(text) {
 
 function walk(dir, rel = '') {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (e.name === '__pycache__' || e.name === '.DS_Store') continue;
+    // spec/ is its own private git repository: its .git holds the full private history and must never be copied.
+    if (e.name === '__pycache__' || e.name === '.DS_Store' || e.name === '.git') continue;
     const s = path.join(dir, e.name), r = path.join(rel, e.name), d = path.join(OUT, r);
     if (e.isDirectory()) { fs.mkdirSync(d, { recursive: true }); walk(s, r); continue; }
     const buf = fs.readFileSync(s);

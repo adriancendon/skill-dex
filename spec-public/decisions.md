@@ -329,7 +329,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - origin: owner
 - quote: (omitted from the public copy)
 - context: (omitted from the public copy)
-- decision: <skill>, <skill>, <skill>, squeez, keploy and <skill> stay discarded; the verdict of each one's report is its discard reason. When a discarded entry is recovered or analysed again, its previous reason and date are kept as history.
+- decision: <skill>, <skill>, <skill>, <private>, <private> and <skill> stay discarded; the verdict of each one's report is its discard reason. When a discarded entry is recovered or analysed again, its previous reason and date are kept as history.
 - affects: REQ-ANA-024; REQ-ANA-025
 
 ### D-045 A clear false-positive criterion, approved once
@@ -913,7 +913,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-008 Where does "only OpenAI models" apply?
 - status: decided
-- question: D-019 was written at the top of the redesign request. Does it hold only for that redesign, for all agent work on Skill Dex, and also for the analyses the app launches? Today `Tecnico/server.mjs` line 61 runs `omp -p` without `--model`, so an analysis runs on whatever model omp uses by default, which may not be OpenAI. The global instructions (line 14) say "Don't pick models by hand unless I ask" and let `quota-balancer` route subagents across Claude, OpenAI and OpenCode Go.
+- question: D-019 was written at the top of the redesign request. Does it hold only for that redesign, for all agent work on Skill Dex, and also for the analyses the app launches? Today `Tecnico/server.mjs` line 61 runs `omp -p` without `--model`, so an analysis runs on whatever model omp uses by default, which may not be OpenAI. The global instructions (line 14) say "Don't pick models by hand unless I ask" and let `<private>` route subagents across Claude, OpenAI and OpenCode Go.
 - depends: A draft requirement that analyses run on an OpenAI model; removed after the decision.
 - decided_by: D-040
 
@@ -938,7 +938,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-012 Six watchlist entries are discarded without a reason
 - status: decided
-- question: In `Seguimiento/watchlist.json`, six entries have `status: descartada` (<skill>, <skill>, <skill>, squeez, keploy, <skill>) but no `discard_reason` and no `discarded_at`. They were set by the agent at analysis time, before the discard button existed [INFERENCE from the session A verdict table at line 176]. The README says "la decisión de descartar es tuya" and the app now requires a reason. Did <private> decide these discards? If yes, is the verdict of each report the reason to record; if not, do they go back to "por analizar"?
+- question: In `Seguimiento/watchlist.json`, six entries have `status: descartada` (<skill>, <skill>, <skill>, <private>, <private>, <skill>) but no `discard_reason` and no `discarded_at`. They were set by the agent at analysis time, before the discard button existed [INFERENCE from the session A verdict table at line 176]. The README says "la decisión de descartar es tuya" and the app now requires a reason. Did <private> decide these discards? If yes, is the verdict of each report the reason to record; if not, do they go back to "por analizar"?
 - depends: REQ-ANA-010, REQ-ANA-018.
 - decided_by: D-044
 
