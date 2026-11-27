@@ -10,7 +10,7 @@ import { dataFile } from './paths.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const TRIAGE_PATH = dataFile('security-triage.json');
 export const BIN = path.join(here, '.venv-skillspector/bin/skillspector');
-export const SCHEMA = 3;
+export const SCHEMA = 4; // 4: issues carry `excl`, the exclusion found in the full finding text and explanation
 
 // --no-llm: sends no file to any model. Symlinks are not accepted: pass the real path.
 export const run = real => new Promise(res => execFile(BIN, ['scan', real, '--no-llm', '--format', 'json'], { maxBuffer: 64e6, timeout: 900000 },
@@ -20,11 +20,16 @@ export const compact = r => ({
   v: SCHEMA, scanned: new Date().toISOString(),
   score: r.risk_assessment?.score ?? null, recommendation: r.risk_assessment?.recommendation ?? null,
   coverage: r.analysis_completeness?.coverage_percent ?? null, complete: r.analysis_completeness?.is_complete ?? null,
-  issues: (r.issues || []).map(x => ({
-    cat: x.category || '', pattern: x.pattern || '', sev: String(x.severity || '').toUpperCase(), conf: x.confidence ?? null,
-    file: x.location?.file || '', line: x.location?.start_line ?? null,
-    snippet: String(x.finding || '').replace(/\s+/g, ' ').slice(0, 140), why: String(x.explanation || '').slice(0, 220),
-  })),
+  issues: (r.issues || []).map(x => {
+    const cat = x.category || '', pattern = x.pattern || '', finding = String(x.finding || '').replace(/\s+/g, ' '), explanation = String(x.explanation || '');
+    return {
+      cat, pattern, sev: String(x.severity || '').toUpperCase(), conf: x.confidence ?? null,
+      file: x.location?.file || '', line: x.location?.start_line ?? null,
+      snippet: finding.slice(0, 140), why: explanation.slice(0, 220),
+      // The exclusions are tested on the whole text, before it is cut for display (REQ-SEC-014).
+      excl: textExclusion(`${cat} ${pattern} ${finding} ${explanation}`),
+    };
+  }),
 });
 
 // ---- Triage: the false-positive criterion approved by the owner (D-056, REQ-SEC-004/005) ----
@@ -88,14 +93,23 @@ function fileLines(rootDir, file) {
 const CODE = /\.(py|sh|bash|zsh|fish|js|mjs|cjs|jsx|ts|tsx|rb|pl|php|go|rs|swift|ps1|bat|cmd|command|pyc|pyo|exe|bin|so|dylib)$/i;
 const SKILL_MD = /(^|\/)SKILL\.md$/i;
 const TEXT_DOC = /\.(md|mdx|markdown|txt|rst)$/i;
-const TEMPLATE = /(^|\/)(templates?|examples?|samples?)\/|(^|\/)[^/]*(template|example|sample)[^/]*\.html?$/i;
+const TEMPLATE_DIR = /(^|\/)(templates?|examples?|samples?)\//i;
+const TEMPLATE_FILE = /(^|\/)[^/]*(template|example|sample)[^/]*\.html?$/i;
+// Text and data types a templates/examples/samples folder may hold as inert material. HTML is here because the
+// criterion already counts template pages as guides; SVG and every unknown or missing extension are not.
+const INERT = /\.(md|mdx|markdown|txt|rst|html?|json|ya?ml|csv)$/i;
 const INSTRUCTION_CATS = /prompt injection|anti-refusal|memory poisoning|hidden instruction|rogue agent/i;
 const SEVN = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
 const date = v => (v ? String(v).slice(0, 10) : null);
 
+// The exclusion a finding falls under, or null. `excl` comes from the full text (compact); findings saved before it
+// existed are tested on the shortened snippet and explanation they kept.
 export function exclusion(x) {
   if (x.sev === 'CRITICAL') return 'critical';
-  const t = `${x.cat} ${x.pattern} ${x.snippet}`;
+  if (x.excl !== undefined) return x.excl;
+  return textExclusion(`${x.cat} ${x.pattern} ${x.snippet} ${x.why || ''}`);
+}
+function textExclusion(t) {
   if (/exfiltrat|server-side request|ssrf|upload|webhook|beacon|send\w*\s+(data|to|it)|network|https?:\/\//i.test(t)) return 'internet';
   if (/\brm\s+-|\brm\s+[~/]|rmtree|unlink|os\.remove|remove-item|\brmdir\b|\bshred\b|delete\w*\s+(\w+\s+)?files?/i.test(t)) return 'delete';
   if (/credential|passw|secret|token|api.?key|private.?key|keychain|\.env\b|ssh.?key/i.test(t)) return 'credentials';
@@ -105,9 +119,15 @@ export function exclusion(x) {
 
 // Condition 1: guides, examples or templates. SKILL.md is the main instruction the agent follows,
 // code runs, and data lists are not in the approved text (D-056 leaves them out), so none count.
-function isGuide(file) {
+// Any other file in a templates/examples/samples folder counts only when its type is text or data and it is not
+// marked executable (REQ-SEC-015): a file without extension or of another type may run, so it stays for review.
+function isGuide(file, rootDir) {
   if (!file || SKILL_MD.test(file) || CODE.test(file)) return false;
-  return TEXT_DOC.test(file) || TEMPLATE.test(file);
+  return TEXT_DOC.test(file) || TEMPLATE_FILE.test(file) || (TEMPLATE_DIR.test(file) && INERT.test(file) && !executable(rootDir, file));
+}
+function executable(rootDir, file) {
+  if (!rootDir) return false;
+  try { return (fs.statSync(path.isAbsolute(file) ? file : path.join(rootDir, file)).mode & 0o111) !== 0; } catch { return false; }
 }
 
 // Condition 2: the Spanish possessive "su" flagged as the shell command su. It counts only in
@@ -125,7 +145,7 @@ function ordinaryWord(x, rootDir) {
 // The condition the code can confirm for a finding, or null (stays). Exclusions win over conditions.
 export function autoCondition(x, rootDir = null) {
   if (exclusion(x)) return null;
-  if (isGuide(x.file) && (CLOSE_INSTRUCTION_FINDINGS_IN_GUIDES || !INSTRUCTION_CATS.test(x.cat))) return 1;
+  if (isGuide(x.file, rootDir) && (CLOSE_INSTRUCTION_FINDINGS_IN_GUIDES || !INSTRUCTION_CATS.test(x.cat))) return 1;
   if (ordinaryWord(x, rootDir)) return 2;
   if (x.conf != null && x.conf < 0.6) return 6;
   return null;
