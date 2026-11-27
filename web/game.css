@@ -1,0 +1,65 @@
+/* Level-up card, each skill's level and rarity, and the Health section. Uses the design D tokens from catalog.css. */
+
+/* Sidebar: the "Preview level-up" link and room for six sections */
+.sidebar{overflow-y:auto}
+.preview-level{font-size:11px;color:var(--blue);padding:10px 0 0;min-height:36px;text-align:left;border-radius:4px}
+.level-name{display:block;font-weight:600;color:var(--blue)}
+.preview-level:hover:not(:disabled){background:none;text-decoration:underline}
+
+/* Level-up card: centred, silent, shown once per level (REQ-USE-020) */
+.level-dialog{border:1px solid var(--line);border-radius:18px;background:var(--paper);color:var(--ink);padding:38px;max-width:calc(100% - 32px);width:420px;text-align:center;box-shadow:0 18px 60px var(--shadow)}
+.level-dialog[open]{animation:level-pop .28s ease-out}
+.level-dialog::backdrop{background:rgba(18,32,52,.42)}
+.level-dialog .sample-label{display:inline-block;font-size:10px;background:var(--side);color:var(--muted);padding:3px 6px;border-radius:4px;margin-bottom:14px;line-height:1.4}
+.level-dialog .level-badge{width:90px;height:100px;font-size:42px;margin:5px auto 26px}
+.level-dialog h2{font-size:27px;margin-bottom:9px;letter-spacing:-.5px}
+.level-dialog p{color:var(--muted);font-size:13px;line-height:1.7}
+.level-dialog .next-goal{background:var(--hover);padding:14px;margin:20px 0;border-radius:8px;text-align:left}
+.level-dialog .next-goal b{display:block;font-size:12px;margin-bottom:5px;color:var(--ink)}
+.level-dialog .primary{min-width:120px}
+@keyframes level-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+
+/* Health section */
+.health-block{margin:0 0 38px;max-width:1100px}
+.health-block>.section-top{margin-bottom:12px}
+.health-block h2 .count{font-size:13px;font-weight:500;color:var(--muted);margin-left:4px}
+.block-note{color:var(--muted);font-size:12px;margin:-4px 0 12px;max-width:720px}
+.block-note:empty{display:none}
+.health-card li{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px}
+.health-card li .text-button{min-height:32px;padding:4px 0;font-size:12px}
+.health-card li>span{font-size:11px}
+.health-empty{color:var(--muted);font-size:12px;margin-top:8px}
+
+.pair-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.pair{padding:16px 0;border-bottom:1px solid var(--line)}
+.pair-names{display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap}
+.pair-skill{display:flex;align-items:center;gap:10px;text-align:left;border-radius:8px;padding:4px 8px 4px 4px;min-height:44px}
+.pair-skill .icon-tile{--s:34px}
+.pair-skill b{display:block;font-size:13px}
+.pair-skill small{display:block;font-size:11px}
+.pair-share{font-size:11px;color:var(--muted);background:var(--side);border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pair-advice{font-size:13px;line-height:1.6;margin:8px 0 0 4px;max-width:820px}
+.pair-advice.pending{color:var(--muted);font-style:italic}
+.outcome{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.2px;border-radius:4px;padding:2px 6px;margin-right:8px;vertical-align:1px;background:var(--blue-soft);color:var(--blue)}
+.outcome.keep-one{background:var(--amber-bg);color:var(--amber)}
+.outcome.separate{background:var(--side);color:var(--muted)}
+
+/* Each skill's level and rarity, shown discreetly (REQ-USE-009, REQ-USE-013): a dot in list rows, a small mark on cards and in details */
+.rarity-dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex:none;background:var(--rarity);--rarity:#9aa7b8}
+.rarity-dot.rare{--rarity:#3b82c4}
+.rarity-dot.epic{--rarity:#8a5fd0}
+.rarity-dot.legendary{--rarity:#c98a1b}
+.skill-mark{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);white-space:nowrap}
+.card-head .skill-mark{margin-left:auto}
+.card-head .skill-mark+.favourite{margin-left:0}
+.skill-level{font-size:12px;color:var(--muted)}
+.skill-level .skill-mark{color:var(--ink);font-weight:600;margin-right:4px}
+
+@media(max-width:600px){
+  .nav{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+  .nav-label{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .level-dialog{padding:26px 20px}
+  .level-dialog h2{font-size:23px}
+  .pair-names{gap:6px}
+  .pair-share{order:3;flex-basis:auto}
+}

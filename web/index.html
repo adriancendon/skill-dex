@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Skill Dex</title>
+<script>
+try { document.documentElement.dataset.theme = localStorage.getItem('skilldex.theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { document.documentElement.dataset.theme = 'light'; }
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='%23315cc9' transform='rotate(-8 8 8)'%3E%3Crect x='3' y='1' width='4' height='6' rx='1'/%3E%3Crect x='9' y='1' width='4' height='6' rx='1' opacity='.55'/%3E%3Crect x='3' y='9' width='4' height='6' rx='1' opacity='.35'/%3E%3Crect x='9' y='9' width='4' height='6' rx='1'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="catalog.css">
+<link rel="stylesheet" href="detail.css">
+<link rel="stylesheet" href="game.css">
+<link rel="stylesheet" href="updates.css">
+<link rel="stylesheet" href="discover.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<aside class="sidebar" aria-label="Main navigation">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="brand-name">Skill Dex</span></div>
+  <p class="workspace">Your personal skill collection</p>
+  <nav class="nav" aria-label="Sections">
+    <button type="button" data-view="library"></button>
+    <button type="button" data-view="discover"></button>
+    <button type="button" data-view="watchlist"></button>
+    <button type="button" data-view="updates"></button>
+    <button type="button" data-view="discarded"></button>
+    <button type="button" data-view="health"></button>
+  </nav>
+  <div class="sidebar-foot">
+    <section class="level-box" aria-label="Your level">
+      <div class="level-line"><span class="level-badge" id="level-number"></span><div><strong id="level-title"></strong><small>Only season uses earn XP</small></div></div>
+      <div class="progress" role="progressbar" aria-label="Progress to the next level" aria-valuemin="0" aria-valuemax="100" id="xp-bar"><i id="xp-progress"></i></div>
+      <div class="xp-copy"><span id="xp-value"></span><span id="xp-next"></span></div>
+      <button type="button" class="preview-level" data-level-preview>Preview level-up</button>
+    </section>
+    <div class="sidebar-tools">
+      <button type="button" data-theme-toggle id="theme-button"></button>
+      <button type="button" data-refresh="data" id="refresh-button" title="Rescan installed skills and usage"></button>
+    </div>
+  </div>
+</aside>
+<main class="main" id="main" tabindex="-1">
+  <div class="mobile-controls">
+    <span class="mobile-xp" id="mobile-level"></span>
+    <button type="button" class="theme-mobile" data-theme-toggle id="mobile-theme"></button>
+    <button type="button" class="theme-mobile" data-refresh="data" id="mobile-refresh" aria-label="Refresh data"></button>
+  </div>
+  <header class="topline">
+    <div><h1 id="page-title">Your skill library</h1><p class="subtitle" id="page-subtitle">A clear view of what helps you do your best work.</p></div>
+    <button type="button" class="primary" id="analyse-button" aria-label="Analyse a skill"><span id="analyse-icon"></span><span class="primary-label">Analyse a skill</span></button>
+  </header>
+  <section class="overview" id="overview" aria-label="Usage overview">
+    <div>
+      <div class="section-top"><h2>Daily rhythm</h2><small>Last 30 days</small></div>
+      <div class="activity-title"><b id="activity-total"></b><span id="activity-caption"></span></div>
+      <div class="chart" id="main-chart" role="img"></div>
+      <div class="chart-axis" id="main-axis" aria-hidden="true"></div>
+      <div class="legend" aria-hidden="true"><span><i></i>Before season · no XP</span><span><i class="current"></i>This season · earns XP</span></div>
+    </div>
+    <div class="most-used">
+      <div class="section-top"><h2>Your go-to skills</h2><div class="segmented" role="group" aria-label="Most-used period"><button type="button" data-period="season" aria-pressed="true">Season</button><button type="button" data-period="total" aria-pressed="false">All time</button></div></div>
+      <div class="rank-list" id="rank"></div>
+      <p class="footer-note" id="rank-note"></p>
+    </div>
+  </section>
+  <div id="library-view">
+    <div class="review-nudge" id="nudge"></div>
+    <section aria-labelledby="library-title">
+      <div class="library-heading"><h2 id="library-title">Library <span id="library-count"></span></h2><span class="muted small">Installed in omp</span></div>
+      <div class="filters">
+        <label class="search"><span id="search-icon"></span><span class="sr-only">Search skills</span><input id="search" type="search" placeholder="Find a skill or a purpose…" autocomplete="off"></label>
+        <label class="sr-only" for="category">Filter by category</label><select id="category"></select>
+        <label class="sr-only" for="origin">Filter by origin</label><select id="origin"><option value="">All origins</option><option value="tercero">Third-party</option><option value="usuario">Your own</option><option value="auto-aprendida">Self-learned</option><option value="proyecto">Project</option></select>
+        <label class="sr-only" for="sort">Sort skills</label><select id="sort"><option value="season">Most used (season)</option><option value="total" selected>Most used (all time)</option><option value="last">Recently used</option><option value="name">Name</option></select>
+      </div>
+      <div class="list-options">
+        <div class="list-tabs" role="group" aria-label="Show">
+          <button type="button" data-filter="all" aria-pressed="true">All skills <span id="all-count"></span></button>
+          <button type="button" data-filter="favourites" aria-pressed="false">Favourites <span id="fav-count"></span></button>
+          <button type="button" data-filter="review" aria-pressed="false">To review <span id="review-count"></span></button>
+        </div>
+        <div class="view-controls">
+          <label class="group-toggle"><input type="checkbox" id="group-category">Group by category</label>
+          <div class="segmented view-switch" role="group" aria-label="Library view"><button type="button" data-mode="list" aria-pressed="true">List</button><button type="button" data-mode="cards" aria-pressed="false">Cards</button></div>
+        </div>
+      </div>
+      <p class="ranking-caption" id="ranking-caption" role="status" aria-live="polite"></p>
+      <div class="column-head" aria-hidden="true"><span>Skill &amp; purpose</span><span class="spark-col">30-day rhythm</span><span>Season / history</span><span>Last used</span><span></span></div>
+      <div id="skill-list"></div>
+    </section>
+  </div>
+  <div id="other-view" hidden></div>
+</main>
+<dialog class="drawer" id="detail" aria-labelledby="detail-title">
+  <div class="drawer-head"><small id="detail-category"></small><button type="button" class="close" id="detail-close" aria-label="Close details">×</button></div>
+  <div class="drawer-body" id="detail-body"></div>
+</dialog>
+<dialog class="analyse-dialog" id="analyse-dialog" aria-labelledby="analyse-title"><div id="analyse-body"></div></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="discover.js"></script>
+<script src="data.js"></script>
+<script src="health.js"></script>
+<script src="catalog.js"></script>
+<script src="marks.js"></script>
+<script src="detail.js"></script>
+<script src="levelup.js"></script>
+<script src="updates.js"></script>
+</body>
+</html>

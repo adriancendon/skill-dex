@@ -1,0 +1,17 @@
+.venv-skillspector/
+node_modules/
+cache/
+web/data.js
+.DS_Store
+# full requirements package: its own private repository (skill-dex-spec); spec-public/ is the clean copy
+spec/
+# local settings and outputs
+skilldex.conf
+.env
+.env.*
+dist/
+*.app/
+__pycache__/
+config.local
+privacy.local.txt
+!.env.example

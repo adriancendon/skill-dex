@@ -1,0 +1,30 @@
+Checking the repository and the security scan…
+Done.
+
+<<<RESULT
+{"name":"Example Lint Helper","source":"https://github.com/example/lint-helper","category":"Rendimiento y calidad","status":"en-analisis","score":7,"verdict":"Install with changes: keep only the lint rules and drop the auto-fix script.","note":"Runs a fixed set of lint checks on demand. Useful, but its auto-fix script rewrites files without asking."}
+RESULT>>>
+<<<REPORT
+# Example Lint Helper: analysis
+
+## What it does
+Runs a fixed set of lint checks on a project and explains each finding in plain words.
+
+## Reviews and score
+- 120 stars, 8 forks, 3 open issues, last commit two weeks ago (GitHub API).
+- No outside reviews found: none are listed on the usual sites.
+
+Our score: **7/10**, because the checks are solid but the auto-fix script is risky.
+
+## Security
+skillcheck: needs review. The one "revisar" finding (`fs.writeFileSync` in `fix.js`) is real: the script rewrites files without asking.
+
+## Activation: automatic or manual
+omp loads it by itself when you ask to "lint this project" or "check code quality". You can also call it with `/skill:lint-helper`.
+
+## Overlaps with your skills
+Overlaps in part with a general code-quality skill; nothing else.
+
+## Honest recommendation
+**Install with changes.** Keep the lint rules, remove `fix.js`. Cost: about 900 tokens of description per session.
+REPORT>>>

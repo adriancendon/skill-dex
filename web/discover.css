@@ -1,0 +1,43 @@
+/* Discover: typed search, suggestions from usage and a popular pick, in the watchlist's quiet row style. */
+.disc-search{display:flex;gap:10px;max-width:760px}
+.disc-search .search{flex:1}
+.disc-search .primary{flex:none}
+#disc-search-message{margin:4px 0 0;min-height:18px}
+.disc-notice{margin:0 0 16px}
+.disc-block{margin:22px 0 34px;max-width:980px}
+.disc-block>h2,.disc-block .section-top h2{font-size:19px}
+.disc-block .section-top{margin-bottom:2px}
+.disc-caption{color:var(--muted);font-size:12px;margin-top:6px;max-width:760px}
+.disc-loading{color:var(--muted);font-size:13px;padding:18px 0}
+.disc-group{margin-top:22px}
+.disc-because{font-size:13px;font-weight:550;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.disc-because b{font-weight:650}
+.disc-because span{color:var(--muted);font-weight:400;font-size:12px}
+.disc-list{border-top:1px solid var(--line);margin-top:10px}
+.disc-item{display:flex;align-items:flex-start;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+.disc-item .icon-tile{--s:40px}
+.disc-item.big{background:var(--hover);border:0;border-radius:12px;padding:22px;margin-top:12px}
+.disc-item.big .icon-tile{--s:50px}
+.disc-list:has(.big){border-top:0}
+.disc-copy{flex:1;min-width:0}
+.disc-name{font-size:15px;font-weight:650;display:flex;flex-wrap:wrap;align-items:center;gap:6px 9px;overflow-wrap:anywhere}
+.disc-where{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;color:var(--muted);font-size:12px;margin-top:3px;overflow-wrap:anywhere}
+.disc-repo{min-width:0}
+.disc-stars{display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+.disc-stars .ico{width:13px;height:13px}
+.disc-desc{color:var(--ink);font-size:13px;margin-top:7px;max-width:720px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.disc-item .watch-actions{margin-top:8px}
+.disc-label{font-size:11px;font-weight:550;border-radius:4px;padding:2px 7px;white-space:nowrap;background:var(--side);color:var(--muted)}
+.disc-label.installed{color:var(--ink);background:color-mix(in srgb,#26806b 18%,var(--bg))}
+.disc-label.watchlist{color:var(--blue);background:var(--blue-soft)}
+.disc-label.discarded{color:var(--red);background:color-mix(in srgb,var(--red) 12%,var(--bg))}
+.disc-more{margin-top:14px}
+@media(max-width:600px){
+  .disc-search{flex-wrap:wrap}
+  .disc-search .primary{width:100%}
+  .disc-item{gap:12px}
+  .disc-item .icon-tile{--s:36px}
+  .disc-item.big{padding:16px}
+  .disc-item.big .icon-tile{--s:40px}
+  .disc-block .section-top{flex-wrap:nowrap}
+}
