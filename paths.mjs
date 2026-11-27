@@ -10,6 +10,8 @@ export const dataFile = (...parts) => path.join(DATA, ...parts);
 // SKILLDEX_WATCHLIST points every watchlist read and write at another file (tests on a temporary copy).
 export const WATCHLIST = path.resolve(process.env.SKILLDEX_WATCHLIST || dataFile('watchlist.json'));
 export const ANALYSIS_DIR = dataFile('analisis');
+// The server's secret for this launch (REQ-SEC-013), readable only by the user; lanzar.sh and local tools read it.
+export const TOKEN_FILE = path.join(HERE, 'cache', 'session-token');
 
 // A path as shown to the user, with the home folder written as ~.
 export function shownPath(p) {

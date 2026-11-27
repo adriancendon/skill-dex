@@ -98,7 +98,8 @@ try {
   json(path.join(data, 'marks.json'), { favourites: ['draft-outline', 'layout-lab', 'test-trail'] });
   execFileSync(process.execPath, ['scan.mjs'], { cwd: app, env, stdio: 'inherit' });
   const server = start(process.execPath, ['server.mjs']);
-  await until(async () => { try { return (await fetch('http://127.0.0.1:4182/')).ok; } catch { return false; } }, 'demo server', server);
+  const token = () => { try { return fs.readFileSync(path.join(app, 'cache', 'session-token'), 'utf8').trim(); } catch { return ''; } };
+  await until(async () => { try { return (await fetch('http://127.0.0.1:4182/', { headers: { 'x-skilldex-token': token() } })).ok; } catch { return false; } }, 'demo server', server);
   const profile = path.join(root, 'chrome-profile');
   const chrome = start(chromeBin, ['--headless=new', '--no-first-run', '--no-default-browser-check', '--no-proxy-server', '--use-mock-keychain', '--password-store=basic', '--disable-extensions', '--disable-background-networking', '--disable-component-update', '--disable-sync', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--window-size=1440,900', 'about:blank']);
   const port = await until(() => {
@@ -128,7 +129,7 @@ try {
   await cdp('Page.enable');
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
   await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }, { name: 'prefers-reduced-motion', value: 'reduce' }] });
-  await cdp('Page.navigate', { url: 'http://127.0.0.1:4182/' });
+  await cdp('Page.navigate', { url: `http://127.0.0.1:4182/?k=${token()}` });
   await until(() => evaluate('document.readyState === "complete" && !!document.querySelector("#theme-button")?.textContent.trim()'), 'library render', server);
   await delay(700);
   fs.mkdirSync(path.join(repo, 'docs'), { recursive: true });

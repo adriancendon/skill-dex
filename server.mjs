@@ -3,6 +3,7 @@
 // Jobs that use omp run one at a time: an analysis first, then short descriptions, then pair advice; none of them runs
 // while an update check or an update is in progress, and an update check never starts during an analysis.
 import http from 'node:http';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -13,7 +14,7 @@ import { ANALYSIS_MODEL, buildPrompt, parseBlock, parseAnalysis, entryFields } f
 import { readWatchlist, writeWatchlist, setWatchStatus, startReanalysis } from './watchlist.mjs';
 import { createUpdates, updatesRoute } from './updates.mjs';
 import { createDiscover } from './discover.mjs';
-import { HERE as here, dataFile, WATCHLIST as WL, ANALYSIS_DIR as ANALISIS, shownPath } from './paths.mjs';
+import { HERE as here, dataFile, WATCHLIST as WL, ANALYSIS_DIR as ANALISIS, TOKEN_FILE, shownPath } from './paths.mjs';
 import { loadMeta } from './categories.mjs';
 
 const WEB = path.join(here, 'web');
@@ -23,7 +24,12 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=
 const sh = (file, args) => new Promise((res, rej) => execFile(file, args, { cwd: here, timeout: 600000 }, (e, out, err) => e ? rej(new Error(err || e.message)) : res(out)));
 const rescan = () => sh(process.execPath, ['scan.mjs']);
 const updates = createUpdates({ onChange: rescan }); // REQ-UPD: skill updates (updates.mjs)
-const body = req => new Promise(res => { let b = ''; req.on('data', c => { b += c; if (b.length > 1e5) req.destroy(); }); req.on('end', () => { try { res(JSON.parse(b || '{}')); } catch { res(null); } }); });
+const body = req => new Promise(res => {
+  let b = '';
+  req.on('error', () => res(null));
+  req.on('data', c => { b += c; if (b.length > 1e5) { req.destroy(); res(null); } });
+  req.on('end', () => { try { res(JSON.parse(b || '{}')); } catch { res(null); } });
+});
 const send = (res, code, obj) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(obj)); };
 const readWL = () => readWatchlist(WL);
 const writeWL = l => writeWatchlist(WL, l);
@@ -164,9 +170,45 @@ function nextJob() {
   fillShorts();
 }
 
+// ---------- Access: a secret for this launch (REQ-SEC-013) ----------
+// Only the user who launched the app can read the token file. lanzar.sh opens /?k=<token>, which sets a strict
+// cookie; every other request needs that cookie (or the X-Skilldex-Token header, for local tools such as
+// tools/regenerate-reports.mjs). The Host header must name this server, so a rebinding DNS name is refused.
+const TOKEN = crypto.randomBytes(32).toString('hex');
+fs.mkdirSync(path.dirname(TOKEN_FILE), { recursive: true });
+fs.rmSync(TOKEN_FILE, { force: true });
+fs.writeFileSync(TOKEN_FILE, TOKEN + '\n', { mode: 0o600, flag: 'wx' });
+const COOKIE = `skilldex-${PORT}`; // one per port: cookies are shared by every port of localhost
+const HOSTS = [`localhost:${PORT}`, `127.0.0.1:${PORT}`];
+const digest = s => crypto.createHash('sha256').update(s).digest();
+const validToken = s => typeof s === 'string' && crypto.timingSafeEqual(digest(s), digest(TOKEN));
+const cookieToken = req => String(req.headers.cookie || '').split(';').map(p => p.trim().split('=')).find(([k]) => k === COOKIE)?.[1];
+const DENIED = '<!doctype html><html lang="en"><meta charset="utf-8"><title>Skill Dex</title><body style="font:16px/1.5 system-ui,sans-serif;max-width:32rem;margin:4rem auto;padding:0 1rem"><h1>Skill Dex</h1><p>Open Skill Dex from its app icon.</p></body></html>';
+function deny(res, pathname = '') {
+  if (pathname.startsWith('/api/')) return send(res, 403, { error: 'Open Skill Dex from its app icon.' });
+  res.writeHead(403, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
+  res.end(DENIED);
+}
+
 // ---------- HTTP ----------
-http.createServer(async (req, res) => {
-  const url = new URL(req.url, 'http://x');
+// A request that fails gets an error answer; it never stops the server (REQ-SEC-012).
+http.createServer((req, res) => {
+  handle(req, res).catch(e => {
+    console.error('Request failed:', req.method, String(e?.message || e).slice(0, 300));
+    if (!res.headersSent) send(res, 500, { error: 'Internal error' }); else res.destroy();
+  });
+}).listen(PORT, '127.0.0.1', () => { console.log(`Skill Dex at http://localhost:${PORT}`); fillShorts(); });
+
+async function handle(req, res) {
+  if (!HOSTS.includes(req.headers.host)) return deny(res);
+  let url;
+  try { url = new URL(req.url, 'http://x'); } catch { return send(res, 400, { error: 'Bad request' }); }
+  if (url.pathname === '/' && url.searchParams.has('k')) { // the launcher's link: set the cookie, then a clean address
+    if (!validToken(url.searchParams.get('k'))) return deny(res);
+    res.writeHead(302, { location: '/', 'set-cookie': `${COOKIE}=${TOKEN}; HttpOnly; SameSite=Strict; Path=/`, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer' });
+    return res.end();
+  }
+  if (!validToken(cookieToken(req)) && !validToken(req.headers['x-skilldex-token'])) return deny(res, url.pathname);
   if (req.method === 'POST') {
     // anti-CSRF: only requests from the app's own page
     const okOrigin = [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`].includes(req.headers.origin || '');
@@ -236,12 +278,13 @@ http.createServer(async (req, res) => {
     last = Date.now(); seen = true; byeAt = 0;
     return send(res, 200, { running: job ? { id: job.id, elapsed: Math.round((Date.now() - job.startedAt) / 1000) } : null, queued: regen.queue.length });
   }
-  const rel = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname.slice(1));
+  let rel;
+  try { rel = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname.slice(1)); } catch { return send(res, 400, { error: 'Bad request' }); }
   const file = path.resolve(WEB, rel);
   if (!file.startsWith(WEB + path.sep) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end('404'); }
   res.writeHead(200, { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream', 'cache-control': 'no-store' });
-  fs.createReadStream(file).pipe(res);
-}).listen(PORT, '127.0.0.1', () => { console.log(`Skill Dex at http://localhost:${PORT}`); fillShorts(); });
+  fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
+}
 
 // At start: analyses left "running" by an earlier session are no longer running. A report regeneration that was cut
 // short puts the entry back as it was; its old report was never replaced.

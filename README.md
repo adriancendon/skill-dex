@@ -52,10 +52,12 @@ rebuild the app or edit that file. On first launch macOS may ask you to confirm 
 ```sh
 ./lanzar.sh                   # scans, starts the server in the background, opens the browser
 # or, in the foreground:
-node scan.mjs && node server.mjs   # then open http://localhost:4173
+node scan.mjs && node server.mjs   # then open http://localhost:4173/?k=$(cat cache/session-token)
 ```
 
 The server only listens on `127.0.0.1` and stops by itself when you close the browser tab. Opening the app again while it is running just opens a new tab.
+
+Each time the server starts it writes a new random secret to `cache/session-token` (readable only by your user, git-ignored). `lanzar.sh` opens `http://localhost:<port>/?k=<secret>`; the server swaps it for an `HttpOnly`, `SameSite=Strict` cookie and redirects to `/`. Every other request, pages and API alike, needs that cookie (local scripts can send the secret in an `X-Skilldex-Token` header instead) and a `Host` of `localhost` or `127.0.0.1` with the server's port; anything else gets a 403 page asking you to open Skill Dex from its app icon. Other user accounts on the same Mac, programs that cannot read your files, and websites therefore cannot use the local API.
 
 ## Configuration
 
@@ -116,7 +118,7 @@ Files in the data folder, all plain JSON or Markdown you can edit by hand (each 
 
 ## Privacy
 
-- Scanning the catalog and usage is local and sends no telemetry. The server binds to `127.0.0.1` and rejects requests from other origins.
+- Scanning the catalog and usage is local and sends no telemetry. The server binds to `127.0.0.1`, answers only requests that carry the secret of the current launch (see above) and rejects changes from other origins.
 - Your skills list, usage counts, watchlist, reports and favourites stay on your Mac, outside the repository, in the data folder (favourites also keep a copy in the browser's local storage).
 - Discover (GitHub search) and Updates (reading a skill's source) go online only when you use them.
 - "Analyze skill" launches your local `omp` agent with an OpenAI model; the skill text it analyzes is sent to that model by `omp`, under your own omp account.

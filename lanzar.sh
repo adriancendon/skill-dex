@@ -1,6 +1,8 @@
 #!/bin/bash
 # Starts Skill Dex without a Terminal window: scans, starts the local server in the background, opens the browser.
 # The server stops by itself when the browser tab is closed. Log: $SKILLDEX_LOG (default /tmp/skilldex.log).
+# The server writes a new secret at each start (cache/session-token, readable only by you); the browser link carries
+# it once, the server swaps it for a cookie, and requests without it are refused.
 #
 # Settings (environment variables, or a `skilldex.conf` file next to this script with KEY=value lines):
 #   SKILLDEX_DATA  folder for your data (watchlist, reports, config). Default: a "Seguimiento" folder next to
@@ -33,5 +35,6 @@ if ! lsof -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
   osascript -e "display dialog \"Skill Dex could not start. See the log: $LOG\" buttons {\"OK\"} with icon stop" 2>/dev/null
   echo "Skill Dex could not start; see $LOG" >&2; exit 1
 fi
-[ -z "$SKILLDEX_NO_OPEN" ] && open "http://localhost:$PORT"
+TOKEN="$(cat "$APP_DIR/cache/session-token" 2>/dev/null)"
+[ -z "$SKILLDEX_NO_OPEN" ] && open "http://localhost:$PORT/${TOKEN:+?k=$TOKEN}"
 exit 0
