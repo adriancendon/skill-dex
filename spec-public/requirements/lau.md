@@ -277,8 +277,9 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-135
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-135 v1
-- note: Built on branch `endurecer`; approved by D-135, not yet accepted.
+- accepted_by: D-136 v1
+- note: Built on branch `endurecer`; approved by D-135, accepted by D-136.

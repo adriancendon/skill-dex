@@ -136,12 +136,13 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-062, D-135
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-135 v2
 - changes:
   - v2 D-135: the server clones into a private folder, with isolated hooks and no submodules, instead of skillcheck cloning into the system temporary folder
+- accepted_by: D-136 v2
 - builder_choice: how the folder is deleted (the safety guard blocks `rm -rf`)
 
 ### REQ-SEC-009 A clean scan is not presented as a guarantee
@@ -273,8 +274,9 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-135
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-135 v1
-- note: Built on branch `endurecer`; approved by D-135, not yet accepted.
+- accepted_by: D-136 v1
+- note: Built on branch `endurecer`; approved by D-135, accepted by D-136.

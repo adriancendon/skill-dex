@@ -6,8 +6,8 @@
 
 | Kind | Count | Breakdown |
 |---|---|---|
-| Requirements | 160 | 1 ready, 7 active, 146 fulfilled, 2 descoped, 4 superseded |
-| Decisions | 135 | 127 owner, 3 derived, 5 constraint |
+| Requirements | 161 | 1 ready, 2 active, 152 fulfilled, 2 descoped, 4 superseded |
+| Decisions | 136 | 128 owner, 3 derived, 5 constraint |
 | Open points | 45 | 45 decided |
 | Risks | 6 | - |
 
@@ -18,7 +18,7 @@
 | REQ-ANA-001 | Analyse a skill from the app | - | fulfilled | 1 | 2 | D-015, D-043, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-002 | The entry shows that it is being analysed | - | fulfilled | 1 | 2 | D-015, D-043, D-126 | 0 mechanical, 2 judgement |
 | REQ-ANA-003 | Only one analysis at a time | - | fulfilled | 1 | 2 | D-016, D-043, D-126 | 1 mechanical, 1 judgement |
-| REQ-ANA-004 | Limited permissions | - | active | 2 | 2 | D-017, D-043, D-135 | 0 mechanical, 2 judgement |
+| REQ-ANA-004 | Limited permissions | - | fulfilled | 2 | 2 | D-017, D-043, D-135, D-136 | 0 mechanical, 2 judgement |
 | REQ-ANA-005 | Time and cost limit | - | fulfilled | 1 | 2 | D-015, D-036, D-043, D-126 | 1 mechanical, 0 judgement |
 | REQ-ANA-006 | An analysis never installs | - | fulfilled | 1 | 2 | D-006, D-043, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-007 | What the report says, in order | - | fulfilled | 2 | 2 | D-007, D-043, D-084, D-094, D-126 | 0 mechanical, 1 judgement |
@@ -36,7 +36,7 @@
 | REQ-ANA-019 | Recover a discarded entry | - | fulfilled | 1 | 2 | D-043, D-044, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-020 | An installed skill leaves the watchlist view | - | fulfilled | 1 | 2 | D-008, D-043, D-060, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-021 | The full output of each analysis is kept | - | fulfilled | 1 | 2 | D-043, D-126 | 0 mechanical, 1 judgement |
-| REQ-ANA-022 | SkillSpector runs inside every analysis | - | active | 2 | 2 | D-012, D-043, D-135 | 0 mechanical, 1 judgement |
+| REQ-ANA-022 | SkillSpector runs inside every analysis | - | fulfilled | 2 | 2 | D-012, D-043, D-135, D-136 | 0 mechanical, 1 judgement |
 | REQ-ANA-024 | The previous discard reason is kept as history | - | fulfilled | 1 | 2 | D-010, D-044, D-094, D-126 | 0 mechanical, 2 judgement |
 | REQ-ANA-025 | A discard without a written reason shows the report's verdict | - | fulfilled | 1 | 2 | D-044, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-026 | Analysis reports are written in English | - | fulfilled | 1 | 2 | D-084, D-092, D-094, D-126 | 0 mechanical, 1 judgement |
@@ -44,7 +44,7 @@
 | REQ-ANA-028 | Agent tasks run with whichever CLI is available | - | fulfilled | 1 | 2 | D-117, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-029 | Agent tasks are disabled when no CLI is available | - | fulfilled | 1 | 2 | D-117, D-126 | 0 mechanical, 1 judgement |
 | REQ-ANA-030 | The model of each runner is configurable | - | fulfilled | 1 | 2 | D-119, D-123, D-126 | 0 mechanical, 1 judgement |
-| REQ-ANA-031 | Every runner starts from an allowlisted environment | - | active | 1 | 2 | D-135 | 0 mechanical, 1 judgement |
+| REQ-ANA-031 | Every runner starts from an allowlisted environment | - | fulfilled | 1 | 2 | D-135, D-136 | 0 mechanical, 1 judgement |
 | REQ-CAT-001 | Installed skills are listed | - | fulfilled | 2 | 2 | D-001, D-003, D-048, D-117, D-124 | 0 mechanical, 2 judgement |
 | REQ-CAT-002 | The list follows what is installed now | - | fulfilled | 1 | 2 | D-003, D-048, D-124 | 0 mechanical, 2 judgement |
 | REQ-CAT-003 | Each skill has a category | - | fulfilled | 1 | 2 | D-001, D-039, D-048, D-124 | 0 mechanical, 2 judgement |
@@ -98,6 +98,7 @@
 | REQ-DIS-010 | Skills the user already knows carry a label | - | fulfilled | 1 | 2 | D-086, D-094, D-128 | 0 mechanical, 2 judgement |
 | REQ-DIS-011 | Without a GitHub session the search works within GitHub's limit | - | fulfilled | 1 | 2 | D-055, D-093, D-094, D-128 | 0 mechanical, 2 judgement |
 | REQ-DIS-012 | A notice explains how to sign in for a higher limit | - | fulfilled | 1 | 2 | D-093, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-DIS-013 | The Discover cache has a size limit | - | active | 1 | 2 | D-136 | 0 mechanical, 1 judgement |
 | REQ-LAU-001 | No Terminal window | - | fulfilled | 1 | 2 | D-014, D-053, D-130 | 0 mechanical, 2 judgement |
 | REQ-LAU-002 | One double click starts everything | - | fulfilled | 1 | 2 | D-035, D-053, D-055, D-130 | 0 mechanical, 2 judgement |
 | REQ-LAU-003 | Fresh data at start | - | fulfilled | 1 | 2 | D-003, D-053, D-130 | 0 mechanical, 1 judgement |
@@ -114,7 +115,7 @@
 | REQ-LAU-014 | The README is for any SKILL.md agent | - | fulfilled | 1 | 2 | D-116, D-117, D-118, D-130 | 0 mechanical, 1 judgement |
 | REQ-LAU-015 | The launcher works best-effort on Linux | - | active | 1 | 2 | D-119, D-123, D-130 | 0 mechanical, 1 judgement |
 | REQ-LAU-016 | Each server port has its own session token file | - | fulfilled | 1 | 2 | D-133, D-134 | 0 mechanical, 1 judgement |
-| REQ-LAU-017 | The launch log is private | - | active | 1 | 2 | D-135 | 0 mechanical, 1 judgement |
+| REQ-LAU-017 | The launch log is private | - | fulfilled | 1 | 2 | D-135, D-136 | 0 mechanical, 1 judgement |
 | REQ-SEC-001 | Scan the installed skills that changed | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-002 | The scan sends no skill files to a model | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 1 mechanical, 0 judgement |
 | REQ-SEC-003 | The security state of each skill is visible | - | fulfilled | 1 | 2 | D-009, D-070, D-094, D-127 | 0 mechanical, 2 judgement |
@@ -122,7 +123,7 @@
 | REQ-SEC-005 | Each closure names the condition that justifies it | - | fulfilled | 2 | 2 | D-056, D-094, D-101, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-006 | Remaining alerts stay in front of <private> | - | fulfilled | 2 | 2 | D-013, D-045, D-056, D-102, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-007 | A verdict for a skill not yet installed | - | fulfilled | 1 | 2 | D-012, D-062, D-127 | 0 mechanical, 1 judgement |
-| REQ-SEC-008 | Remote skills are checked from a temporary copy that is then deleted | - | active | 2 | 2 | D-006, D-062, D-135 | 0 mechanical, 2 judgement |
+| REQ-SEC-008 | Remote skills are checked from a temporary copy that is then deleted | - | fulfilled | 2 | 2 | D-006, D-062, D-135, D-136 | 0 mechanical, 2 judgement |
 | REQ-SEC-009 | A clean scan is not presented as a guarantee | - | fulfilled | 1 | 2 | D-062, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-010 | Findings closed before the criterion are checked again | - | fulfilled | 1 | 2 | D-056, D-094, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-011 | An owner closure reopens when the file or folder changes | - | fulfilled | 1 | 2 | D-101, D-127 | 0 mechanical, 1 judgement |
@@ -130,7 +131,7 @@
 | REQ-SEC-013 | The loopback API does not trust a client-asserted header | - | fulfilled | 1 | 2 | D-114, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-014 | Triage exclusions look at the full finding text | - | fulfilled | 1 | 2 | D-056, D-114, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-015 | Runnable files in templates or examples folders are not closed as guides | - | fulfilled | 1 | 2 | D-114, D-127 | 0 mechanical, 1 judgement |
-| REQ-SEC-016 | Symlinks in fetched repositories are removed and reported | - | active | 1 | 2 | D-135 | 0 mechanical, 1 judgement |
+| REQ-SEC-016 | Symlinks in fetched repositories are removed and reported | - | fulfilled | 1 | 2 | D-135, D-136 | 0 mechanical, 1 judgement |
 | REQ-UI-001 | Day and night mode | - | fulfilled | 1 | 2 | D-020, D-062, D-132 | 0 mechanical, 1 judgement |
 | REQ-UI-002 | The chosen theme is remembered | - | fulfilled | 1 | 2 | D-062, D-132 | 0 mechanical, 1 judgement |
 | REQ-UI-003 | A minimal main screen | - | fulfilled | 1 | 2 | D-021, D-024, D-038, D-070, D-094, D-132 | 0 mechanical, 1 judgement |
@@ -315,6 +316,7 @@
 | D-133 | The two small fixes and the spec-public refresh are approved | owner | REQ-LAU-016, REQ-UPD-014 |
 | D-134 | The two fixes are accepted | owner | REQ-LAU-016, REQ-UPD-014 |
 | D-135 | The remaining audit and review fixes are approved and published | owner | REQ-ANA-004, REQ-ANA-022, REQ-ANA-031, REQ-LAU-017, REQ-SEC-008, REQ-SEC-016 |
+| D-136 | The hardening changes are accepted and the Discover cache gets a size limit | owner | REQ-ANA-004, REQ-ANA-022, REQ-ANA-031, REQ-DIS-013, REQ-LAU-017, REQ-SEC-008, REQ-SEC-016 |
 
 ## Open points
 

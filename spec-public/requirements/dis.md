@@ -219,3 +219,19 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - ratified_by: D-093 v1
 - accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
+
+### REQ-DIS-013 The Discover cache has a size limit
+- pattern: ubiquitous
+- statement: Skill Dex shall keep at most 200 entries and 2 MB in the Discover cache, dropping first the entries older than 7 days and then the oldest ones until both limits hold.
+- rationale: D-136: the cache expired entries by time only and could grow without limit.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a cache with more than 200 entries or more than 2 MB WHEN an entry is added THEN entries older than 7 days go first, then the oldest, until it holds at most 200 entries and 2 MB
+- scope: The Discover cache (`discover.mjs`, `trimCache`; test `test/discover-cache.test.mjs`).
+- conditions: none
+- exceptions: none
+- source: D-136
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-136 v1
+- note: Built; approved by D-136, not yet accepted.

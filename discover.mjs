@@ -12,6 +12,21 @@ import { ORIGIN_FILES, originName } from './names.mjs';
 
 const TTL_SEARCH = 6 * 3600e3, TTL_POPULAR = 24 * 3600e3, TTL_PARTIAL = 10 * 60e3, CACHE_KEEP = 7 * 24 * 3600e3; // results left incomplete by limits are kept 10 minutes
 const POPULAR_SIZE = 30; // the popular pick comes from this many of the most-starred skill repositories
+// The cache file never grows without bound: at most this many entries and this many bytes; the oldest go first.
+export const CACHE_MAX_ENTRIES = 200, CACHE_MAX_BYTES = 2e6;
+
+// Drops entries older than `keep`, then the oldest ones until both caps hold. Returns the same object.
+export function trimCache(c, now = Date.now(), { keep = CACHE_KEEP, maxEntries = CACHE_MAX_ENTRIES, maxBytes = CACHE_MAX_BYTES } = {}) {
+  for (const k of Object.keys(c)) if (now - (c[k]?.at || 0) > keep) delete c[k];
+  const oldestFirst = Object.keys(c).sort((a, b) => (c[a]?.at || 0) - (c[b]?.at || 0));
+  let size = Buffer.byteLength(JSON.stringify(c));
+  while (oldestFirst.length && (oldestFirst.length > maxEntries || size > maxBytes)) {
+    const k = oldestFirst.shift();
+    size -= Buffer.byteLength(JSON.stringify(k)) + Buffer.byteLength(JSON.stringify(c[k])) + 2; // "key":value,
+    delete c[k];
+  }
+  return c;
+}
 const SUGGEST_PER_GROUP = 3; // suggestions shown for each of the three most-used skills
 const TOPICS = ['agent-skills', 'claude-skills']; // GitHub topics that repositories use to say they hold agent skills
 // Self-imposed per-minute budgets, under GitHub's limits (search: 30 signed in, 10 anonymous; code search: 10, signed in only).
@@ -223,8 +238,8 @@ export function createDiscover({ here, rescan }) {
   function cacheRead() { return readJSON(CACHE, {}); }
   function cachePut(key, data) {
     const c = cacheRead(), now = Date.now();
-    for (const k of Object.keys(c)) if (now - (c[k].at || 0) > CACHE_KEEP) delete c[k];
     c[key] = { at: now, data };
+    trimCache(c, now);
     fs.mkdirSync(path.dirname(CACHE), { recursive: true });
     fs.writeFileSync(CACHE, JSON.stringify(c));
   }

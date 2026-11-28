@@ -1063,6 +1063,14 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: The fixes for the six points are approved, and pushing them to the public repository is approved.
 - affects: REQ-ANA-004; REQ-ANA-022; REQ-ANA-031; REQ-SEC-008; REQ-SEC-016; REQ-LAU-017; REQ-DAT-009
 
+### D-136 The hardening changes are accepted and the Discover cache gets a size limit
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the hardening changes of D-135, and the Discover cache is given a size limit.
+- affects: REQ-ANA-004; REQ-ANA-022; REQ-ANA-031; REQ-SEC-008; REQ-SEC-016; REQ-LAU-017; REQ-DIS-013
+
 ## Open points
 
 ### OP-001 Which design does the app follow?

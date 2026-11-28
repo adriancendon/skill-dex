@@ -63,12 +63,13 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: Codex keeps a read-only, network-less shell inside its operating-system sandbox.
 - source: D-017, D-043, D-135
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-135 v2
 - changes:
   - v2 D-135: no shell for omp and Claude Code, read-only sandbox for Codex, instead of bash limited by the prompt
+- accepted_by: D-136 v2
 
 ### REQ-ANA-005 Time and cost limit
 - pattern: ubiquitous
@@ -357,12 +358,13 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: Tools that are not skills (a CLI, a proxy) are reviewed by hand instead.
 - source: D-012, D-043, D-135
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-135 v2
 - changes:
   - v2 D-135: the server runs SkillSpector before the agent; the agent does not run skillcheck
+- accepted_by: D-136 v2
 
 ### REQ-ANA-024 The previous discard reason is kept as history
 - pattern: event
@@ -499,8 +501,9 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-135
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-135 v1
-- note: Built on branch `endurecer`; approved by D-135, not yet accepted.
+- accepted_by: D-136 v1
+- note: Built on branch `endurecer`; approved by D-135, accepted by D-136.
