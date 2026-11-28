@@ -192,3 +192,22 @@ test('a skill folder that is itself a git clone records its remote and commit as
     assert.equal(findOrigin(sub, 'nested'), null, 'a folder inside a bigger clone is not taken as the clone');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('new-version symlinks are stripped before scanning and remain visible as security findings', async () => {
+  const before = snapshot(FIX);
+  fs.symlinkSync('SKILL.md', path.join(SRC, 'skills/fix/inside-link'));
+  fs.symlinkSync(path.join(T, 'outside-fixture'), path.join(SRC, 'skills/fix/outside-link'));
+  w(path.join(T, 'outside-fixture'), 'outside fixture content');
+  git(SRC, 'add', '.'); git(SRC, 'commit', '-qm', 'Fixture symlinks');
+  w(spector, `#!${process.execPath}\nconst fs = require('node:fs'); const path = require('node:path'); const dir = process.argv[3]; if (fs.readdirSync(dir).some(n => fs.lstatSync(path.join(dir,n)).isSymbolicLink())) process.exit(2); console.log(JSON.stringify({issues: []}));\n`, 0o700);
+  const u = make(); await u.check();
+  const fix = item(u, 'fix');
+  assert.equal(fix.security.status, 'done');
+  assert.equal(fix.security.level, 'review');
+  assert.ok(fix.security.review.some(f => f.sev === 'HIGH' && /symlink removed: outside-link ->/.test(f.snippet)));
+  assert.ok(fix.security.info.some(f => f.sev === 'MEDIUM' && /symlink removed: inside-link -> SKILL.md/.test(f.snippet)));
+  assert.equal(fix.can.ok, false, 'versions containing links still cannot be installed');
+  const saved = JSON.parse(read(path.join(T, 'cache/results.json'))).items.find(i => i.id === 'fix');
+  assert.ok(!fs.existsSync(path.join(saved.staged, 'inside-link')));
+  assert.equal(snapshot(FIX), before);
+});

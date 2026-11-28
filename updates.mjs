@@ -15,6 +15,7 @@ import { dataFile, shownPath } from './paths.mjs';
 import { ORIGIN_FILES, THIRD_PARTY_DIR, normalizeTriage } from './names.mjs';
 import { loadMeta } from './categories.mjs';
 import { listSkillDirs } from './skill-sources.mjs';
+import { removeSymlinks } from './tree-safety.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -197,11 +198,13 @@ export function createUpdates(opts = {}) {
     const hit = entries.find(e => e.sha === mine) || entries.find(e => path.posix.basename(e.dir) === path.basename(real)) || entries.find(e => e.dir === '.') || (entries.length === 1 ? entries[0] : null);
     return hit ? hit.dir : null;
   }
-  async function scan(dir, id) { // SkillSpector exits non-zero when it finds issues: read its JSON either way (as lib-security run does)
-    if (!cfg.spector || !fs.existsSync(cfg.spector)) return { status: 'unavailable' };
+  async function scan(dir, id, links = []) { // Findings from the symlink gate survive even when SkillSpector is unavailable.
+    const linkTriage = triage(compact({ issues: links }), [], dir);
+    if (!cfg.spector || !fs.existsSync(cfg.spector)) return { status: 'unavailable', ...linkTriage, symlinks: links };
     const r = await new Promise(res => execFile(cfg.spector, ['scan', dir, '--no-llm', '--format', 'json'], { maxBuffer: 64e6, timeout: 900000 },
       (err, out) => { try { res(JSON.parse(out)); } catch { res(null); } }));
-    if (!r) return { status: 'failed' };
+    if (!r) return { status: 'failed', ...linkTriage, symlinks: links };
+    r.issues = [...(r.issues || []), ...links];
     const c = compact(r), t = triage(c, cfg.loadTriage(id), dir);
     return { status: 'done', level: t.level, counts: t.counts, review: t.review, stale: t.stale, info: t.info, coverage: c.coverage, raw: c.recommendation };
   }
@@ -264,11 +267,12 @@ export function createUpdates(opts = {}) {
       security: { status: 'pending' },
     });
     if ((state.skipped[id] || []).some(s => s.commit === latest)) item.status = 'skipped';
-    else if (!unsupported.length) { // the exact files that will be installed, for the security check and the Update
+    else if (![...newEntries.values()].some(n => n.type !== 'blob')) { // Symlinks are stripped and reported; installation remains blocked for these versions.
       const dest = path.join(STAGED, id, latest.slice(0, 12)), tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'skilldex-upd-x-')), tar = path.join(tmp, 'v.tar');
       try {
         await git(gitDir, ['archive', '--format=tar', '-o', tar, latest, ...(pathArg ? [pathArg] : [])]);
         fs.mkdirSync(path.join(tmp, 'x')); await sh('tar', ['-xf', tar, '-C', path.join(tmp, 'x')]);
+        item.symlinks = removeSymlinks(path.join(tmp, 'x', pathArg));
         fs.rmSync(dest, { recursive: true, force: true }); fs.mkdirSync(path.dirname(dest), { recursive: true });
         fs.cpSync(path.join(tmp, 'x', pathArg), dest, { recursive: true }); item.staged = dest;
       } catch (e) { item.security = { status: 'failed', error: 'Could not download the new version.' }; }
@@ -302,7 +306,7 @@ export function createUpdates(opts = {}) {
     await Promise.all(Array.from({ length: 3 }, async () => { // up to 3 scans at once, like security.mjs
       for (let i; (i = toScan.shift());) {
         running.add(i.id); job.step = `Security check of ${[...running].join(', ')}`;
-        i.security = await scan(i.staged, i.id);
+        i.security = await scan(i.staged, i.id, i.symlinks || []);
         running.delete(i.id); job.done++; job.step = running.size ? `Security check of ${[...running].join(', ')}` : 'Saving';
       }
     }));

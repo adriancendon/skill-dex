@@ -260,8 +260,9 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: OP-045, D-133
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-133 v1
-- note: Built: the server writes `cache/session-token-<port>`; `launch.sh` and the tools read the file of their port; verified with two servers at once and the test suite. Approved by D-133; not yet accepted.
+- accepted_by: D-134 v1
+- note: Built: the server writes `cache/session-token-<port>`; `launch.sh` and the tools read the file of their port; verified with two servers at once and the test suite. Approved by D-133, accepted by D-134.

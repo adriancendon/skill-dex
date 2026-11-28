@@ -104,17 +104,27 @@ The skill's detail shows the basis ("found in 3 public GitHub repositories", or 
 
 ## Runners
 
-"Analyse a skill", the short descriptions written for skills that lack one and the advice on similar skills need an agent command-line tool, the **runner**. Choose it with `"runner"` in `config.json` or `SKILLDEX_RUNNER`: `auto` (default: the first installed of omp, claude, codex), `omp`, `claude`, `codex` or `none`. A runner chosen by name that is not installed is not replaced by another. Binaries are found through `OMP_BIN`, `CLAUDE_BIN`, `CODEX_BIN`, then `~/.local/bin`, Homebrew, `/usr/local/bin` and `PATH`. Each runs in an empty temporary folder, with the tightest limits its CLI documents:
+"Analyse a skill", short descriptions and advice on similar skills use your selected command-line **runner**: `auto` (the first installed of omp, claude, codex), `omp`, `claude`, `codex` or `none`, via `"runner"` in config or `SKILLDEX_RUNNER`. An unavailable named runner is never replaced. Binaries use `OMP_BIN`, `CLAUDE_BIN`, `CODEX_BIN`, then the usual install folders and `PATH`. Before an analysis, the server fetches the source itself into a fresh private temporary folder (0700), strips and reports all symlinks, runs static SkillSpector and fetches read-only GitHub metadata when available. Only HTTPS repository URLs and local repository paths are accepted; names are resolved against installed skill folders or GitHub repository search. Missing scanner or metadata is explicitly reported as unverified/no data. The runner receives that folder, scan and metadata, not permission to clone or execute repository code. The folder is deleted on completion, error, cancellation, timeout and server shutdown. Installed local skills are scanned from link-free copies without modifying their folders; outside-pointing links are reported.
+
+Remote clones disable file/extra transports, hooks, templates, inherited Git configuration and submodules. Git itself classifies direct local paths as file transport: only an existing realpathed local directory gets a scoped exception, using `--local --no-hardlinks`; `file://` URLs are still rejected and remote/submodule file transport stays disabled.
 
 | Runner | Tools | Limits |
 | --- | --- | --- |
-| omp | `read, bash, web_search, grep, glob` for analyses (`--tools`); none for background text | `--max-time 20m` and `--max-cost 1.5` per analysis (3–4 minutes and $0.30–0.40 for background text); no saved session |
-| Claude Code | `claude -p` with `--tools Read,Grep,Glob,WebSearch,WebFetch,Bash,Skill`, Bash allowed only for `mktemp -d`, `git clone --depth 1`, `curl` to `api.github.com` and the bundled security check (`--allowedTools`), edits denied (`--disallowedTools`), `--permission-mode dontAsk` so anything else is refused; no tools for background text | `--max-budget-usd 1.5` per analysis; the CLI has no time limit, so Skill Dex stops it after 20 minutes; `--no-session-persistence` |
-| Codex | `codex exec --sandbox read-only` (its shell can read but not write, and has no network in that sandbox, so analyses rely on Codex's own web search if your Codex configuration enables it) | the CLI has no cost or time limit: Skill Dex stops it after 20 minutes (3–4 for background text); `--ephemeral` |
+| omp | `--no-tools --tools read,grep,glob,web_search`; no shell, editing, subagents, MCP, extensions, rules or automatic context loading; background text gets no tools | `--max-time 20m`, `--max-cost 1.5`; no saved session |
+| Claude Code | `Read,Grep,Glob,WebSearch,WebFetch` only; Bash, Edit, Write, NotebookEdit, Skill, Agent and Task explicitly denied; safe mode, hooks disabled, no user/project settings, skills or MCP; background text gets no tools | `--permission-mode dontAsk`, `--max-budget-usd 1.5`, no saved session; stopped after 20 minutes |
+| Codex | `exec --sandbox read-only --ignore-user-config --ignore-rules`: **keeps a read-only shell inside its OS sandbox**, unlike omp and Claude Code; it can read the local clone but cannot write or use network there. This is not a general filesystem-read isolation boundary. | no saved session; stopped after 20 minutes; no CLI cost ceiling |
 
-Every run is also stopped by Skill Dex a little after its time limit. The guide skill (`analysis_skill`) is passed only to runners that can load skills (omp and Claude Code); Codex follows the built-in steps. With `none` or no runner installed, the Analyse buttons are disabled with a notice, background jobs do not run, and everything else works.
+Every run is stopped by Skill Dex a little after its time limit; fetching and scanning share an overall analysis deadline. An installed guide (`analysis_skill`) is resolved by the server to its `SKILL.md` file for omp and Claude Code to read, never executed as a skill/command; Codex follows the built-in steps. With `none` or no runner installed, Analyse and background jobs are off and everything else works. Updates also strips and reports new-version symlinks before scanning; versions that contained links remain blocked from installation.
 
 **Models.** Each runner uses the model in `"models"` of `config.json` (`{"omp": "…", "claude": "…", "codex": "…"}`) or `SKILLDEX_MODEL_OMP`, `SKILLDEX_MODEL_CLAUDE`, `SKILLDEX_MODEL_CODEX` (the variable wins). Without one, omp uses `openai-codex/gpt-6.1-sol` (its built-in default here) and Claude Code and Codex use their own default model (no `--model` is passed).
+
+**Runner environment.** All three job types start from an empty environment, passing only set values of `PATH`, `HOME`, `USER`, `LOGNAME`, `SHELL`, `LANG`, `LC_*`, `TMPDIR` and `TERM`, plus:
+
+- omp: `OMP_PROFILE`, `PI_CODING_AGENT_DIR`, `PI_PACKAGE_DIR` locate its own profile, credentials and package. Its default `openai-codex` model uses stored OAuth credentials, so `OPENAI_API_KEY` is **not** inherited. Only an explicit `openai/…` API model receives that key. Models remain explicit command-line overrides. Other `OMP_*`/`PI_*` variables, auxiliary-model overrides and search-provider keys are not inherited.
+- Claude Code: `CLAUDE_CONFIG_DIR` locates its own login; `ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN` and `ANTHROPIC_BASE_URL` support its own API/OAuth/gateway authentication. No Bedrock/Vertex/AWS credentials are passed. Other Claude/Anthropic configuration is not inherited.
+- Codex: `CODEX_HOME` locates its own stored login; `CODEX_API_KEY`, `OPENAI_API_KEY` and `OPENAI_BASE_URL` support its own API authentication/endpoint. No other provider credentials are passed.
+
+`GITHUB_TOKEN`, `GH_TOKEN`, `AWS_*`, `NPM_TOKEN`, `SSH_AUTH_SOCK`, unrelated model credentials and all other variables are excluded. GitHub metadata is fetched by the server, not the runner. The default omp run needs a working stored OAuth login in its selected profile; custom provider, proxy/CA or keyed search configurations may need an explicitly reviewed additional variable and will not silently inherit one. Tool allowlists are not an OS sandbox for file reads: do not analyse untrusted repositories with access to sensitive files unless you accept that remaining boundary.
 
 ## Configuration
 
@@ -124,6 +134,7 @@ Everything Skill Dex writes goes in a **data folder**:
 | --- | --- | --- |
 | `SKILLDEX_DATA` | data folder | `~/Library/Application Support/Skill Dex` on macOS, `${XDG_DATA_HOME:-~/.local/share}/Skill Dex` on Linux. A folder named `Seguimiento` next to the repository folder, the name earlier versions used, is still found and used when it exists |
 | `PORT` | local port | `4173` |
+| `SKILLDEX_LOG` | launch log override | `~/Library/Logs/Skill Dex/launch.log` on macOS; `${XDG_STATE_HOME:-~/.local/state}/skill-dex/launch.log` on Linux. Default folder 0700, log 0600; symlink log paths refused |
 | `SKILLDEX_SKILL_DIRS` | extra skill folders, separated by colons (same as `skill_dirs` in `config.json`) | none |
 | `SKILLDEX_RUNNER` | `auto`, `omp`, `claude`, `codex` or `none` (same as `runner` in `config.json`) | `auto` |
 | `SKILLDEX_MODEL_OMP`, `SKILLDEX_MODEL_CLAUDE`, `SKILLDEX_MODEL_CODEX` | model of each runner (same as `models` in `config.json`) | see [Runners](#runners) |
@@ -187,7 +198,7 @@ Data folders written by earlier versions used Spanish names: an `analisis/` fold
 ## Tools
 
 - `node tools/privacy-check.mjs [--dir PATH] [--exclude PREFIX]`: personal-data scan described above.
-- `node tools/export-public-spec.mjs [OUT_DIR] [--src SPEC_DIR]`: writes a cleaned copy of the private `spec/` requirements package to versioned `spec-public/`, omitting owner quotes, Spanish text, session and line references and who shared a skill, and replacing local private terms, paths and installed skill ids. The output is the same on every run. Run it while the private package is available, then run the privacy check.
+- `node tools/export-public-spec.mjs [OUT_DIR] [--src SPEC_DIR]`: writes a cleaned copy of the private `spec/` requirements package to versioned `spec-public/`, omitting owner quotes, Spanish text, session and line references and who shared a skill, and replacing local private terms, paths and installed skill ids. The public state is a short generic description of the current public version, never a copy of private development status. The output is deterministic. Run it while the private package is available, then run the privacy check.
 - `node tools/migrate-data.mjs [--data DIR] [--dry-run]`: converts a data folder written by an earlier version to the new names, with a backup (see above).
 - `node tools/regenerate-reports.mjs <watchlist id>...`: asks the running app to write new reports for those entries, one analysis at a time (each uses quota; an entry keeps its status). `--status` shows the queue.
 - `node --test test/*.test.mjs updates.test.mjs`: the automated tests (no network, no analysis, only temporary folders).

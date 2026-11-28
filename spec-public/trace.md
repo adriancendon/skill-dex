@@ -6,8 +6,8 @@
 
 | Kind | Count | Breakdown |
 |---|---|---|
-| Requirements | 157 | 1 ready, 3 active, 147 fulfilled, 2 descoped, 4 superseded |
-| Decisions | 133 | 125 owner, 3 derived, 5 constraint |
+| Requirements | 157 | 1 ready, 1 active, 149 fulfilled, 2 descoped, 4 superseded |
+| Decisions | 134 | 126 owner, 3 derived, 5 constraint |
 | Open points | 45 | 45 decided |
 | Risks | 6 | - |
 
@@ -112,7 +112,7 @@
 | REQ-LAU-013 | The public instructions are in English | - | fulfilled | 1 | 2 | D-066, D-094, D-130 | 0 mechanical, 1 judgement |
 | REQ-LAU-014 | The README is for any SKILL.md agent | - | fulfilled | 1 | 2 | D-116, D-117, D-118, D-130 | 0 mechanical, 1 judgement |
 | REQ-LAU-015 | The launcher works best-effort on Linux | - | active | 1 | 2 | D-119, D-123, D-130 | 0 mechanical, 1 judgement |
-| REQ-LAU-016 | Each server port has its own session token file | - | active | 1 | 2 | D-133 | 0 mechanical, 1 judgement |
+| REQ-LAU-016 | Each server port has its own session token file | - | fulfilled | 1 | 2 | D-133, D-134 | 0 mechanical, 1 judgement |
 | REQ-SEC-001 | Scan the installed skills that changed | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 0 mechanical, 1 judgement |
 | REQ-SEC-002 | The scan sends no skill files to a model | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 1 mechanical, 0 judgement |
 | REQ-SEC-003 | The security state of each skill is visible | - | fulfilled | 1 | 2 | D-009, D-070, D-094, D-127 | 0 mechanical, 2 judgement |
@@ -147,7 +147,7 @@
 | REQ-UPD-011 | A confirmed update replaces the skill's files | - | fulfilled | 1 | 2 | D-082, D-094, D-129 | 0 mechanical, 1 judgement |
 | REQ-UPD-012 | A version can be skipped | - | fulfilled | 1 | 2 | D-091, D-094, D-129 | 0 mechanical, 1 judgement |
 | REQ-UPD-013 | A skill with no update source shows who it came from | - | fulfilled | 1 | 2 | D-106, D-110, D-129 | 0 mechanical, 2 judgement |
-| REQ-UPD-014 | Updates never shows a check date and "No check yet" together | - | active | 1 | 2 | D-133 | 0 mechanical, 1 judgement |
+| REQ-UPD-014 | Updates never shows a check date and "No check yet" together | - | fulfilled | 1 | 2 | D-133, D-134 | 0 mechanical, 1 judgement |
 | REQ-USE-001 | Uses are counted from the omp sessions | - | fulfilled | 2 | 2 | D-004, D-062, D-117, D-125 | 0 mechanical, 1 judgement |
 | REQ-USE-002 | Chart of uses per day | - | fulfilled | 1 | 2 | D-004, D-030, D-047, D-125 | 0 mechanical, 1 judgement |
 | REQ-USE-003 | The chart is on the main screen | - | fulfilled | 1 | 2 | D-030, D-070, D-094, D-125 | 0 mechanical, 1 judgement |
@@ -310,6 +310,7 @@
 | D-131 | The data and privacy area is accepted | owner | REQ-DAT-001, REQ-DAT-002, REQ-DAT-003, REQ-DAT-004, REQ-DAT-005, REQ-DAT-006, REQ-DAT-007, REQ-DAT-008, REQ-DAT-009, REQ-DAT-010, REQ-DAT-011, REQ-DAT-012 |
 | D-132 | The interface area is accepted | owner | REQ-UI-001, REQ-UI-002, REQ-UI-003, REQ-UI-005, REQ-UI-006 |
 | D-133 | The two small fixes and the spec-public refresh are approved | owner | REQ-LAU-016, REQ-UPD-014 |
+| D-134 | The two fixes are accepted | owner | REQ-LAU-016, REQ-UPD-014 |
 
 ## Open points
 

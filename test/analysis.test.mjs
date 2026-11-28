@@ -12,11 +12,12 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const fixture = fs.readFileSync(path.join(here, 'fixtures/analysis-output.txt'), 'utf8');
 
 describe('analysis prompt', () => {
-  const p = buildPrompt('https://github.com/example/lint-helper', '/x/skillcheck.mjs', { categories: ['SEO', 'Quality', 'Other'] });
+  const candidate = { folder: '/candidate', scan: { level: 'review', symlinks: [] }, metadata: { status: 'No data' } };
+  const p = buildPrompt('https://github.com/example/lint-helper', candidate, { categories: ['SEO', 'Quality', 'Other'] });
   it('lists the configured categories and follows a guide skill only when one is configured', () => {
     assert.match(p, /"category":"one of: SEO \| Quality \| Other"/);
-    assert.doesNotMatch(p, /skill:\/\//);
-    assert.match(buildPrompt('x', '/x/skillcheck.mjs', { guide: 'my-analyst' }), /First read skill:\/\/my-analyst/);
+    assert.doesNotMatch(p, /First read the guide file/);
+    assert.match(buildPrompt('x', candidate, { guide: '/guides/my-analyst/SKILL.md' }), /First read the guide file "\/guides\/my-analyst\/SKILL.md" with read/);
   });
   it('asks for English and never for Spanish', () => {
     assert.match(p, /write the whole report and every field of the result in English/);
@@ -33,12 +34,14 @@ describe('analysis prompt', () => {
     assert.match(p, /Install, Install with changes or Do not install/);
     assert.match(p, /never invent/i);
     assert.match(p, /<<<QUERY https:\/\/github\.com\/example\/lint-helper QUERY>>>/);
-    assert.match(p, /node \/x\/skillcheck\.mjs/);
+    assert.match(p, /\"folder\":\"\/candidate\"/);
+    assert.match(p, /server already fetched the candidate and ran SkillSpector/i);
+    assert.doesNotMatch(p, /limited shell|Use bash only|git clone/);
   });
   it('omp runs default to an OpenAI model', () => assert.match(DEFAULT_MODELS.omp, /^openai-codex\//));
   it('tells each runner how to follow a guide skill, and Codex gets the built-in steps', () => {
-    assert.match(buildPrompt('x', '/x/skillcheck.mjs', { guide: 'my-analyst', runner: 'claude' }), /load the "my-analyst" skill with the Skill tool/);
-    const codex = buildPrompt('x', '/x/skillcheck.mjs', { guide: 'my-analyst', runner: 'codex', skillDirs: ['~/.codex/skills', '~/.agents/skills'] });
+    assert.match(buildPrompt('x', candidate, { guide: '/guides/my-analyst/SKILL.md', runner: 'claude' }), /with Read and follow its analysis steps; do not invoke skills or commands/);
+    const codex = buildPrompt('x', candidate, { guide: 'my-analyst', runner: 'codex', skillDirs: ['~/.codex/skills', '~/.agents/skills'] });
     assert.doesNotMatch(codex, /my-analyst/);
     assert.match(codex, /list ~\/\.codex\/skills ~\/\.agents\/skills/);
   });

@@ -1,12 +1,8 @@
 // Which agent command-line tool runs analyses, short descriptions and pair advice (REQ-ANA, REQ-CAT-023, REQ-USE-017).
 // Setting: SKILLDEX_RUNNER, or "runner" in config.json: auto | omp | claude | codex | none. auto = the first one
-// installed of omp, claude, codex. Each runner gets the tightest limits its CLI offers:
-// - omp: an explicit model, a tools list, --max-time and --max-cost (as before).
-// - claude: -p with only the built-in tools it needs (--tools), the allowed Bash commands spelled out (--allowedTools),
-//   edits denied (--disallowedTools), --permission-mode dontAsk so anything else is refused, --max-budget-usd,
-//   no saved session. Its CLI has no time limit: Skill Dex stops it after the same time as omp.
-// - codex: codex exec --sandbox read-only, no saved session (--ephemeral). Its CLI has no cost or time limit:
-//   Skill Dex stops it after the same time as omp.
+// installed of omp, claude, codex. Analyses get read/search tools only in omp and Claude;
+// Codex gets its OS-enforced read-only sandbox (its read-only command tool remains available).
+// No runner inherits unrelated provider, cloud, package-registry or GitHub credentials.
 // Every run also gets a wall-clock kill a little after its time limit, whatever the runner.
 // Model: "models" in config.json ({"omp": "...", "claude": "...", "codex": "..."}) or SKILLDEX_MODEL_OMP /
 // SKILLDEX_MODEL_CLAUDE / SKILLDEX_MODEL_CODEX. Without one, omp uses DEFAULT_MODELS.omp and claude and codex use
@@ -22,6 +18,19 @@ export const LABELS = { omp: 'omp', claude: 'Claude Code', codex: 'Codex' };
 export const DEFAULT_MODELS = { omp: 'openai-codex/gpt-6.1-sol' }; // the default for omp only; any omp model can be set
 const ENV_BIN = { omp: 'OMP_BIN', claude: 'CLAUDE_BIN', codex: 'CODEX_BIN' };
 const ENV_MODEL = { omp: 'SKILLDEX_MODEL_OMP', claude: 'SKILLDEX_MODEL_CLAUDE', codex: 'SKILLDEX_MODEL_CODEX' };
+
+const BASE_ENV = ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'TMPDIR', 'TERM'];
+const RUNNER_ENV = {
+  omp: ['OMP_PROFILE', 'PI_CODING_AGENT_DIR', 'PI_PACKAGE_DIR'],
+  claude: ['CLAUDE_CONFIG_DIR', 'ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'CLAUDE_CODE_OAUTH_TOKEN', 'ANTHROPIC_BASE_URL'],
+  codex: ['CODEX_HOME', 'CODEX_API_KEY', 'OPENAI_API_KEY', 'OPENAI_BASE_URL'],
+};
+export function runnerEnvironment(kind, env = process.env, model = '') {
+  const allowed = new Set([...BASE_ENV, ...(RUNNER_ENV[kind] || [])]);
+  // OpenAI API models need their own key; openai-codex uses the login stored in the omp profile.
+  if (kind === 'omp' && /^openai\//.test(model)) allowed.add('OPENAI_API_KEY');
+  return Object.fromEntries(Object.entries(env).filter(([key]) => allowed.has(key) || /^LC_[A-Z_]+$/.test(key)));
+}
 
 const executable = p => { try { fs.accessSync(p, fs.constants.X_OK); return fs.statSync(p).isFile(); } catch { return false; } };
 
@@ -58,39 +67,40 @@ export function chooseRunner({ env = process.env, home = os.homedir(), config = 
 export const supportsSkills = kind => kind === 'omp' || kind === 'claude';
 
 const minutes = m => `${m}m`;
-// The command line for one run. task: 'analysis' (read, search, web and the bash commands of the prompt) or 'text'
-// (no tools at all). limits: { minutes, cost }. skillcheck: path of skillcheck.mjs (analysis only). model: '' = CLI default.
-export function buildArgs(kind, task, prompt, { minutes: mins, cost, skillcheck = '', model = '' } = {}) {
+// The command line for one run. Text jobs have no tools (Codex retains only its read-only sandbox).
+export function buildArgs(kind, task, prompt, { minutes: mins, cost, model = '' } = {}) {
   const analysis = task === 'analysis';
   if (kind === 'omp') {
     const m = ['--model', model || DEFAULT_MODELS.omp];
     return analysis
-      ? ['-p', ...m, '--tools', 'read,bash,web_search,grep,glob', '--no-session', '--no-title', '--max-time', minutes(mins), '--max-cost', String(cost), prompt]
-      : ['-p', ...m, '--no-tools', '--no-skills', '--no-rules', '--no-context-files', '--no-extensions', '--no-lsp', '--no-session', '--no-title', '--thinking', 'low', '--max-time', minutes(mins), '--max-cost', String(cost), prompt];
+      ? ['-p', ...m, '--no-tools', '--tools', 'read,grep,glob,web_search', '--no-skills', '--no-rules', '--no-context-files', '--no-extensions', '--no-lsp', '--no-session', '--no-title', '--max-time', minutes(mins), '--max-cost', String(cost), prompt]
+      : ['-p', ...m, '--no-tools', '--tools', '', '--no-skills', '--no-rules', '--no-context-files', '--no-extensions', '--no-lsp', '--no-session', '--no-title', '--thinking', 'low', '--max-time', minutes(mins), '--max-cost', String(cost), prompt];
   }
   if (kind === 'claude') {
-    const common = ['-p', '--output-format', 'text', '--no-session-persistence', '--permission-mode', 'dontAsk', '--max-budget-usd', String(cost), ...(model ? ['--model', model] : [])];
-    if (!analysis) return [...common, '--tools', '', '--disable-slash-commands', '--strict-mcp-config', prompt];
-    const curl = ['', '-s ', '-sL ', '-fsSL '].map(f => `Bash(curl ${f}https://api.github.com/*)`);
-    const bash = ['Bash(mktemp -d)', 'Bash(mktemp -d *)', 'Bash(git clone --depth 1 *)', ...curl, `Bash(node ${skillcheck} *)`];
-    return [...common, '--tools', 'Read,Grep,Glob,WebSearch,WebFetch,Bash,Skill', '--allowedTools', ['Read', 'Grep', 'Glob', 'WebSearch', 'WebFetch', 'Skill', ...bash].join(','),
-      '--disallowedTools', 'Edit,Write,NotebookEdit', '--strict-mcp-config', prompt];
+    const common = ['-p', '--safe-mode', '--setting-sources', '', '--settings', '{"disableAllHooks":true}', '--output-format', 'text', '--no-session-persistence', '--permission-mode', 'dontAsk', '--max-budget-usd', String(cost), ...(model ? ['--model', model] : [])];
+    const denied = ['--disallowedTools', 'Bash,Edit,Write,NotebookEdit,Skill,Agent,Task', '--disable-slash-commands', '--strict-mcp-config'];
+    if (!analysis) return [...common, '--tools', '', ...denied, prompt];
+    const tools = 'Read,Grep,Glob,WebSearch,WebFetch';
+    return [...common, '--tools', tools, '--allowedTools', tools, ...denied, prompt];
   }
-  if (kind === 'codex') return ['exec', '--sandbox', 'read-only', '--skip-git-repo-check', '--ephemeral', '--color', 'never', ...(model ? ['--model', model] : []), prompt];
+  if (kind === 'codex') return ['exec', '--sandbox', 'read-only', '--ignore-user-config', '--ignore-rules', '--skip-git-repo-check', '--ephemeral', '--color', 'never', ...(model ? ['--model', model] : []), prompt];
   throw new Error(`Unknown runner: ${kind}`);
 }
 
 // Starts one run in cwd. Returns the child process; onDone(code, output) is called once, after the process ends or
 // is stopped by the wall-clock limit (code -1 when it could not start, 124 when it ran out of time).
-export function runAgent(runner, task, prompt, { cwd, minutes: mins, cost, skillcheck, env = process.env }, onDone) {
-  const args = buildArgs(runner.kind, task, prompt, { minutes: mins, cost, skillcheck, model: runner.model });
-  const child = spawn(runner.bin, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });
+export function runAgent(runner, task, prompt, { cwd, minutes: mins, cost, env = process.env, signal }, onDone) {
+  const args = buildArgs(runner.kind, task, prompt, { minutes: mins, cost, model: runner.model });
+  const child = spawn(runner.bin, args, { cwd, env: runnerEnvironment(runner.kind, env, runner.model), stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '', done = false, timedOut = false;
   child.stdout.on('data', d => { out += d; }); child.stderr.on('data', d => { out += d; });
-  const timer = setTimeout(() => { timedOut = true; child.kill('SIGTERM'); setTimeout(() => { if (child.exitCode === null) child.kill('SIGKILL'); }, 5000).unref(); }, (mins * 60 + 30) * 1000);
+  const stop = () => { child.kill('SIGTERM'); setTimeout(() => { if (child.exitCode === null) child.kill('SIGKILL'); }, 5000).unref(); };
+  const timer = setTimeout(() => { timedOut = true; stop(); }, (mins * 60 + 30) * 1000);
+  signal?.addEventListener('abort', stop, { once: true });
+  if (signal?.aborted) stop();
   timer.unref();
   const finish = code => {
-    if (done) return; done = true; clearTimeout(timer);
+    if (done) return; done = true; clearTimeout(timer); signal?.removeEventListener('abort', stop);
     if (timedOut) out += `\n[Skill Dex] Stopped after ${mins} minutes.\n`;
     onDone(timedOut ? 124 : code, out);
   };

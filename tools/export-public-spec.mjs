@@ -138,6 +138,10 @@ export function exportSpec(src, out, { terms = personalSkillTerms(), localTerms 
       // spec/ is its own private git repository: its .git holds the full private history and must never be copied.
       if (e.name === '__pycache__' || e.name === '.DS_Store' || e.name === '.git') continue;
       const s = path.join(dir, e.name), r = path.join(rel, e.name), d = path.join(out, r);
+      if (r === 'state.md') {
+        fs.writeFileSync(d, '# State\n\nThis requirements package describes the current public version of Skill Dex.\n');
+        continue;
+      }
       if (e.isDirectory()) { fs.mkdirSync(d, { recursive: true }); walk(s, r); continue; }
       const buf = fs.readFileSync(s);
       fs.mkdirSync(path.dirname(d), { recursive: true });

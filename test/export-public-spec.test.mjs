@@ -74,9 +74,8 @@ test('the public copy drops quotes, Spanish text, process details, friends and p
     assert.match(d, /- question: \(written in Spanish; omitted from the public copy\)/);
     assert.match(d, /- affects: REQ-X-001 \(D-003, owner approval\), the README says \[quote omitted\]\./);
     assert.match(d, /node tool\.mjs check {3}# aligned comment, line 5 stays/, 'code blocks are left as they are');
-    assert.match(s, /- Approved with the owner's approval\.\n/);
-    assert.match(s, /- Read in full: <private>'s messages, the form answers, and `notes\.md`\./);
-    assert.match(s, /A plain English line about lines of code and sessions in general stays as it is\./);
+    assert.equal(s, '# State\n\nThis requirements package describes the current public version of Skill Dex.\n');
+    assert.doesNotMatch(s, /approv|Read in full|pending|private|\d/);
     assert.equal(fs.readFileSync(path.join(out, 'tools', 'tool.py'), 'utf8'), 'fd = os.open(path, os.O_WRONLY | os.O_CREAT)  # o y de la\n', 'code files only lose private data');
     assert.ok(!fs.existsSync(path.join(out, '.git')), 'the private history is never copied');
   } finally { fs.rmSync(src, { recursive: true, force: true }); fs.rmSync(out, { recursive: true, force: true }); }

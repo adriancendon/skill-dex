@@ -7,15 +7,26 @@ import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dataFile } from './paths.mjs';
 import { sources, listSkillDirs } from './skill-sources.mjs';
+import { symlinkFindings, copyWithoutSymlinks, safeTreePath } from './tree-safety.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const TRIAGE_PATH = dataFile('security-triage.json');
 export const BIN = path.join(here, '.venv-skillspector/bin/skillspector');
 export const SCHEMA = 4; // 4: issues carry `excl`, the exclusion found in the full finding text and explanation
 
-// --no-llm: sends no file to any model. Symlinks are not accepted: pass the real path.
-export const run = real => new Promise(res => execFile(BIN, ['scan', real, '--no-llm', '--format', 'json'], { maxBuffer: 64e6, timeout: 900000 },
-  (err, out) => { try { res(JSON.parse(out)); } catch { res(null); } }));
+// The scanner sees a link-free copy for local skills; installed files are never changed.
+export async function run(real, { signal, tempRoot = os.tmpdir() } = {}) {
+  const links = symlinkFindings(real);
+  const tmp = fs.mkdtempSync(path.join(tempRoot, 'skilldex-scan-'));
+  try {
+    const dir = path.join(tmp, 'skill');
+    copyWithoutSymlinks(real, dir);
+    const result = await new Promise(res => execFile(process.env.SKILLSPECTOR_BIN || BIN, ['scan', dir, '--no-llm', '--format', 'json'], { signal, maxBuffer: 64e6, timeout: 900000 },
+      (err, out) => { try { res(JSON.parse(out)); } catch { res(null); } }));
+    if (result) result.issues = [...(result.issues || []), ...links];
+    return result;
+  } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+}
 
 export const compact = r => ({
   v: SCHEMA, scanned: new Date().toISOString(),
@@ -26,7 +37,7 @@ export const compact = r => ({
     return {
       cat, pattern, sev: String(x.severity || '').toUpperCase(), conf: x.confidence ?? null,
       file: x.location?.file || '', line: x.location?.start_line ?? null,
-      snippet: finding.slice(0, 140), why: explanation.slice(0, 220),
+      snippet: cat === 'symlink' ? finding : finding.slice(0, 140), why: explanation.slice(0, 220),
       // The exclusions are tested on the whole text, before it is cut for display (REQ-SEC-014).
       excl: textExclusion(`${cat} ${pattern} ${finding} ${explanation}`),
     };
@@ -70,7 +81,8 @@ export const COVERAGE_GAPS_AS_NOTICES = true;
 // reviewed finding about a folder comes back when anything inside it changes.
 export function fileHash(rootDir, file) {
   if (!rootDir || !file) return null;
-  const p = path.isAbsolute(file) ? file : path.join(rootDir, file);
+  const p = safeTreePath(rootDir, file);
+  if (!p) return null;
   try {
     if (!fs.statSync(p).isDirectory()) return crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
     const parts = [];
@@ -87,7 +99,8 @@ export function fileHash(rootDir, file) {
 }
 function fileLines(rootDir, file) {
   if (!rootDir || !file) return null;
-  const p = path.isAbsolute(file) ? file : path.join(rootDir, file);
+  const p = safeTreePath(rootDir, file);
+  if (!p) return null;
   try { return fs.readFileSync(p, 'utf8').split('\n'); } catch { return null; }
 }
 
@@ -155,6 +168,7 @@ export function autoCondition(x, rootDir = null) {
 const validCondition = n => Number.isInteger(n) && n >= 1 && n <= 6;
 
 export function classify(x, reviewed = [], rootDir = null, scanned = null) {
+  if (x.cat === 'symlink') return { kind: x.sev === 'HIGH' || x.sev === 'CRITICAL' ? 'review' : 'info', why: 'Symlinks are not followed; this repository-safety finding is never automatically dismissed.' };
   const candidates = reviewed.filter(r =>
     r.file === x.file &&
     (r.line == null || r.line === x.line) &&

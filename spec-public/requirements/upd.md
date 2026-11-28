@@ -243,8 +243,9 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: OP-044, D-133
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-133 v1
-- note: Built: Updates shows "Check again to see results" when a date is saved without results. Approved by D-133; not yet accepted.
+- accepted_by: D-134 v1
+- note: Built: Updates shows "Check again to see results" when a date is saved without results. Approved by D-133, accepted by D-134.

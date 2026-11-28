@@ -1047,6 +1047,14 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: The Updates message and the per-port session token file are fixed, and `spec-public` is refreshed in the public repository.
 - affects: REQ-UPD-014; REQ-LAU-016; REQ-DAT-009
 
+### D-134 The two fixes are accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the fixes of REQ-UPD-014 and REQ-LAU-016.
+- affects: REQ-UPD-014; REQ-LAU-016
+
 ## Open points
 
 ### OP-001 Which design does the app follow?

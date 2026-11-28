@@ -6,7 +6,7 @@ import http from 'node:http';
 import net from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
-import { execFile, spawn } from 'node:child_process';
+import { execFile, execFileSync, spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { fileURLToPath } from 'node:url';
 import { describe, it, before, after } from 'node:test';
@@ -15,7 +15,6 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MSG = 'Open Skill Dex from its app icon.';
 let root, app, data, port, server, token, log = '';
 
-const freePort = () => new Promise(res => { const s = net.createServer().listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => res(p)); }); });
 // Raw requests: fetch would normalise the paths and the Host header these tests need to send as they are.
 const request = (p, { method = 'GET', headers = {}, body } = {}) => new Promise((res, rej) => {
   const req = http.request({ host: '127.0.0.1', port, path: p, method, headers: { host: `127.0.0.1:${port}`, ...headers } }, r => {
@@ -38,9 +37,12 @@ before(async () => {
   fs.copyFileSync(path.join(repo, 'tools/regenerate-reports.mjs'), path.join(app, 'tools/regenerate-reports.mjs'));
   fs.cpSync(path.join(repo, 'web'), path.join(app, 'web'), { recursive: true, filter: f => path.basename(f) !== 'data.js' });
   fs.writeFileSync(path.join(app, 'web/data.js'), 'window.SKILLDEX = null;\n');
-  port = await freePort();
-  const env = { ...process.env, HOME: path.join(root, 'home'), SKILLDEX_DATA: data, PORT: String(port), OMP_BIN: '/usr/bin/false', CLAUDE_BIN: '/usr/bin/false', CODEX_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false' };
-  for (const k of Object.keys(env)) if (k === 'SKILLDEX_WATCHLIST' || k.startsWith('SKILLDEX_UPD_') || k.startsWith('SKILLDEX_MODEL_') || ['SKILLSPECTOR_BIN', 'SKILLDEX_RUNNER', 'SKILLDEX_SKILL_DIRS'].includes(k)) delete env[k];
+  port = 4192; // 4190 is a Fetch-blocked service port; the local client also needs to be exercised.
+  const fake = path.join(root, 'fake-runner'), scanner = path.join(root, 'fake-scanner');
+  const answer = fs.readFileSync(path.join(repo, 'test/fixtures/analysis-output.txt'), 'utf8');
+  fs.writeFileSync(fake, `#!${process.execPath}\nconst fs = require('node:fs'); const p = require('node:path'); fs.writeFileSync(${JSON.stringify(path.join(root, 'capture.json'))}, JSON.stringify({args: process.argv.slice(2), env: process.env, cwd: process.cwd(), mode: fs.statSync(p.dirname(process.cwd())).mode & 511, links: fs.readdirSync(process.cwd()).filter(f => fs.lstatSync(p.join(process.cwd(), f)).isSymbolicLink())})); if (fs.existsSync('WAIT')) setInterval(() => {}, 1000); else if (fs.existsSync('FAIL')) process.exit(4); else console.log(${JSON.stringify(answer)});\n`, { mode: 0o700 });
+  fs.writeFileSync(scanner, `#!${process.execPath}\nconsole.log(JSON.stringify({issues: [], risk_assessment: {recommendation: 'PASS', score: 0}}));\n`, { mode: 0o700 });
+  const env = { PATH: process.env.PATH, HOME: path.join(root, 'home'), TMPDIR: root, SKILLDEX_DATA: data, PORT: String(port), SKILLDEX_RUNNER: 'omp', OMP_BIN: fake, CLAUDE_BIN: '/usr/bin/false', CODEX_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false', SKILLSPECTOR_BIN: scanner, GITHUB_TOKEN: 'dummy', GH_TOKEN: 'dummy', AWS_SECRET_ACCESS_KEY: 'dummy', NPM_TOKEN: 'dummy', OPENAI_API_KEY: 'dummy', SSH_AUTH_SOCK: 'dummy' };
   server = spawn(process.execPath, ['server.mjs'], { cwd: app, env, stdio: ['ignore', 'pipe', 'pipe'] });
   server.stdout.on('data', d => { log += d; }); server.stderr.on('data', d => { log += d; });
   for (let i = 0; i < 100 && !log.includes('Skill Dex at'); i++) {
@@ -128,5 +130,73 @@ describe('REQ-SEC-012: malformed requests do not stop the server', () => {
     assert.match(await raw('GET /%E0%A4%A HTTP/1.1'), /^HTTP\/1\.1 400/);
     assert.equal((await request('/api/ping', { headers: auth() })).status, 200);
     assert.equal(server.exitCode, null, log);
+  });
+});
+
+const waitFor = async predicate => {
+  for (let n = 0; n < 200; n++) {
+    const result = predicate(); if (result) return result;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.fail('Timed out waiting for the fixture job');
+};
+const fixtureRepo = marker => {
+  const dir = path.join(root, `source-${marker || 'success'}`); fs.mkdirSync(dir);
+  fs.writeFileSync(path.join(dir, 'SKILL.md'), '# Fictional fixture skill\n');
+  fs.writeFileSync(path.join(root, 'outside-fixture'), 'outside fixture content must not be read');
+  fs.symlinkSync(path.join(root, 'outside-fixture'), path.join(dir, 'escape'));
+  fs.symlinkSync('SKILL.md', path.join(dir, 'inside'));
+  if (marker) fs.writeFileSync(path.join(dir, marker), 'fixture');
+  const git = (...args) => execFileSync('git', ['-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null', ...args], { cwd: dir, stdio: 'pipe' });
+  git('init', '-q'); git('add', '.'); git('commit', '-qm', 'Fixture');
+  return dir;
+};
+const analyze = query => request('/api/analyze', { method: 'POST', headers: json(auth()), body: JSON.stringify({ query: path.relative(app, query) }) });
+const finished = id => waitFor(() => {
+  const entry = JSON.parse(fs.readFileSync(path.join(data, 'watchlist.json'), 'utf8')).find(w => w.id === id);
+  return entry && entry.status !== 'analysing' && entry;
+});
+
+describe('server-owned analysis acquisition with a fake runner', () => {
+  it('POST with token saves the report, records stripped links, limits tools/environment and deletes the private folder', async () => {
+    const response = await analyze(fixtureRepo());
+    assert.equal(response.status, 202, response.text);
+    const { id } = JSON.parse(response.text), entry = await finished(id);
+    assert.equal(entry.status, 'recommended', entry.error);
+    const report = fs.readFileSync(path.join(data, 'reports', id + '.md'), 'utf8');
+    assert.match(report, /\[HIGH\] symlink removed: escape ->/);
+    assert.match(report, /\[MEDIUM\] symlink removed: inside -> SKILL.md/);
+    assert.doesNotMatch(report, /outside fixture content/);
+    const captured = JSON.parse(fs.readFileSync(path.join(root, 'capture.json'), 'utf8'));
+    assert.equal(captured.args[captured.args.indexOf('--tools') + 1], 'read,grep,glob,web_search');
+    assert.ok(captured.args.includes('--no-tools'));
+    assert.doesNotMatch(captured.args.slice(0, -1).join(','), /bash/i);
+    assert.ok(captured.args.at(-1).includes(JSON.stringify(captured.cwd)));
+    assert.deepEqual(captured.links, []);
+    assert.equal(captured.mode, 0o700);
+    for (const key of ['GITHUB_TOKEN', 'GH_TOKEN', 'AWS_SECRET_ACCESS_KEY', 'NPM_TOKEN', 'OPENAI_API_KEY', 'SSH_AUTH_SOCK', 'SKILLDEX_DATA']) assert.ok(!(key in captured.env), key);
+    assert.equal(fs.existsSync(path.dirname(captured.cwd)), false);
+  });
+  it('cleans up after a failed runner', async () => {
+    const response = await analyze(fixtureRepo('FAIL'));
+    assert.equal(response.status, 202);
+    const entry = await finished(JSON.parse(response.text).id);
+    assert.equal(entry.status, 'error');
+    const captured = JSON.parse(fs.readFileSync(path.join(root, 'capture.json'), 'utf8'));
+    assert.equal(fs.existsSync(path.dirname(captured.cwd)), false);
+  });
+  it('cancels a running job and deletes its clone', async () => {
+    const response = await analyze(fixtureRepo('WAIT'));
+    assert.equal(response.status, 202);
+    const { id } = JSON.parse(response.text);
+    const captured = await waitFor(() => {
+      const c = JSON.parse(fs.readFileSync(path.join(root, 'capture.json'), 'utf8'));
+      return c.cwd.includes('skilldex-job-') && fs.existsSync(path.join(c.cwd, 'WAIT')) && c;
+    });
+    const cancel = await request('/api/cancel', { method: 'POST', headers: json(auth()), body: JSON.stringify({ id }) });
+    assert.equal(cancel.status, 200);
+    assert.match((await finished(id)).error, /Cancelled by you/);
+    assert.equal(fs.existsSync(path.dirname(captured.cwd)), false);
+    assert.ok(!fs.readdirSync(root).some(n => /^skilldex-(job|scan)-/.test(n)));
   });
 });

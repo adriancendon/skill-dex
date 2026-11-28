@@ -1,7 +1,7 @@
 #!/bin/bash
 # Starts Skill Dex without a Terminal window: scans, starts the local server in the background, opens the browser.
 # Works on macOS (tested) and, best effort, on Linux (xdg-open; messages go to the terminal instead of a dialog).
-# The server stops by itself when the browser tab is closed. Log: $SKILLDEX_LOG (default /tmp/skilldex.log).
+# The server stops by itself when the browser tab is closed. SKILLDEX_LOG overrides the private per-user launch log.
 # The server writes a new secret at each start (cache/session-token-<port>, readable only by you); the browser link carries
 # it once, the server swaps it for a cookie, and requests without it are refused.
 #
@@ -29,7 +29,15 @@ fi
 mkdir -p "$SKILLDEX_DATA" 2>/dev/null
 export SKILLDEX_DATA
 PORT="${PORT:-4173}"; export PORT
-LOG="${SKILLDEX_LOG:-/tmp/skilldex.log}"
+if [ -n "$MAC" ]; then DEFAULT_LOG="$HOME/Library/Logs/Skill Dex/launch.log"
+else DEFAULT_LOG="${XDG_STATE_HOME:-$HOME/.local/state}/skill-dex/launch.log"; fi
+LOG="${SKILLDEX_LOG:-$DEFAULT_LOG}"
+umask 077
+LOG_DIR="$(dirname "$LOG")"
+if [ -L "$LOG_DIR" ] || [ -L "$LOG" ]; then say_error "The log path must not be a symbolic link."; exit 1; fi
+if [ ! -d "$LOG_DIR" ]; then mkdir -p "$LOG_DIR" && chmod 700 "$LOG_DIR" || { say_error "Cannot create the private log folder."; exit 1; }
+elif [ "$LOG" = "$DEFAULT_LOG" ]; then chmod 700 "$LOG_DIR" || exit 1; fi
+touch "$LOG" && chmod 600 "$LOG" || { say_error "Cannot create the private launch log."; exit 1; }
 # Is something listening on the port? lsof when installed, else bash's /dev/tcp.
 listening() {
   if command -v lsof >/dev/null 2>&1; then lsof -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1
