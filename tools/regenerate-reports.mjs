@@ -6,7 +6,7 @@
 // Usage: node tools/regenerate-reports.mjs <watchlist id>... [--port N]
 //        node tools/regenerate-reports.mjs --status [--port N]
 import fs from 'node:fs';
-import { TOKEN_FILE } from '../paths.mjs';
+import { tokenFile } from '../paths.mjs';
 
 const args = process.argv.slice(2);
 const portAt = args.indexOf('--port');
@@ -15,7 +15,7 @@ const ids = args.filter((a, i) => !a.startsWith('--') && (portAt < 0 || i !== po
 const base = `http://127.0.0.1:${port}`;
 // The running server's secret for this launch (REQ-SEC-013); only the user who started it can read the file.
 let token = '';
-try { token = fs.readFileSync(TOKEN_FILE, 'utf8').trim(); } catch {}
+try { token = fs.readFileSync(tokenFile(port), 'utf8').trim(); } catch {}
 const auth = { 'x-skilldex-token': token };
 
 async function main() {

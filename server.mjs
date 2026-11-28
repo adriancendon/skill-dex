@@ -17,7 +17,7 @@ import { sources } from './skill-sources.mjs';
 import { readWatchlist, writeWatchlist, setWatchStatus, startReanalysis } from './watchlist.mjs';
 import { createUpdates, updatesRoute } from './updates.mjs';
 import { createDiscover } from './discover.mjs';
-import { HERE as here, dataFile, WATCHLIST as WL, REPORTS, TOKEN_FILE, shownPath } from './paths.mjs';
+import { HERE as here, dataFile, WATCHLIST as WL, REPORTS, tokenFile, shownPath } from './paths.mjs';
 import { loadMeta } from './categories.mjs';
 import { createRarity } from './rarity.mjs';
 
@@ -183,8 +183,10 @@ function nextJob() {
 // cookie; every other request needs that cookie (or the X-Skilldex-Token header, for local tools such as
 // tools/regenerate-reports.mjs). The Host header must name this server, so a rebinding DNS name is refused.
 const TOKEN = crypto.randomBytes(32).toString('hex');
+const TOKEN_FILE = tokenFile(PORT); // one file per port, so a second server never overwrites this one's secret
 fs.mkdirSync(path.dirname(TOKEN_FILE), { recursive: true });
 fs.rmSync(TOKEN_FILE, { force: true });
+fs.rmSync(path.join(here, 'cache', 'session-token'), { force: true }); // shared file of older versions
 fs.writeFileSync(TOKEN_FILE, TOKEN + '\n', { mode: 0o600, flag: 'wx' });
 const COOKIE = `skilldex-${PORT}`; // one per port: cookies are shared by every port of localhost
 const HOSTS = [`localhost:${PORT}`, `127.0.0.1:${PORT}`];

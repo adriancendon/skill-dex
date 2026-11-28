@@ -25,8 +25,9 @@ export function reportFile(id, data = DATA) {
   const now = path.join(data, REPORTS_DIR, id + '.md'), old = path.join(data, LEGACY_REPORTS_DIR, id + '.md');
   return !fs.existsSync(now) && fs.existsSync(old) ? old : now;
 }
-// The server's secret for this launch (REQ-SEC-013), readable only by the user; launch.sh and local tools read it.
-export const TOKEN_FILE = path.join(HERE, 'cache', 'session-token');
+// The server's secret for one launch on one port (REQ-SEC-013, REQ-LAU-016), readable only by the user; launch.sh
+// and local tools read the file of the port they talk to, so a second server on another port never overwrites it.
+export const tokenFile = port => path.join(HERE, 'cache', `session-token-${Number(port) || 4173}`);
 
 // A path as shown to the user, with the home folder written as ~.
 export function shownPath(p) {

@@ -2,7 +2,7 @@
 # Starts Skill Dex without a Terminal window: scans, starts the local server in the background, opens the browser.
 # Works on macOS (tested) and, best effort, on Linux (xdg-open; messages go to the terminal instead of a dialog).
 # The server stops by itself when the browser tab is closed. Log: $SKILLDEX_LOG (default /tmp/skilldex.log).
-# The server writes a new secret at each start (cache/session-token, readable only by you); the browser link carries
+# The server writes a new secret at each start (cache/session-token-<port>, readable only by you); the browser link carries
 # it once, the server swaps it for a cookie, and requests without it are refused.
 #
 # Settings (environment variables, or a `skilldex.conf` file next to this script with KEY=value lines):
@@ -44,7 +44,7 @@ if ! listening; then
   for _ in 1 2 3 4 5 6 7 8 9 10; do listening && break; sleep 0.5; done
 fi
 if ! listening; then say_error "Skill Dex could not start. See the log: $LOG"; exit 1; fi
-TOKEN="$(cat "$APP_DIR/cache/session-token" 2>/dev/null)"
+TOKEN="$(cat "$APP_DIR/cache/session-token-$PORT" 2>/dev/null)"
 URL="http://localhost:$PORT/${TOKEN:+?k=$TOKEN}"
 if [ -z "$SKILLDEX_NO_OPEN" ]; then
   if [ -n "$MAC" ]; then open "$URL"

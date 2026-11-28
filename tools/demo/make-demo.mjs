@@ -125,7 +125,7 @@ try {
   json(path.join(data, 'marks.json'), { favourites: ['draft-outline', 'layout-lab', 'test-trail'] });
   execFileSync(process.execPath, ['scan.mjs'], { cwd: app, env, stdio: 'inherit' });
   const server = start(process.execPath, ['server.mjs']);
-  const token = () => { try { return fs.readFileSync(path.join(app, 'cache', 'session-token'), 'utf8').trim(); } catch { return ''; } };
+  const token = () => { try { return fs.readFileSync(path.join(app, 'cache', 'session-token-4182'), 'utf8').trim(); } catch { return ''; } };
   await until(async () => { try { return (await fetch('http://127.0.0.1:4182/', { headers: { 'x-skilldex-token': token() } })).ok; } catch { return false; } }, 'demo server', server);
   const profile = path.join(root, 'chrome-profile');
   const chrome = start(chromeBin, ['--headless=new', '--no-first-run', '--no-default-browser-check', '--no-proxy-server', '--use-mock-keychain', '--password-store=basic', '--disable-extensions', '--disable-background-networking', '--disable-component-update', '--disable-sync', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--window-size=1440,900', 'about:blank']);

@@ -48,7 +48,7 @@ before(async () => {
     await new Promise(r => setTimeout(r, 100));
   }
   assert.ok(log.includes('Skill Dex at'), log);
-  token = fs.readFileSync(path.join(app, 'cache/session-token'), 'utf8').trim();
+  token = fs.readFileSync(path.join(app, `cache/session-token-${port}`), 'utf8').trim();
 });
 after(async () => {
   if (server && server.exitCode === null) { server.kill('SIGTERM'); await once(server, 'exit'); }
@@ -56,9 +56,11 @@ after(async () => {
 });
 
 describe('REQ-SEC-013: a secret for each launch', () => {
-  it('writes a 256-bit token readable only by the user', () => {
+  it('writes a 256-bit token readable only by the user, in a file of its own port', () => {
     assert.match(token, /^[0-9a-f]{64}$/);
-    assert.equal(fs.statSync(path.join(app, 'cache/session-token')).mode & 0o777, 0o600);
+    assert.equal(fs.statSync(path.join(app, `cache/session-token-${port}`)).mode & 0o777, 0o600);
+    // REQ-LAU-016: no shared file that a server on another port could overwrite
+    assert.equal(fs.existsSync(path.join(app, 'cache/session-token')), false);
   });
 
   it('refuses the page, data.js and the API without the token', async () => {
