@@ -1,10 +1,10 @@
-# USE: Uso y gamificación
+# USE: Usage and game
 
 Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.js`, `Seguimiento/config.json` and `Seguimiento/README.md`. The placement of the chart waits for the design (OP-001); the game is decided with the new design (D-049, OP-015), except what D-047, D-050 and D-051 already fix. Priority 2 is a placeholder: <private> gave no order.
 
 ### REQ-USE-001 Uses are counted from the omp sessions
 - pattern: ubiquitous
-- statement: Skill Dex shall count one **uso registrado** for each `read` of a skill's `skill://` address or of its `SKILL.md` found in the session logs of omp, Claude Code and Codex, counting each tool call once.
+- statement: Skill Dex shall count one **recorded use** for each `read` of a skill's `skill://` address or of its `SKILL.md` found in the session logs of omp, Claude Code and Codex, counting each tool call once.
 - rationale: D-004 asks to measure how often each skill is used; D-117 adds the logs of Claude Code and Codex to those of omp (REQ-USE-024).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an omp session in which an agent read `skill://seo` WHEN Skill Dex is rescanned THEN the use count of `seo` has grown by one for that day
@@ -12,12 +12,13 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: Skills loaded without the `read` tool, and skills that Skill Dex does not list are not counted.
 - source: D-004, D-062, D-117
-- status: ready
+- status: active
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
 - changes:
   - v2 D-117: logs of Claude Code and Codex are counted as well
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 ### REQ-USE-002 Chart of uses per day
 - pattern: ubiquitous
 - statement: Skill Dex shall show a chart of the total uses per day over the last 30 days.
@@ -51,11 +52,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-004 Activity of one skill
 - pattern: event
-- statement: When the user opens the **ficha** of an installed skill, Skill Dex shall show its uses since the **temporada** start, its historical uses, its last use and a chart of its last 30 days.
+- statement: When the user opens the **detail view** of an installed skill, Skill Dex shall show its uses since the **season** start, its historical uses, its last use and a chart of its last 30 days.
 - rationale: D-004 at the level of one skill. `Tecnico/web/detail.js`, `activity`, with the full list by date under "Ver registro por fecha".
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill used on known days WHEN <private> opens its **ficha** THEN the three figures and the 30-day chart match those days
-- scope: The **ficha** of installed skills.
+  - AC1 [judgement] GIVEN a skill used on known days WHEN <private> opens its **detail view** THEN the three figures and the 30-day chart match those days
+- scope: The **detail view** of installed skills.
 - conditions: none
 - exceptions: none
 - source: D-004, D-103
@@ -67,10 +68,10 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-005 Only season uses give experience
 - pattern: ubiquitous
-- statement: Skill Dex shall give **XP** only for uses dated on or after the **temporada** start set in `Seguimiento/config.json`.
-- rationale: D-005. `Tecnico/scan.mjs` compute `since` from the field `inicio` (today `2026-11-24`); `Tecnico/web/catalog.js`, `xp`, uses only `since`. README: changing that date starts a new season.
+- statement: Skill Dex shall give **XP** only for uses dated on or after the **season** start set in `Seguimiento/config.json`.
+- rationale: D-005. `Tecnico/scan.mjs` compute `since` from the field `season_start` (today `2026-11-24`; the old name `inicio` is still read, D-120); `Tecnico/web/catalog.js`, `xp`, uses only `since`. README: changing that date starts a new season.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill with uses before and after the start date WHEN <private> opens its **ficha** THEN the XP earned by use equals 10 times the uses since the start date only
+  - AC1 [judgement] GIVEN a skill with uses before and after the start date WHEN <private> opens its **detail view** THEN the XP earned by use equals 10 times the uses since the start date only
 - scope: Collection XP and skill levels.
 - conditions: none
 - exceptions: none
@@ -82,11 +83,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-006 Historical uses are shown apart
 - pattern: ubiquitous
-- statement: Skill Dex shall show each skill's historical uses, including those before the **temporada** start, separately from its season uses.
+- statement: Skill Dex shall show each skill's historical uses, including those before the **season** start, separately from its season uses.
 - rationale: D-047: earlier uses stay visible, apart, without XP. `Tecnico/web/catalog.js` (`hist`, card counter) and `Tecnico/web/detail.js`.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill used only before the start date WHEN <private> looks at its card and **ficha** THEN he sees its historical uses and zero season uses
-- scope: Cards and the **ficha** of installed skills.
+  - AC1 [judgement] GIVEN a skill used only before the start date WHEN <private> looks at its card and **detail view** THEN he sees its historical uses and zero season uses
+- scope: Cards and the **detail view** of installed skills.
 - conditions: none
 - exceptions: none
 - source: D-047
@@ -97,10 +98,10 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-007 How the collection earns experience
 - pattern: ubiquitous
-- statement: Skill Dex shall add to the collection 10 **XP** per installed skill, 10 per season use, 25 per **dominada** skill, 15 per installed skill with its own **informe** and 5 per recommended watchlist entry.
+- statement: Skill Dex shall add to the collection 10 **XP** per installed skill, 10 per season use, 25 per **mastered** skill, 15 per installed skill with its own **report** and 5 per recommended watchlist entry.
 - rationale: `Tecnico/web/catalog.js`, `xp`; told to <private> (without the 5 for recommended entries). Part of the gamification of D-003 and D-023; the exact numbers are OP-015.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN the current collection WHEN <private> opens the **ficha** of a skill and reads [quote omitted] THEN the figures follow these rules
+  - AC1 [judgement] GIVEN the current collection WHEN <private> opens the **detail view** of a skill and reads [quote omitted] THEN the figures follow these rules
 - scope: The collection level.
 - conditions: none
 - exceptions: none
@@ -132,8 +133,8 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - statement: Skill Dex shall give each installed skill a level equal to the whole square root of its season uses.
 - rationale: D-089 keeps the level of each skill. `Tecnico/web/catalog.js`, `sLvl`, and `Tecnico/web/detail.js`, `rewards`: 1 use is level 1, 4 uses level 2, 9 uses level 3 (told to <private>). It gives no collection XP (REQ-USE-021).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill with 9 season uses WHEN <private> opens its **ficha** THEN it shows level 3 and 7 uses to level 4
-- scope: The **ficha** of installed skills.
+  - AC1 [judgement] GIVEN a skill with 9 season uses WHEN <private> opens its **detail view** THEN it shows level 3 and 7 uses to level 4
+- scope: The **detail view** of installed skills.
 - conditions: none
 - exceptions: none
 - source: D-089
@@ -162,7 +163,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - statement: Skill Dex shall show the three installed skills with the most season uses as [quote omitted].
 - rationale: D-023 asks to reward the most used skills. `Tecnico/web/catalog.js`, `header`, builds the podium from season uses; with no season use it shows a message instead. The proposal adds a [quote omitted] tab. How it looks is part of the game decided with the design (OP-015).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN season uses for several skills WHEN <private> looks at [quote omitted] THEN the three skills with the most season uses appear in order with their counts, and a click opens their **ficha**
+  - AC1 [judgement] GIVEN season uses for several skills WHEN <private> looks at [quote omitted] THEN the three skills with the most season uses appear in order with their counts, and a click opens their **detail view**
 - scope: The main page.
 - conditions: none
 - exceptions: Skills without season uses do not appear.
@@ -175,7 +176,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-012 Unused skills are suggested for review
 - pattern: ubiquitous
-- statement: Skill Dex shall mark for review, under "Para revisar", every installed skill with no **uso registrado** in its history, with a **hallazgo por revisar**, or with no use this season.
+- statement: Skill Dex shall mark for review, under "Para revisar", every installed skill with no **recorded use** in its history, with a **finding to review**, or with no use this season.
 - rationale: D-023 asks to recommend reviewing unused skills. `Tecnico/web/catalog.js`, `needsReview`; the selector inside the filter also lists security only, never used, and skills unused this season but used before, separately.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill that was never used WHEN <private> chooses "Para revisar" THEN it is listed with the reason [quote omitted]
@@ -195,19 +196,20 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - statement: Skill Dex shall give each installed skill one of four rarities from the number of public GitHub repositories that contain it: 1 is Legendary, 2 to 9 Epic, 10 to 49 Rare, 50 or more Common, and Common when the number is unknown.
 - rationale: D-121 replaces the size-based rarity of D-089, which let a bloated skill be Legendary. It is decoration and says nothing about quality.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill found in one public repository WHEN <private> opens its **ficha** THEN its rarity is Legendary
-  - AC2 [judgement] GIVEN a skill whose count could not be found WHEN he opens its **ficha** THEN its rarity is Common
-- scope: The **ficha** of installed skills.
+  - AC1 [judgement] GIVEN a skill found in one public repository WHEN <private> opens its **detail view** THEN its rarity is Legendary
+  - AC2 [judgement] GIVEN a skill whose count could not be found WHEN he opens its **detail view** THEN its rarity is Common
+- scope: The **detail view** of installed skills.
 - conditions: none
 - exceptions: none
 - source: D-089, D-121
-- status: ready
+- status: active
 - version: 2
 - priority: 2
 - ratified_by: D-121 v2
 - changes:
   - v2 D-121: rarity is how uncommon the skill is on GitHub, not its size
 - builder_choice: how the count is searched on GitHub, and how it is cached
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-USE-014 Reviewing never uninstalls
 - pattern: ubiquitous
@@ -226,7 +228,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-015 Catalogue health panel
 - pattern: ubiquitous
-- statement: Skill Dex shall show, in its own Health section, a **salud del catálogo** panel with the tokens of all descriptions, the heaviest skills, pairs of similar skills, unused skills and load warnings.
+- statement: Skill Dex shall show, in its own Health section, a **catalogue health** panel with the tokens of all descriptions, the heaviest skills, pairs of similar skills, unused skills and load warnings.
 - rationale: D-009 (option 2: duplicates, unused, weight in context). Computed in `Tecnico/scan.mjs`, shown today by `Tecnico/web/catalog.js`, `healthPanel`. Design D does not show it, so D-083 moves it to a section of its own in the sidebar.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the current collection WHEN <private> opens the Health section THEN he sees the five groups with their counts and can unfold each list
@@ -363,10 +365,10 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 
 ### REQ-USE-023 The mastered mark is shown in the Health section
 - pattern: ubiquitous
-- statement: Skill Dex shall show in the Health section which installed skills the user has marked as **dominada**.
+- statement: Skill Dex shall show in the Health section which installed skills the user has marked as **mastered**.
 - rationale: D-083 put the mastered mark in the Health section; D-090 removes the mark, so nothing is shown.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill marked as mastered in its **ficha** WHEN <private> opens the Health section THEN he sees that skill listed as mastered
+  - AC1 [judgement] GIVEN a skill marked as mastered in its **detail view** WHEN <private> opens the Health section THEN he sees that skill listed as mastered
 - scope: The Health section.
 - conditions: none
 - exceptions: none
@@ -385,7 +387,8 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28

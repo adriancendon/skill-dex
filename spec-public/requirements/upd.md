@@ -1,4 +1,4 @@
-# UPD: Actualizaciones de skills
+# UPD: Skill updates
 
 A new section <private> asked for (D-072). Nothing of it is built. He decided how it works on 2026-11-27 (D-077 to D-082): updates come from the skill's source repository and version number, are looked for only when he presses "Check for updates", pass the security check first, cover only external skills, warn about his local edits and save a copy of his version, and are applied by an "Update" button that asks for confirmation. Buttons and labels follow the English interface (REQ-UI-005). Priority 2 is a placeholder: he gave no order.
 
@@ -105,9 +105,9 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-007 Only external skills are checked
 - pattern: ubiquitous
 - statement: Skill Dex shall offer updates only for installed skills that come from outside, and none for skills the user wrote or that omp learned by itself.
-- rationale: D-080: the skills of other origins come from no repository. The **origen** values `usuario` and `auto-aprendida` are not external; `tercero` is.
+- rationale: D-080: the skills of other origins come from no repository. The **origin** values `user` and `self-learned` are not external; `third-party` is (the old Spanish values `usuario`, `auto-aprendida` and `tercero` are still read, D-120).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill of **origen** `auto-aprendida` and an external skill with a newer version WHEN <private> checks for updates THEN only the external skill is listed
+  - AC1 [judgement] GIVEN a skill of **origin** `self-learned` and an external skill with a newer version WHEN <private> checks for updates THEN only the external skill is listed
 - scope: The updates section.
 - conditions: none
 - exceptions: none
@@ -116,7 +116,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - version: 1
 - priority: 2
 - ratified_by: D-080 v1
-- builder_choice: how a skill counts as external when its **origen** is `usuario` but it was cloned from a repository
+- builder_choice: how a skill counts as external when its **origin** is `user` but it was cloned from a repository
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-008 A warning about the user's own edits
@@ -214,7 +214,8 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-110, D-106
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-110 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28

@@ -1,10 +1,10 @@
-# DAT: Datos y privacidad
+# DAT: Data and privacy
 
 Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`, `Tecnico/.gitignore`, `Seguimiento/README.md` and the state of the git repository in `Tecnico/`. <private> decided where his marks are kept (D-054) and that the repository becomes public later without his data (D-055). Priority 2 is a placeholder: he gave no order.
 
 ### REQ-DAT-001 Favourite marks are saved to a file
 - pattern: ubiquitous
-- statement: Skill Dex shall save the **favorita** marks in a file of the user's data, so that they survive another browser or a cleared cache.
+- statement: Skill Dex shall save the **favourite** marks in a file of the user's data, so that they survive another browser or a cleared cache.
 - rationale: D-054, without the mastered mark that D-090 removes. Today the marks live only in the browser's local storage (`Tecnico/web/catalog.js`, key `skilldex.v1`; R-003). The file must stay out of the repository (REQ-DAT-008).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill marked as favourite in one browser WHEN <private> opens Skill Dex in another browser THEN the mark is there
@@ -158,10 +158,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-DAT-011 Data names are in English and the old names are still read
 - pattern: ubiquitous
@@ -174,10 +175,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-120
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-120 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-DAT-012 The public export carries no process or personal traces
 - pattern: ubiquitous
@@ -189,7 +191,8 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-123
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-119 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28

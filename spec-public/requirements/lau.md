@@ -1,11 +1,11 @@
-# LAU: Arranque y servidor local
+# LAU: Launch and local server
 
-Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lanzar.sh`, `Tecnico/server.mjs`, `Tecnico/web/catalog.js` and `Seguimiento/README.md`. The app and the server were not started for this adoption. <private> accepted the local server (D-053) and asked for an app anyone can install (D-055). Priority 2 is a placeholder: he gave no order.
+Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/launch.sh`, `Tecnico/server.mjs`, `Tecnico/web/catalog.js` and `Seguimiento/README.md`. The app and the server were not started for this adoption. <private> accepted the local server (D-053) and asked for an app anyone can install (D-055). Priority 2 is a placeholder: he gave no order.
 
 ### REQ-LAU-001 No Terminal window
 - pattern: event
 - statement: When <private> opens `Skill Dex.app`, Skill Dex shall open in the browser without opening a Terminal window.
-- rationale: D-014. The app's script runs `Tecnico/lanzar.sh` in the background with its output discarded; reports that Terminal did not open in the agent's test.
+- rationale: D-014. The app's script runs `Tecnico/launch.sh` in the background with its output discarded; reports that Terminal did not open in the agent's test.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN Skill Dex closed WHEN <private> double-clicks `Skill Dex.app` THEN the browser opens Skill Dex and no Terminal window appears
   - AC2 [judgement] GIVEN he has finished WHEN he closes the browser tab THEN there is nothing else left to close
@@ -21,7 +21,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-002 One double click starts everything
 - pattern: event
 - statement: When <private> double-clicks `Skill Dex.app`, Skill Dex shall start what it needs and open its page at `http://localhost:4173`.
-- rationale: D-035: easy to launch with one app icon; D-053 accepts the local server it starts. `Tecnico/lanzar.sh` finds Node, starts the scan and the server if port 4173 is free, and opens the page. Today `Skill Dex.app` sits in the project root, outside the git repository, and holds an absolute path to `lanzar.sh`; REQ-LAU-011 removes that dependency (D-055).
+- rationale: D-035: easy to launch with one app icon; D-053 accepts the local server it starts. `Tecnico/launch.sh` finds Node, starts the scan and the server if port 4173 is free, and opens the page. Today `Skill Dex.app` sits in the project root, outside the git repository, and holds an absolute path to `launch.sh`; REQ-LAU-011 removes that dependency (D-055).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the Mac just started WHEN <private> double-clicks `Skill Dex.app` THEN the page opens with the current data and the buttons that need the server work
   - AC2 [judgement] GIVEN Skill Dex already open in another tab WHEN he double-clicks the app again THEN a new tab opens on the same server without starting a second one
@@ -37,7 +37,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-003 Fresh data at start
 - pattern: event
 - statement: When `Skill Dex.app` starts the local server, Skill Dex shall rescan the skills and the session logs before the page opens.
-- rationale: `Tecnico/lanzar.sh` runs `scan.mjs` before `server.mjs`. Keeps the list dynamic (D-003).
+- rationale: `Tecnico/launch.sh` runs `scan.mjs` before `server.mjs`. Keeps the list dynamic (D-003).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill used in omp since Skill Dex was last open WHEN <private> opens `Skill Dex.app` THEN that use is already counted
 - scope: Starting the app.
@@ -97,7 +97,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 
 ### REQ-LAU-007 An analysis keeps running after the tab closes
 - pattern: complex
-- statement: While an **análisis** runs, when the last Skill Dex tab is closed, Skill Dex shall keep its server running until the **análisis** ends.
+- statement: While an **analysis** runs, when the last Skill Dex tab is closed, Skill Dex shall keep its server running until the **analysis** ends.
 - rationale: `Tecnico/server.mjs` skips the shutdown while a job exists; README: [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an analysis running WHEN <private> closes the tab and opens Skill Dex again ten minutes later THEN the analysis has finished and its result is in the watchlist
@@ -113,7 +113,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-008 Missing Node.js is reported
 - pattern: unwanted
 - statement: If Node.js cannot be found when `Skill Dex.app` starts, then Skill Dex shall show a dialog saying that it needs Node.js.
-- rationale: `Tecnico/lanzar.sh`.
+- rationale: `Tecnico/launch.sh`.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a Mac without Node.js in the known places WHEN <private> opens `Skill Dex.app` THEN a dialog says "No encuentro Node.js. Skill Dex lo necesita."
 - scope: Starting the app.
@@ -158,7 +158,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-011 A fresh copy starts on any Mac
 - pattern: ubiquitous
 - statement: Skill Dex shall start from a fresh copy of its repository on another Mac without relying on any path of <private>'s Mac.
-- rationale: D-055: anyone must be able to install it. Today `Skill Dex.app` is outside the repository and its `main.scpt` holds `<path>`; `Tecnico/lanzar.sh` itself finds its folder relative to where it is.
+- rationale: D-055: anyone must be able to install it. Today `Skill Dex.app` is outside the repository and its `main.scpt` holds `<path>`; `Tecnico/launch.sh` itself finds its folder relative to where it is.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a fresh clone of the repository on a Mac with another user name and Node.js installed WHEN the person follows the install instructions and opens the app THEN Skill Dex opens and lists that person's skills
   - AC2 [judgement] GIVEN the repository WHEN it is searched for `<private>` THEN no file that the app runs contains it
@@ -215,10 +215,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-LAU-015 The launcher works best-effort on Linux
 - pattern: ubiquitous
@@ -230,7 +231,8 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 - conditions: none
 - exceptions: none
 - source: D-123
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-119 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28 (Linux not tested)

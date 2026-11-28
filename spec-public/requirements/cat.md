@@ -1,4 +1,4 @@
-# CAT: Catálogo (the list of skills)
+# CAT: Catalogue (the list of skills)
 
 Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.js` and `Seguimiento/README.md`. The web files are the redesign applied without <private>'s approval; it stays until design D (D-070, mockups in `Seguimiento/versiones/propuestas-diseno/d/`) is built. D-048 ratified the catalogue's behaviour; D-070 to D-073 ratified the design-dependent parts. Priority 2 is a placeholder: <private> gave no order.
 
@@ -13,12 +13,13 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: Project skills are REQ-CAT-015.
 - source: D-001, D-003, D-048, D-117
-- status: ready
+- status: active
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
 - changes:
   - v2 D-117: the folders are no longer only the two of omp
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 ### REQ-CAT-002 The list follows what is installed now
 - pattern: event
 - statement: When the skills are rescanned, Skill Dex shall list the skills that are installed at that moment.
@@ -69,7 +70,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-005 Filters
 - pattern: ubiquitous
-- statement: Skill Dex shall offer filters for the installed skills by category, by origin, by **favorita**, by **dominada** and by "Para revisar".
+- statement: Skill Dex shall offer filters for the installed skills by category, by origin, by **favourite**, by **mastered** and by "Para revisar".
 - rationale: D-022 asks for simple filters. The set is the one in `Tecnico/web/index.html` (pills Todas, Favoritas, Dominadas, Para revisar; selects for category and origin, "Limpiar filtros"), confirmed by D-048.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the Instaladas tab WHEN <private> picks each filter in turn THEN the list shows only the matching skills and "Limpiar filtros" restores all of them
@@ -102,7 +103,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-007 Installed, watchlist and discarded are three views of one catalogue
 - pattern: ubiquitous
-- statement: Skill Dex shall show the installed skills, the **watchlist** and the **descartada** entries as three tabs of the same catalogue, each with its count.
+- statement: Skill Dex shall show the installed skills, the **watchlist** and the **discarded** entries as three tabs of the same catalogue, each with its count.
 - rationale: D-002 asks that analysed skills join the same list; D-008 keeps them in a watchlist apart from the installed ones; D-010 keeps discarded ones. The tabs are in `Tecnico/web/index.html` (`collection-nav`).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN installed skills, watchlist entries and discarded entries WHEN <private> opens Skill Dex THEN he can switch between the three tabs on one page and each tab shows its number of entries
@@ -119,10 +120,10 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-008 A click on a card opens its detail
 - pattern: event
-- statement: When the user clicks a skill card, Skill Dex shall open the **ficha** of that skill in a dialog over the catalogue.
+- statement: When the user clicks a skill card, Skill Dex shall open the **detail view** of that skill in a dialog over the catalogue.
 - rationale: D-018. Built in `Tecnico/web/catalog.js` (click handler on `.card`) and `Tecnico/web/detail.js` (`detail`).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN any card in any tab WHEN <private> clicks it THEN a dialog with that skill's **ficha** opens on top of the catalogue
+  - AC1 [judgement] GIVEN any card in any tab WHEN <private> clicks it THEN a dialog with that skill's **detail view** opens on top of the catalogue
 - scope: Cards of all three tabs and the [quote omitted] entries.
 - conditions: none
 - exceptions: A click on a button or link inside the card does what that button or link does.
@@ -135,12 +136,12 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-009 The detail shows the full analysis
 - pattern: event
-- statement: When the user opens the **ficha** of a skill that has an **informe**, Skill Dex shall show the complete **informe** inside the app.
-- rationale: D-018 asks to see the detailed analysis in the app. `Tecnico/web/detail.js`, `fullReport`, renders the Markdown of `Seguimiento/analisis/<id>.md`, folded under [quote omitted].
+- statement: When the user opens the **detail view** of a skill that has an **report**, Skill Dex shall show the complete **report** inside the app.
+- rationale: D-018 asks to see the detailed analysis in the app. `Tecnico/web/detail.js`, `fullReport`, renders the Markdown of `Seguimiento/reports/<id>.md`, folded under [quote omitted].
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a watchlist entry with a report in `Seguimiento/analisis/` WHEN <private> opens its **ficha** THEN he can read the whole report there, without opening another program
-  - AC2 [judgement] GIVEN a skill without a report WHEN he opens its **ficha** THEN it says that there is no report yet
-- scope: The **ficha** of installed and watchlist skills.
+  - AC1 [judgement] GIVEN a watchlist entry with a report in `Seguimiento/reports/` WHEN <private> opens its **detail view** THEN he can read the whole report there, without opening another program
+  - AC2 [judgement] GIVEN a skill without a report WHEN he opens its **detail view** THEN it says that there is no report yet
+- scope: The **detail view** of installed and watchlist skills.
 - conditions: none
 - exceptions: none
 - source: D-018, D-048
@@ -151,11 +152,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-010 Closing the detail
 - pattern: event
-- statement: When the user presses Escape, clicks outside the dialog or presses its close button, Skill Dex shall close the **ficha** and return to the catalogue.
+- statement: When the user presses Escape, clicks outside the dialog or presses its close button, Skill Dex shall close the **detail view** and return to the catalogue.
 - rationale: `Tecnico/web/catalog.js`, `closeModal` and its key and click handlers; README [quote omitted].
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN an open **ficha** WHEN <private> presses Escape THEN it closes and the catalogue is where he left it
-- scope: The **ficha** dialog.
+  - AC1 [judgement] GIVEN an open **detail view** WHEN <private> presses Escape THEN it closes and the catalogue is where he left it
+- scope: The **detail view** dialog.
 - conditions: none
 - exceptions: none
 - source: D-048
@@ -171,7 +172,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the installed skills WHEN <private> looks at the list or the cards THEN each skill has an icon on a badge of its category's colour, and for a sample of skills he can tell why the icon fits the description
   - AC2 [judgement] GIVEN a skill installed after the icons were made WHEN Skill Dex is rescanned THEN that skill also has an icon
-- scope: The list, the cards, the **ficha**, the watchlist and "Descubre skills".
+- scope: The list, the cards, the **detail view**, the watchlist and "Discover".
 - conditions: none
 - exceptions: none
 - source: D-029, D-039, D-069, D-070
@@ -216,11 +217,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-014 Favourite mark
 - pattern: event
-- statement: When the user presses "Guardar favorita" in a **ficha**, Skill Dex shall switch the favourite mark on or off for the skill.
+- statement: When the user presses "Guardar favorita" in a **detail view**, Skill Dex shall switch the favourite mark on or off for the skill.
 - rationale: `Tecnico/web/detail.js` and `Tecnico/web/catalog.js`, `tg`. The "Marcar dominada" button goes with the mastered mark (D-090). Where the marks are stored is REQ-DAT-001. The button label becomes English with the interface (D-063).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN an installed skill WHEN <private> presses "Guardar favorita" in its **ficha** THEN it appears under the Favoritas filter, and pressing again removes it
-- scope: The **ficha** of installed skills.
+  - AC1 [judgement] GIVEN an installed skill WHEN <private> presses "Guardar favorita" in its **detail view** THEN it appears under the Favoritas filter, and pressing again removes it
+- scope: The **detail view** of installed skills.
 - conditions: none
 - exceptions: none
 - source: D-048, D-090
@@ -243,13 +244,14 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-048, D-117
-- status: ready
+- status: active
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
 - changes:
   - v2 D-117: project skill folders of every agent, not only `.omp/skills`
 - builder_choice: how projects are found; whether the project label is also a filter
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 ### REQ-CAT-016 One global list ranked by use
 - pattern: ubiquitous
 - statement: Skill Dex shall show all installed skills in one list ordered by default by their all-time uses, with the top 10 places numbered.
@@ -301,12 +303,12 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-019 Short descriptions in the list
 - pattern: ubiquitous
-- statement: Skill Dex shall show in the list and in the cards a short description of each skill in natural, direct language, and its full original description only in the **ficha**.
+- statement: Skill Dex shall show in the list and in the cards a short description of each skill in natural, direct language, and its full original description only in the **detail view**.
 - rationale: D-071. Where the short texts come from and their language: D-076, REQ-CAT-022.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the list WHEN <private> reads the descriptions THEN each fits in one short line, says plainly what the skill is for, and none is the long original text
-  - AC2 [judgement] GIVEN a skill's **ficha** WHEN he opens it THEN its full original description is there
-- scope: The list, the cards and the **ficha**.
+  - AC2 [judgement] GIVEN a skill's **detail view** WHEN he opens it THEN its full original description is there
+- scope: The list, the cards and the **detail view**.
 - conditions: none
 - exceptions: none
 - source: D-071
@@ -395,10 +397,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-025 Project skill folders of every agent are read
 - pattern: ubiquitous
@@ -410,10 +413,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-026 A skill found in several places is listed once
 - pattern: ubiquitous
@@ -425,10 +429,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-027 Each skill shows the agent it belongs to
 - pattern: ubiquitous
@@ -436,14 +441,15 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - rationale: D-117 (agent badges).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill in the Claude Code folder WHEN the user looks at the list and the cards THEN it carries a Claude Code badge
-- scope: The list, the cards and the ficha.
+- scope: The list, the cards and the detail view.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-028 The catalogue can be filtered by agent
 - pattern: event
@@ -455,10 +461,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-029 An empty catalogue says where it looked
 - pattern: state
@@ -470,7 +477,8 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- note: built on branch multi-agente, merged and pushed 2026-11-28

@@ -1,4 +1,4 @@
-# UI: Interfaz y tema
+# UI: Interface and theme
 
 Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/catalog.css` and the two versions kept in `Seguimiento/versiones/antes/` and `Seguimiento/versiones/propuesta-intermedia/` (read, not changed). The layout waits for OP-001. <private> confirmed the theme rules and asked for an English interface (D-062, D-063). Priority 2 is a placeholder: he gave no order.
 
@@ -7,7 +7,7 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - statement: When the user presses the theme button, Skill Dex shall switch between day mode and night mode.
 - rationale: D-020, confirmed by D-062. `Tecnico/web/catalog.js`, `$('theme').onclick`; colours in `Tecnico/web/catalog.css` (`:root` and `:root[data-theme=dark]`).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN Skill Dex in day mode WHEN <private> presses the night-mode button THEN every part of the page, the **ficha** included, turns dark and stays readable, and the button now offers day mode
+  - AC1 [judgement] GIVEN Skill Dex in day mode WHEN <private> presses the night-mode button THEN every part of the page, the **detail view** included, turns dark and stays readable, and the button now offers day mode
 - scope: The whole page.
 - conditions: none
 - exceptions: none
@@ -34,7 +34,7 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 
 ### REQ-UI-003 A minimal main screen
 - pattern: ubiquitous
-- statement: Skill Dex shall show on its main screen only what <private> needs to understand his collection and decide about a skill, leaving the rest to the **ficha**.
+- statement: Skill Dex shall show on its main screen only what <private> needs to understand his collection and decide about a skill, leaving the rest to the **detail view**.
 - rationale: D-021 (easier to understand, better structured, minimalist), D-024 (a command center to take decisions) and D-038 (very visual, easy to understand, without filling the screen with information); design D (D-070) is how it is laid out.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN Skill Dex just opened WHEN <private> looks at it for the first time in a while THEN he can say which skills he uses most, which ones to review and where to analyse a new one, without reading help text
@@ -84,7 +84,7 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 ### REQ-UI-006 A left sidebar with the app name, sections, level and theme switch
 - pattern: ubiquitous
 - statement: Skill Dex shall show a left sidebar with the app name, its sections with their counts, the user's level and the day/night switch.
-- rationale: D-067 (proposal B's sidebar) and design D (D-070). The sections include the library of installed skills, the **watchlist**, the **descartada** entries, Discover (D-052), Updates (D-072, REQ-UPD-001) and Health (D-083). Replaces REQ-CAT-007, which put the first three in tabs.
+- rationale: D-067 (proposal B's sidebar) and design D (D-070). The sections include the library of installed skills, the **watchlist**, the **discarded** entries, Discover (D-052), Updates (D-072, REQ-UPD-001) and Health (D-083). Replaces REQ-CAT-007, which put the first three in tabs.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN Skill Dex open on a computer WHEN <private> looks at the left side THEN he sees the app name, each section with its count, his level and the day/night switch, and a click on a section opens it
 - scope: The whole app.
