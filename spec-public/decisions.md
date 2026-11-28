@@ -1055,6 +1055,14 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: He accepts the fixes of REQ-UPD-014 and REQ-LAU-016.
 - affects: REQ-UPD-014; REQ-LAU-016
 
+### D-135 The remaining audit and review fixes are approved and published
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The fixes for the six points are approved, and pushing them to the public repository is approved.
+- affects: REQ-ANA-004; REQ-ANA-022; REQ-ANA-031; REQ-SEC-008; REQ-SEC-016; REQ-LAU-017; REQ-DAT-009
+
 ## Open points
 
 ### OP-001 Which design does the app follow?
@@ -1365,7 +1373,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 ### R-005 An unattended analysis clones and inspects untrusted repositories
 - from: D-015
 - risk: An analysis launched from the app clones external repositories and has `bash`; the limits on what it runs are instructions in its prompt, not a sandbox.
-- mitigation: REQ-ANA-004 limits its tools and working folder; REQ-ANA-005 limits time and cost.
+- mitigation: REQ-ANA-004 gives the agent no shell (a read-only sandbox for Codex) and REQ-ANA-031 an allowlisted environment; REQ-SEC-008 clones in a private temporary folder and REQ-SEC-016 removes symlinks; REQ-ANA-005 limits time and cost.
 
 ### R-006 Personal data could reach the public repository
 - from: D-055

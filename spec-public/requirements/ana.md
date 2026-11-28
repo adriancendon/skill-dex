@@ -54,20 +54,21 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 
 ### REQ-ANA-004 Limited permissions
 - pattern: ubiquitous
-- statement: Skill Dex shall run each **analysis** with only the read, bash, web search, grep and glob tools, from a new temporary folder, with no writing to the project by the agent.
-- rationale: D-017, confirmed as built by D-043. `Tecnico/server.mjs` (`--tools read,bash,web_search,grep,glob`) and (working folder from `mkdtemp`); the prompt (`buildPrompt`) forbids writing project files, installing, running code of the analysed repository and `rm`. The app writes the result itself (REQ-ANA-008, REQ-ANA-009). The agent had proposed [quote omitted]; what is built is stricter.
+- statement: Skill Dex shall run each **analysis** with read, grep, glob and web search tools only and no shell, from a private temporary folder, with Codex confined to a read-only sandbox, and with no writing to the project by the agent.
+- rationale: D-017 and D-135. omp is started with `--no-tools --tools read,grep,glob,web_search`, Claude Code without Bash, Edit and Write, and Codex with `exec --sandbox read-only`, which keeps a read-only shell without network inside its operating-system sandbox (documented). The app writes the result itself. Limits are no longer only instructions in the prompt.
 - acceptance_criteria:
-  - AC1 [mechanical: `cd Tecnico && grep -n "'--tools', 'read,bash,web_search,grep,glob'" server.mjs`] GIVEN the server code WHEN it is searched THEN the analysis is started with exactly these five tools
+  - AC1 [judgement] GIVEN an analysis run with each available runner WHEN its allowed tools are inspected THEN omp and Claude Code have no shell and Codex runs read-only
   - AC2 [judgement] GIVEN a finished analysis WHEN the project folder is compared before and after THEN only the report, `watchlist.json`, `web/data.js` and the job log changed, all written by the app
 - scope: Analyses launched from the app.
 - conditions: none
-- exceptions: `bash` is not sandboxed; its limits are instructions in the prompt (R-005).
-- source: D-017, D-043
-- status: fulfilled
-- version: 1
+- exceptions: Codex keeps a read-only, network-less shell inside its operating-system sandbox.
+- source: D-017, D-043, D-135
+- status: active
+- version: 2
 - priority: 2
-- ratified_by: D-043 v1
-- accepted_by: D-126 v1
+- ratified_by: D-135 v2
+- changes:
+  - v2 D-135: no shell for omp and Claude Code, read-only sandbox for Codex, instead of bash limited by the prompt
 
 ### REQ-ANA-005 Time and cost limit
 - pattern: ubiquitous
@@ -348,19 +349,20 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 
 ### REQ-ANA-022 SkillSpector runs inside every analysis
 - pattern: ubiquitous
-- statement: Skill Dex shall include a SkillSpector scan through `Tecnico/skillcheck.mjs` in every **analysis** of a skill that has a `SKILL.md`.
-- rationale: D-012. Step 3 of `<skill>` makes it compulsory; the app's prompt allows `node …/skillcheck.mjs` and asks to check every "revisar" or [quote omitted] finding in the real code.
+- statement: Skill Dex shall have the server run a SkillSpector scan, before the agent starts, in every **analysis** of a skill that has a `SKILL.md`, and give the result to the agent.
+- rationale: D-012 and D-135: the agent no longer runs `skillcheck.mjs` or git itself, since it has no shell; the server does and hands over the verdict.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a finished analysis of a skill with a `SKILL.md` WHEN <private> reads the security part of its **report** THEN it gives the `skillcheck.mjs` verdict and says for each "revisar" or [quote omitted] finding whether it is a **false positive** and why
-- scope: Analyses launched from the app and from an omp conversation.
+  - AC1 [judgement] GIVEN a finished analysis of a skill with a `SKILL.md` WHEN <private> reads the security part of its **report** THEN it gives the SkillSpector verdict and says for each finding to review whether it is a **false positive** and why
+- scope: Analyses launched from the app.
 - conditions: none
 - exceptions: Tools that are not skills (a CLI, a proxy) are reviewed by hand instead.
-- source: D-012, D-043
-- status: fulfilled
-- version: 1
+- source: D-012, D-043, D-135
+- status: active
+- version: 2
 - priority: 2
-- ratified_by: D-043 v1
-- accepted_by: D-126 v1
+- ratified_by: D-135 v2
+- changes:
+  - v2 D-135: the server runs SkillSpector before the agent; the agent does not run skillcheck
 
 ### REQ-ANA-024 The previous discard reason is kept as history
 - pattern: event
@@ -486,3 +488,19 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - ratified_by: D-119 v1
 - accepted_by: D-126 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
+
+### REQ-ANA-031 Every runner starts from an allowlisted environment
+- pattern: ubiquitous
+- statement: Skill Dex shall start every runner for analyses, short descriptions and pair advice from an empty environment holding only an allowlist: PATH, HOME, USER, LOGNAME, SHELL, LANG, LC_*, TMPDIR, TERM and that runner's own configuration and authentication variables.
+- rationale: D-135: the omp process inherited every variable of the user.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a variable that is not on the list WHEN a runner is started THEN the runner does not see it
+- scope: Agent tasks.
+- conditions: none
+- exceptions: none
+- source: D-135
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-135 v1
+- note: Built on branch `endurecer`; approved by D-135, not yet accepted.

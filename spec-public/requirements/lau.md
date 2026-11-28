@@ -266,3 +266,19 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - ratified_by: D-133 v1
 - accepted_by: D-134 v1
 - note: Built: the server writes `cache/session-token-<port>`; `launch.sh` and the tools read the file of their port; verified with two servers at once and the test suite. Approved by D-133, accepted by D-134.
+
+### REQ-LAU-017 The launch log is private
+- pattern: ubiquitous
+- statement: Skill Dex shall write its launch log to a private folder of the user, `~/Library/Logs/Skill Dex/launch.log` on macOS and the XDG state folder on Linux, with the folder readable only by the user and the file readable and writable only by the user.
+- rationale: D-135: the log was at the predictable shared path `/tmp/skilldex.log`.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a launch WHEN the log folder and file are listed THEN the folder is mode 0700 and the file 0600, and nothing is written to `/tmp/skilldex.log`
+- scope: The launcher.
+- conditions: none
+- exceptions: none
+- source: D-135
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-135 v1
+- note: Built on branch `endurecer`; approved by D-135, not yet accepted.

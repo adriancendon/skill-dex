@@ -127,22 +127,22 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 
 ### REQ-SEC-008 Remote skills are checked from a temporary copy that is then deleted
 - pattern: event
-- statement: When `Tecnico/skillcheck.mjs` is given a git URL, Skill Dex shall clone it into a new folder under the system temporary folder, scan it there and delete that folder afterwards.
-- rationale: D-062 accepts [quote omitted] Today `Tecnico/skillcheck.mjs` clone into `mkdtemp` and leave the copy for macOS to clear; deleting it after the scan is not built. Keeps the check apart from the skills folders (D-006).
+- statement: When the user analyses a git URL or an existing local path, Skill Dex shall have the server clone it into a private temporary folder, with git hooks and templates isolated and no submodules, scan it there and delete that folder afterwards.
+- rationale: D-062 and D-135. The server, not the agent, fetches the candidate: only https URLs or an existing local path (`--local --no-hardlinks`), run SkillSpector, read repository metadata read-only, and then start the runner. Keeps the check apart from the skills folders (D-006).
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a git URL WHEN `skillcheck.mjs` runs THEN it prints "Clonado en" followed by a path in the temporary folder, and no skills folder changes
-  - AC2 [judgement] GIVEN the same run WHEN it has finished THEN the folder it printed no longer exists
-- scope: `skillcheck.mjs`.
+  - AC1 [judgement] GIVEN a git URL WHEN an analysis runs THEN the clone is in a private temporary folder, no skills folder changes and no git hook of the repository runs
+  - AC2 [judgement] GIVEN the same run WHEN it has finished THEN that folder no longer exists
+- scope: Analyses launched from the app and `skillcheck.mjs`.
 - conditions: none
 - exceptions: none
-- source: D-062
-- status: fulfilled
-- version: 1
+- source: D-062, D-135
+- status: active
+- version: 2
 - priority: 2
-- ratified_by: D-062 v1
-- accepted_by: D-127 v1
+- ratified_by: D-135 v2
+- changes:
+  - v2 D-135: the server clones into a private folder, with isolated hooks and no submodules, instead of skillcheck cloning into the system temporary folder
 - builder_choice: how the folder is deleted (the safety guard blocks `rm -rf`)
-- note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-SEC-009 A clean scan is not presented as a guarantee
 - pattern: ubiquitous
@@ -262,3 +262,19 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - ratified_by: D-114 v1
 - accepted_by: D-127 v1
 - note: Smallest fix from the audit: Apply the folder rule only to md, mdx, markdown, txt, rst, html, json, yaml and csv, and add a regression test that `examples/run` stays in review.
+
+### REQ-SEC-016 Symlinks in fetched repositories are removed and reported
+- pattern: event
+- statement: When Skill Dex fetches a repository or stages an update version, it shall remove the symlinks inside it before scanning or reading it, and report each one as a finding.
+- rationale: D-135: a symlink in a cloned repository could make a scanner or an agent read local files. A link that points outside the tree is reported with higher severity. Installed skills are not modified; their outside-pointing symlinks are only reported.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a fetched repository with a symlink to a file outside it WHEN it is scanned THEN the link is removed, reported as a finding of higher severity, and the outside file is not read
+- scope: Fetched repositories and staged update versions.
+- conditions: none
+- exceptions: none
+- source: D-135
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-135 v1
+- note: Built on branch `endurecer`; approved by D-135, not yet accepted.
