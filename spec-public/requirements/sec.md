@@ -12,10 +12,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: SkillSpector is installed in `Tecnico/.venv-skillspector`.
 - exceptions: Without SkillSpector the scan is skipped with a message in the log.
 - source: D-009, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-127 v1
 
 ### REQ-SEC-002 The scan sends no skill files to a model
 - pattern: ubiquitous
@@ -27,10 +28,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: SkillSpector still queries a public vulnerability database for dependencies (REQ-DAT-006).
 - source: D-009, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-127 v1
 
 ### REQ-SEC-003 The security state of each skill is visible
 - pattern: ubiquitous
@@ -43,10 +45,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-009, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-127 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-SEC-004 Findings are closed only under the approved criterion
@@ -61,10 +64,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-045, D-056
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-056 v1
+- accepted_by: D-127 v1
 - builder_choice: which conditions are applied by code and which by an agent reading the finding, as long as a doubtful case is shown to <private>
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -78,10 +82,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: A finding closed by the owner (D-101) is recorded as decided by him, with the date, instead of a condition number.
 - source: D-056, D-101
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-101 v2
+- accepted_by: D-127 v2
 - changes:
   - v2 D-101: owner closures are recorded as decided by him
 - note: built in 749b7e7, confirmed by D-094.
@@ -96,10 +101,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: Scanner coverage gaps ("analysis-evasion") are shown as minor notices, not as findings to review; they stay visible in the detail view and are never closed by themselves (D-102).
 - source: D-013, D-045, D-056, D-102
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-102 v2
+- accepted_by: D-127 v2
 - changes:
   - v2 D-102: coverage gaps are minor notices
 
@@ -113,10 +119,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: SkillSpector is installed in `Tecnico/.venv-skillspector`.
 - exceptions: none
 - source: D-012, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-127 v1
 
 ### REQ-SEC-008 Remote skills are checked from a temporary copy that is then deleted
 - pattern: event
@@ -129,10 +136,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-127 v1
 - builder_choice: how the folder is deleted (the safety guard blocks `rm -rf`)
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -146,10 +154,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-127 v1
 
 ### REQ-SEC-010 Findings closed before the criterion are checked again
 - pattern: ubiquitous
@@ -161,10 +170,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-056
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-056 v1
+- accepted_by: D-127 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 
@@ -178,10 +188,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: D-101
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-101 v1
+- accepted_by: D-127 v1
 - note: Built in the latest commit after 749b7e7, confirmed by D-101.
 
 ### REQ-SEC-012 A malformed request URL does not crash the server
@@ -194,10 +205,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: OP-040, D-114
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-114 v1
+- accepted_by: D-127 v1
 - note: Smallest fix from the audit: Contain every error of the request handler: parse the URL and decode the static path in a try that returns 400, turn a handler rejection into a 500, and handle errors of the static file stream.
 
 ### REQ-SEC-013 The loopback API does not trust a client-asserted header
@@ -210,10 +222,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: OP-041, D-114
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-114 v1
+- accepted_by: D-127 v1
 - note: Smallest fix from the audit: Bind the API to the launching user with a per-launch secret: a random token in a 0600 file in the data folder, passed by the launcher and answered with a strict cookie; refuse every other request.
 
 ### REQ-SEC-014 Triage exclusions look at the full finding text
@@ -226,10 +239,11 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: OP-042, D-114
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-114 v1
+- accepted_by: D-127 v1
 - note: Smallest fix from the audit: Run the exclusion test on the full text and explanation, computed before the snippet is cut, and add a regression test.
 
 ### REQ-SEC-015 Runnable files in templates or examples folders are not closed as guides
@@ -242,8 +256,9 @@ Drafted from `Tecnico/security.mjs`, `Tecnico/lib-security.mjs`, `Tecnico/skillc
 - conditions: none
 - exceptions: none
 - source: OP-043, D-114
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-114 v1
+- accepted_by: D-127 v1
 - note: Smallest fix from the audit: Apply the folder rule only to md, mdx, markdown, txt, rst, html, json, yaml and csv, and add a regression test that `examples/run` stays in review.

@@ -13,10 +13,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-072
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-072 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-002 Nothing updates without the user's action
@@ -29,10 +30,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-082
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-082 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-003 Every update is security-checked before it can be applied
@@ -45,10 +47,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-079
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-079 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-004 The user sees what an update changes
@@ -61,10 +64,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-077
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-077 v1
+- accepted_by: D-129 v1
 - note: The mockup shows this as the "Review changes" button. Built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-005 Updates are found from the source repository and the version number
@@ -78,10 +82,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: The Mac is online.
 - exceptions: A skill whose source repository is not known cannot be compared.
 - source: D-077
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-077 v1
+- accepted_by: D-129 v1
 - builder_choice: how a skill's source repository is found, and how a skill that cannot be checked is shown
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -96,10 +101,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-078
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-078 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-007 Only external skills are checked
@@ -112,10 +118,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-080
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-080 v1
+- accepted_by: D-129 v1
 - builder_choice: how a skill counts as external when its **origin** is `user` but it was cloned from a repository
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -130,10 +137,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-081
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-081 v1
+- accepted_by: D-129 v1
 - builder_choice: how his edits are detected
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -147,10 +155,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-081
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-081 v1
+- accepted_by: D-129 v1
 - builder_choice: where the copy is kept, as long as it stays out of the repository (REQ-DAT-008)
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -164,10 +173,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-082
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-082 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-011 A confirmed update replaces the skill's files
@@ -180,10 +190,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-082
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-082 v1
+- accepted_by: D-129 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UPD-012 A version can be skipped
@@ -196,10 +207,11 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-091
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-091 v1
+- accepted_by: D-129 v1
 - builder_choice: how a skipped version can be brought back
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -214,8 +226,25 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 - conditions: none
 - exceptions: none
 - source: D-110, D-106
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-110 v1
+- accepted_by: D-129 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
+
+### REQ-UPD-014 Updates never shows a check date and "No check yet" together
+- pattern: state
+- statement: While a check date is saved for the updates but no result is cached, Skill Dex shall show one coherent message in Updates.
+- rationale: Updates shows "Last checked: <date>" and "No check yet" at the same time.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a saved check date and no cached result WHEN <private> opens Updates THEN it does not show both messages
+- scope: Skill Dex as published.
+- conditions: none
+- exceptions: none
+- source: OP-044, D-133
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-133 v1
+- note: Built: Updates shows "Check again to see results" when a date is saved without results. Approved by D-133; not yet accepted.

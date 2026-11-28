@@ -12,10 +12,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: Skills loaded without the `read` tool, and skills that Skill Dex does not list are not counted.
 - source: D-004, D-062, D-117
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
+- accepted_by: D-125 v2
 - changes:
   - v2 D-117: logs of Claude Code and Codex are counted as well
 - note: built on branch multi-agente, merged and pushed 2026-11-28
@@ -29,10 +30,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-004, D-030, D-047
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-047 v1
+- accepted_by: D-125 v1
 
 ### REQ-USE-003 The chart is on the main screen
 - pattern: ubiquitous
@@ -44,10 +46,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-030, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-125 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-USE-004 Activity of one skill
@@ -60,10 +63,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-004, D-103
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-103 v1
+- accepted_by: D-125 v1
 - note: Built before; confirmed by D-103.
 
 ### REQ-USE-005 Only season uses give experience
@@ -76,10 +80,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-005, D-047
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-047 v1
+- accepted_by: D-125 v1
 
 ### REQ-USE-006 Historical uses are shown apart
 - pattern: ubiquitous
@@ -91,10 +96,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-047
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-047 v1
+- accepted_by: D-125 v1
 
 ### REQ-USE-007 How the collection earns experience
 - pattern: ubiquitous
@@ -121,10 +127,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-088
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-088 v1
+- accepted_by: D-125 v1
 - builder_choice: how the title and the level are laid out together
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -138,10 +145,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-089
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-089 v1
+- accepted_by: D-125 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-USE-010 Achievements
@@ -168,10 +176,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: Skills without season uses do not appear.
 - source: D-023, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-125 v1
 - note: How it looks may change with the new design and game (OP-001, OP-015).
 
 ### REQ-USE-012 Unused skills are suggested for review
@@ -185,10 +194,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-023, D-103
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-103 v1
+- accepted_by: D-125 v1
 - note: Built before; confirmed by D-103. The filter also offers never used, security only, and unused this season but used before as separate choices.
 
 ### REQ-USE-013 Rarity by how uncommon the skill is on GitHub
@@ -202,10 +212,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-089, D-121
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-121 v2
+- accepted_by: D-125 v2
 - changes:
   - v2 D-121: rarity is how uncommon the skill is on GitHub, not its size
 - builder_choice: how the count is searched on GitHub, and how it is cached
@@ -221,10 +232,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-023, D-009, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-125 v1
 
 ### REQ-USE-015 Catalogue health panel
 - pattern: ubiquitous
@@ -236,10 +248,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-009, D-062, D-083
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-083 v2
+- accepted_by: D-125 v2
 - changes:
   - v2 D-083: the panel moves from the main page to a Health section of the sidebar
 - note: built in 749b7e7, confirmed by D-094.
@@ -254,10 +267,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-009, D-046
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-046 v1
+- accepted_by: D-125 v1
 
 ### REQ-USE-017 Advice for each pair of similar skills
 - pattern: ubiquitous
@@ -270,10 +284,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-046
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-046 v1
+- accepted_by: D-125 v1
 - builder_choice: how the recommendation is worked out (rules on usage and descriptions, or an agent's reading), as long as each pair gets one of the three outcomes with a reason
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -287,10 +302,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-050
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-050 v1
+- accepted_by: D-125 v1
 - builder_choice: the formula of the increase, shown to <private> with the new design before it is applied (D-025)
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -304,10 +320,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-051
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-051 v1
+- accepted_by: D-125 v1
 - note: Its form is REQ-USE-020 (D-057); its texts are in English (REQ-UI-005). Built in 749b7e7, confirmed by D-094.
 
 ### REQ-USE-020 The level-up message is a centred card shown once
@@ -321,10 +338,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-057, D-063, D-088
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-088 v2
+- accepted_by: D-125 v2
 - changes:
   - v2 D-088: the title shown on the card is one of the eight titles of REQ-USE-008
 - builder_choice: the exact English texts and the button label, following the tone of the form's example
@@ -340,10 +358,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-047, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-125 v1
 - supersedes: REQ-USE-007
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -357,10 +376,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-050, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-125 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-USE-023 The mastered mark is shown in the Health section
@@ -387,8 +407,9 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail.j
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-125 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28

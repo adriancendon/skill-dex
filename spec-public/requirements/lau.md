@@ -13,10 +13,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-014, D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-002 One double click starts everything
 - pattern: event
@@ -29,10 +30,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: Node.js is installed.
 - exceptions: none
 - source: D-035, D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-003 Fresh data at start
 - pattern: event
@@ -44,10 +46,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: The server was not already running.
 - exceptions: If the server is already running, no rescan happens at launch.
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-004 The server is reachable only from this Mac
 - pattern: ubiquitous
@@ -60,10 +63,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-005 Changes come only from Skill Dex's own page
 - pattern: unwanted
@@ -75,10 +79,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-006 The server stops when the tab closes
 - pattern: event
@@ -90,10 +95,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: No analysis is running (REQ-LAU-007).
 - exceptions: none
 - source: D-014, D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-007 An analysis keeps running after the tab closes
 - pattern: complex
@@ -105,10 +111,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-008 Missing Node.js is reported
 - pattern: unwanted
@@ -120,10 +127,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-009 Refresh on demand
 - pattern: event
@@ -135,10 +143,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: The local server is running.
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-010 Without the server, the page says what to do
 - pattern: complex
@@ -150,10 +159,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-053
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-053 v1
+- accepted_by: D-130 v1
 
 ### REQ-LAU-011 A fresh copy starts on any Mac
 - pattern: ubiquitous
@@ -183,10 +193,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-055
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-055 v1
+- accepted_by: D-130 v1
 - note: The language is English (REQ-LAU-013). Built in 749b7e7, confirmed by D-094. The MIT licence, holder <private>, is added for publication (D-105).
 
 ### REQ-LAU-013 The public instructions are in English
@@ -199,10 +210,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-066
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-066 v1
+- accepted_by: D-130 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-LAU-014 The README is for any SKILL.md agent
@@ -215,10 +227,11 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-130 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-LAU-015 The launcher works best-effort on Linux
@@ -235,4 +248,20 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/launch.sh`), `Tecnico/lau
 - version: 1
 - priority: 2
 - ratified_by: D-119 v1
-- note: built on branch multi-agente, merged and pushed 2026-11-28 (Linux not tested)
+- note: built on branch multi-agente, merged and pushed 2026-11-28 (Linux not tested). D-130 accepted the area without the untested Linux part.
+
+### REQ-LAU-016 Each server port has its own session token file
+- pattern: ubiquitous
+- statement: Skill Dex shall keep one session token file per port, named `cache/session-token-<port>`, and remove the old shared file at start.
+- rationale: A second test server on another port overwrote the shared `cache/session-token`, and the app icon then opened the blocked page.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN two servers on different ports from the same folder WHEN both run THEN each accepts its own page and the app icon still opens
+- scope: Skill Dex as published.
+- conditions: none
+- exceptions: none
+- source: OP-045, D-133
+- status: active
+- version: 1
+- priority: 2
+- ratified_by: D-133 v1
+- note: Built: the server writes `cache/session-token-<port>`; `launch.sh` and the tools read the file of their port; verified with two servers at once and the test suite. Approved by D-133; not yet accepted.

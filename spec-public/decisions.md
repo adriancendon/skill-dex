@@ -967,6 +967,86 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: These builder choices stand until he changes them.
 - affects: REQ-ANA-030; REQ-LAU-015; REQ-DAT-012; REQ-LAU-012
 
+### D-124 The catalogue area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the catalogue area against its criteria.
+- affects: CAT requirements
+
+### D-125 The usage and game area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the usage and game area against its criteria.
+- affects: USE requirements
+
+### D-126 The analysis and watchlist area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the analysis and watchlist area against its criteria.
+- affects: ANA requirements
+
+### D-127 The security area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the security area against its criteria.
+- affects: SEC requirements
+
+### D-128 The Discover area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the Discover area against its criteria.
+- affects: DIS requirements
+
+### D-129 The updates area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the updates area against its criteria.
+- affects: UPD requirements
+
+### D-130 The launch and local server area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the launch and local server area against its criteria. The untested Linux part and the fresh-Mac test are not covered.
+- affects: LAU requirements
+
+### D-131 The data and privacy area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the data and privacy area against its criteria.
+- affects: DAT requirements
+
+### D-132 The interface area is accepted
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the result of the interface area against its criteria.
+- affects: UI requirements
+
+### D-133 The two small fixes and the spec-public refresh are approved
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The Updates message and the per-port session token file are fixed, and `spec-public` is refreshed in the public repository.
+- affects: REQ-UPD-014; REQ-LAU-016; REQ-DAT-009
+
 ## Open points
 
 ### OP-001 Which design does the app follow?
@@ -1240,6 +1320,18 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - question: The security audit (`<home>/security-audit-skill/skill-dex/run-1/`) confirmed, with low severity: templates, examples and samples folders treated as inert even for runnable files. Is it fixed in the public repository? Recommended: yes. Every push to the public repository needs his OK.
 - depends: REQ-SEC-015 stays a draft until he answers.
 - decided_by: D-114
+
+### OP-044 Should the "Last checked" and "No check yet" messages in Updates agree?
+- status: decided
+- question: Updates shows "Last checked: <date>" and "No check yet" at the same time when there is a saved date but no cached result. Is this fixed? Recommended: yes.
+- depends: REQ-UPD-014 stays a draft until he answers.
+- decided_by: D-133
+
+### OP-045 Should each server port have its own session token file?
+- status: decided
+- question: The session token file (`cache/session-token`) is shared by every server started from the same folder, so a second test server on another port overwrites it and the app icon then opens the blocked page. Is this fixed with one token file per port? Recommended: yes.
+- depends: REQ-LAU-016 stays a draft until he answers.
+- decided_by: D-133
 
 ## Risks
 

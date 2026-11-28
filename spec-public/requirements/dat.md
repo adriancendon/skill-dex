@@ -13,10 +13,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-054, D-090
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-090 v2
+- accepted_by: D-131 v2
 - changes:
   - v2 D-090: the mastered mark is no longer saved
 - builder_choice: the file's name and format, and whether the browser keeps a copy
@@ -33,10 +34,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: `Seguimiento/` and today's `Skill Dex.app` are outside the repository; <private>'s data stays out (REQ-DAT-008).
 - source: D-033, D-055
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-055 v1
+- accepted_by: D-131 v1
 
 ### REQ-DAT-003 The watchlist is a file both the app and omp read
 - pattern: ubiquitous
@@ -48,10 +50,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: In a copy installed by someone else, the file sits in that person's data folder (REQ-LAU-011).
 - source: D-010, D-054
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-054 v1
+- accepted_by: D-131 v1
 
 ### REQ-DAT-004 Generated files stay out of git
 - pattern: ubiquitous
@@ -63,10 +66,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-033, D-055
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-055 v1
+- accepted_by: D-131 v1
 
 ### REQ-DAT-005 A short how-to-use note
 - pattern: ubiquitous
@@ -78,10 +82,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-035, D-039, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-131 v1
 - note: The note is for <private> and stays in Spanish; the app's interface becomes English (D-063). Its content is corrected when a design is applied (D-039).
 
 ### REQ-DAT-006 SkillSpector only contacts the vulnerability database
@@ -94,10 +99,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-131 v1
 
 ### REQ-DAT-007 Session logs are read on this Mac only
 - pattern: ubiquitous
@@ -109,10 +115,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: Analyses launched from the app send their prompt and what they read to the model they run on.
 - source: D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-131 v1
 
 ### REQ-DAT-008 None of <private>'s data goes into the repository
 - pattern: ubiquitous
@@ -124,10 +131,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-055
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-055 v1
+- accepted_by: D-131 v1
 - note: Built and published (D-113): `<private>/skill-dex` is public since 2026-11-28. Accepted exception: its first public commit still names <private>, <private> and <private> (D-113). The requirements package quotes <private> and stays private (REQ-DAT-009).
 
 ### REQ-DAT-009 Only a clean version of this package goes public
@@ -141,10 +149,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-065
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-065 v1
+- accepted_by: D-131 v1
 - builder_choice: where the full package is kept private (for example a private repository or a private branch) and how the clean version is produced
 - note: Built and published (D-113): the public repository carries only the clean export; the full package is the private repository `skill-dex-spec`, and the exporter never copies its `.git`.
 
@@ -158,10 +167,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-131 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-DAT-011 Data names are in English and the old names are still read
@@ -175,10 +185,11 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-120
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-120 v1
+- accepted_by: D-131 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-DAT-012 The public export carries no process or personal traces
@@ -191,8 +202,9 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-123
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-119 v1
+- accepted_by: D-131 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28

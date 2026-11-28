@@ -12,10 +12,11 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - conditions: none
 - exceptions: none
 - source: D-020, D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-132 v1
 
 ### REQ-UI-002 The chosen theme is remembered
 - pattern: ubiquitous
@@ -27,10 +28,11 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - conditions: none
 - exceptions: none
 - source: D-062
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-062 v1
+- accepted_by: D-132 v1
 
 ### REQ-UI-003 A minimal main screen
 - pattern: ubiquitous
@@ -42,10 +44,11 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - conditions: none
 - exceptions: none
 - source: D-021, D-024, D-038, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-132 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-UI-004 The interface is in Spanish
@@ -72,10 +75,11 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - conditions: none
 - exceptions: Skill names and the original descriptions of skills keep their own language.
 - source: D-063, D-084
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-084 v2
+- accepted_by: D-132 v2
 - supersedes: REQ-UI-004
 - changes:
   - v2 D-084: the analysis reports are no longer an exception; they are in English
@@ -91,10 +95,11 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 - conditions: none
 - exceptions: On a phone the sidebar becomes a bar at the bottom, as in the mockup.
 - source: D-067, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-132 v1
 - supersedes: REQ-CAT-007
 - builder_choice: section names and order
 - note: built in 749b7e7, confirmed by D-094.

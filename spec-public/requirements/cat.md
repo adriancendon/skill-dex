@@ -13,10 +13,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: Project skills are REQ-CAT-015.
 - source: D-001, D-003, D-048, D-117
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
+- accepted_by: D-124 v2
 - changes:
   - v2 D-117: the folders are no longer only the two of omp
 - note: built on branch multi-agente, merged and pushed 2026-11-28
@@ -31,10 +32,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: Between two scans the list shows the state of the last scan.
 - source: D-003, D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 
 ### REQ-CAT-003 Each skill has a category
 - pattern: ubiquitous
@@ -47,10 +49,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-048, D-039
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 
 ### REQ-CAT-004 Search
 - pattern: event
@@ -63,10 +66,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-022, D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 
 ### REQ-CAT-005 Filters
 - pattern: ubiquitous
@@ -78,10 +82,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-022, D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 - builder_choice: how the filters are laid out
 
 ### REQ-CAT-006 Sort orders
@@ -128,10 +133,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: A click on a button or link inside the card does what that button or link does.
 - source: D-018, D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 - builder_choice: full-screen or pop-up dialog (D-018 allows either)
 
 ### REQ-CAT-009 The detail shows the full analysis
@@ -145,10 +151,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-018, D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 
 ### REQ-CAT-010 Closing the detail
 - pattern: event
@@ -160,10 +167,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-048
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-048 v1
+- accepted_by: D-124 v1
 
 ### REQ-CAT-011 Each skill shows its own icon
 - pattern: ubiquitous
@@ -176,10 +184,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-029, D-039, D-069, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-012 What each skill shows without opening it
@@ -192,10 +201,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-028, D-038, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - builder_choice: the exact layout of a row and of a card, following the approved mockup
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -209,10 +219,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-027, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-014 Favourite mark
@@ -225,10 +236,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-048, D-090
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-090 v2
+- accepted_by: D-124 v2
 - changes:
   - v2 D-090: the mastered mark and its button are removed
 - note: built in 749b7e7, confirmed by D-094.
@@ -244,10 +256,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-048, D-117
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-117 v2
+- accepted_by: D-124 v2
 - changes:
   - v2 D-117: project skill folders of every agent, not only `.omp/skills`
 - builder_choice: how projects are found; whether the project label is also a filter
@@ -262,10 +275,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: Skills without uses carry no place number.
 - source: D-068, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-017 Grouping by category is optional and keeps the order
@@ -278,10 +292,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-068, D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-018 Sort orders
@@ -294,10 +309,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-070
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-070 v1
+- accepted_by: D-124 v1
 - supersedes: REQ-CAT-006
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -312,10 +328,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-071
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-071 v1
+- accepted_by: D-124 v1
 - note: The short texts are written in English and kept in an editable file (REQ-CAT-022). Built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-020 List view or cards view
@@ -328,10 +345,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-073
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-073 v1
+- accepted_by: D-124 v1
 - builder_choice: the look of the cards, shown to <private> in the updated mockup (D-025)
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -345,10 +363,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-074
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-075 v1
+- accepted_by: D-124 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-022 Short descriptions are kept in an editable file
@@ -362,10 +381,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-076
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-076 v1
+- accepted_by: D-124 v1
 - builder_choice: the name and format of the file, and where it is kept so that it stays out of the repository (REQ-DAT-008)
 - note: The agent that writes them runs with the CLI chosen by REQ-ANA-028; omp keeps its explicit model (D-117). Built in 749b7e7, confirmed by D-094.
 
@@ -379,10 +399,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-076
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-076 v1
+- accepted_by: D-124 v1
 - builder_choice: whether the description is written at the scan or when the skill is first shown
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -397,10 +418,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-025 Project skill folders of every agent are read
@@ -413,10 +435,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-026 A skill found in several places is listed once
@@ -429,10 +452,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-027 Each skill shows the agent it belongs to
@@ -445,10 +469,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-028 The catalogue can be filtered by agent
@@ -461,10 +486,11 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-CAT-029 An empty catalogue says where it looked
@@ -477,8 +503,9 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-124 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28

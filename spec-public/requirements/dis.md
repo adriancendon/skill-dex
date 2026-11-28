@@ -12,10 +12,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: The Mac is online.
 - exceptions: none
 - source: D-052, D-059
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-059 v1
+- accepted_by: D-128 v1
 - builder_choice: the English name of the section
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -29,10 +30,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-058
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-058 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-003 A discovered skill can be analysed
@@ -46,10 +48,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-058, D-059, D-015
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-058 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-004 Discovering never installs
@@ -62,10 +65,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-006, D-058
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-058 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-005 Suggestions from what the user uses
@@ -78,10 +82,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-059
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-059 v1
+- accepted_by: D-128 v1
 - builder_choice: how the fit with his usage is worked out
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -95,10 +100,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-059
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-059 v1
+- accepted_by: D-128 v1
 - builder_choice: how "most used" is measured on GitHub (for example stars), said in the app next to the pick
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -112,10 +118,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-058, D-059
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-058 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-008 GitHub is searched with the login already on the Mac
@@ -129,10 +136,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-061, D-093
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-093 v2
+- accepted_by: D-128 v2
 - changes:
   - v2 D-093: the search no longer needs a GitHub session
 - builder_choice: how the session is read (for example through the GitHub command line already installed)
@@ -148,10 +156,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: The Mac is online.
 - exceptions: none
 - source: D-085, D-093
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-093 v2
+- accepted_by: D-128 v2
 - changes:
   - v2 D-093: the typed search no longer needs a GitHub session
 - builder_choice: how many results are shown and what each result shows
@@ -168,10 +177,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-086
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-086 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-011 Without a GitHub session the search works within GitHub's limit
@@ -185,10 +195,11 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: The Mac is online.
 - exceptions: none
 - source: D-093
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-093 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-DIS-012 A notice explains how to sign in for a higher limit
@@ -202,8 +213,9 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 - conditions: none
 - exceptions: none
 - source: D-093
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-093 v1
+- accepted_by: D-128 v1
 - note: built in 749b7e7, confirmed by D-094.

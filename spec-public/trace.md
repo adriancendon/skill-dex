@@ -6,170 +6,172 @@
 
 | Kind | Count | Breakdown |
 |---|---|---|
-| Requirements | 155 | 1 ready, 148 active, 2 descoped, 4 superseded |
-| Decisions | 123 | 115 owner, 3 derived, 5 constraint |
-| Open points | 43 | 43 decided |
+| Requirements | 157 | 1 ready, 3 active, 147 fulfilled, 2 descoped, 4 superseded |
+| Decisions | 133 | 125 owner, 3 derived, 5 constraint |
+| Open points | 45 | 45 decided |
 | Risks | 6 | - |
 
 ## Requirements
 
 | Requirement | Title | Parent | Status | Version | Priority | Decisions | Criteria |
 |---|---|---|---|---|---|---|---|
-| REQ-ANA-001 | Analyse a skill from the app | - | active | 1 | 2 | D-015, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-002 | The entry shows that it is being analysed | - | active | 1 | 2 | D-015, D-043 | 0 mechanical, 2 judgement |
-| REQ-ANA-003 | Only one analysis at a time | - | active | 1 | 2 | D-016, D-043 | 1 mechanical, 1 judgement |
-| REQ-ANA-004 | Limited permissions | - | active | 1 | 2 | D-017, D-043 | 1 mechanical, 1 judgement |
-| REQ-ANA-005 | Time and cost limit | - | active | 1 | 2 | D-015, D-036, D-043 | 1 mechanical, 0 judgement |
-| REQ-ANA-006 | An analysis never installs | - | active | 1 | 2 | D-006, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-007 | What the report says, in order | - | active | 2 | 2 | D-007, D-043, D-084, D-094 | 0 mechanical, 1 judgement |
-| REQ-ANA-008 | The report is saved | - | active | 1 | 2 | D-015, D-018, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-009 | The watchlist entry is filled in | - | active | 1 | 2 | D-008, D-015, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-010 | An analysis never discards by itself | - | active | 1 | 2 | D-010, D-043, D-044 | 0 mechanical, 1 judgement |
-| REQ-ANA-011 | Already investigated skills are recognised | - | active | 1 | 2 | D-010, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-012 | Analyse a known skill again | - | active | 1 | 2 | D-043, D-044 | 0 mechanical, 1 judgement |
-| REQ-ANA-013 | Cancel a running analysis | - | active | 1 | 2 | D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-014 | Remove a failed attempt | - | active | 1 | 2 | D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-015 | Only failed attempts can be removed | - | active | 1 | 2 | D-010, D-043 | 1 mechanical, 1 judgement |
-| REQ-ANA-016 | An analysis cut off by closing the app is marked failed | - | active | 1 | 2 | D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-017 | A discard needs a reason | - | active | 1 | 2 | D-010, D-043 | 1 mechanical, 1 judgement |
-| REQ-ANA-018 | A discarded entry is kept with its reason and date | - | active | 1 | 2 | D-010, D-043, D-044, D-060 | 0 mechanical, 1 judgement |
-| REQ-ANA-019 | Recover a discarded entry | - | active | 1 | 2 | D-043, D-044 | 0 mechanical, 1 judgement |
-| REQ-ANA-020 | An installed skill leaves the watchlist view | - | active | 1 | 2 | D-008, D-043, D-060 | 0 mechanical, 1 judgement |
-| REQ-ANA-021 | The full output of each analysis is kept | - | active | 1 | 2 | D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-022 | SkillSpector runs inside every analysis | - | active | 1 | 2 | D-012, D-043 | 0 mechanical, 1 judgement |
-| REQ-ANA-024 | The previous discard reason is kept as history | - | active | 1 | 2 | D-010, D-044, D-094 | 0 mechanical, 2 judgement |
-| REQ-ANA-025 | A discard without a written reason shows the report's verdict | - | active | 1 | 2 | D-044 | 0 mechanical, 1 judgement |
-| REQ-ANA-026 | Analysis reports are written in English | - | active | 1 | 2 | D-084, D-092, D-094 | 0 mechanical, 1 judgement |
-| REQ-ANA-027 | Reports written in Spanish are produced again in English | - | active | 2 | 2 | D-084, D-092, D-098, D-100 | 0 mechanical, 2 judgement |
-| REQ-ANA-028 | Agent tasks run with whichever CLI is available | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
-| REQ-ANA-029 | Agent tasks are disabled when no CLI is available | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
-| REQ-ANA-030 | The model of each runner is configurable | - | active | 1 | 2 | D-119, D-123 | 0 mechanical, 1 judgement |
-| REQ-CAT-001 | Installed skills are listed | - | active | 2 | 2 | D-001, D-003, D-048, D-117 | 0 mechanical, 2 judgement |
-| REQ-CAT-002 | The list follows what is installed now | - | active | 1 | 2 | D-003, D-048 | 0 mechanical, 2 judgement |
-| REQ-CAT-003 | Each skill has a category | - | active | 1 | 2 | D-001, D-039, D-048 | 0 mechanical, 2 judgement |
-| REQ-CAT-004 | Search | - | active | 1 | 2 | D-022, D-048 | 0 mechanical, 2 judgement |
-| REQ-CAT-005 | Filters | - | active | 1 | 2 | D-022, D-048 | 0 mechanical, 1 judgement |
+| REQ-ANA-001 | Analyse a skill from the app | - | fulfilled | 1 | 2 | D-015, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-002 | The entry shows that it is being analysed | - | fulfilled | 1 | 2 | D-015, D-043, D-126 | 0 mechanical, 2 judgement |
+| REQ-ANA-003 | Only one analysis at a time | - | fulfilled | 1 | 2 | D-016, D-043, D-126 | 1 mechanical, 1 judgement |
+| REQ-ANA-004 | Limited permissions | - | fulfilled | 1 | 2 | D-017, D-043, D-126 | 1 mechanical, 1 judgement |
+| REQ-ANA-005 | Time and cost limit | - | fulfilled | 1 | 2 | D-015, D-036, D-043, D-126 | 1 mechanical, 0 judgement |
+| REQ-ANA-006 | An analysis never installs | - | fulfilled | 1 | 2 | D-006, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-007 | What the report says, in order | - | fulfilled | 2 | 2 | D-007, D-043, D-084, D-094, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-008 | The report is saved | - | fulfilled | 1 | 2 | D-015, D-018, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-009 | The watchlist entry is filled in | - | fulfilled | 1 | 2 | D-008, D-015, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-010 | An analysis never discards by itself | - | fulfilled | 1 | 2 | D-010, D-043, D-044, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-011 | Already investigated skills are recognised | - | fulfilled | 1 | 2 | D-010, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-012 | Analyse a known skill again | - | fulfilled | 1 | 2 | D-043, D-044, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-013 | Cancel a running analysis | - | fulfilled | 1 | 2 | D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-014 | Remove a failed attempt | - | fulfilled | 1 | 2 | D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-015 | Only failed attempts can be removed | - | fulfilled | 1 | 2 | D-010, D-043, D-126 | 1 mechanical, 1 judgement |
+| REQ-ANA-016 | An analysis cut off by closing the app is marked failed | - | fulfilled | 1 | 2 | D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-017 | A discard needs a reason | - | fulfilled | 1 | 2 | D-010, D-043, D-126 | 1 mechanical, 1 judgement |
+| REQ-ANA-018 | A discarded entry is kept with its reason and date | - | fulfilled | 1 | 2 | D-010, D-043, D-044, D-060, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-019 | Recover a discarded entry | - | fulfilled | 1 | 2 | D-043, D-044, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-020 | An installed skill leaves the watchlist view | - | fulfilled | 1 | 2 | D-008, D-043, D-060, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-021 | The full output of each analysis is kept | - | fulfilled | 1 | 2 | D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-022 | SkillSpector runs inside every analysis | - | fulfilled | 1 | 2 | D-012, D-043, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-024 | The previous discard reason is kept as history | - | fulfilled | 1 | 2 | D-010, D-044, D-094, D-126 | 0 mechanical, 2 judgement |
+| REQ-ANA-025 | A discard without a written reason shows the report's verdict | - | fulfilled | 1 | 2 | D-044, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-026 | Analysis reports are written in English | - | fulfilled | 1 | 2 | D-084, D-092, D-094, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-027 | Reports written in Spanish are produced again in English | - | fulfilled | 2 | 2 | D-084, D-092, D-098, D-100, D-126 | 0 mechanical, 2 judgement |
+| REQ-ANA-028 | Agent tasks run with whichever CLI is available | - | fulfilled | 1 | 2 | D-117, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-029 | Agent tasks are disabled when no CLI is available | - | fulfilled | 1 | 2 | D-117, D-126 | 0 mechanical, 1 judgement |
+| REQ-ANA-030 | The model of each runner is configurable | - | fulfilled | 1 | 2 | D-119, D-123, D-126 | 0 mechanical, 1 judgement |
+| REQ-CAT-001 | Installed skills are listed | - | fulfilled | 2 | 2 | D-001, D-003, D-048, D-117, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-002 | The list follows what is installed now | - | fulfilled | 1 | 2 | D-003, D-048, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-003 | Each skill has a category | - | fulfilled | 1 | 2 | D-001, D-039, D-048, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-004 | Search | - | fulfilled | 1 | 2 | D-022, D-048, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-005 | Filters | - | fulfilled | 1 | 2 | D-022, D-048, D-124 | 0 mechanical, 1 judgement |
 | REQ-CAT-006 | Sort orders | - | superseded | 1 | 2 | D-001, D-048 | 0 mechanical, 2 judgement |
 | REQ-CAT-007 | Installed, watchlist and discarded are three views of one catalogue | - | superseded | 1 | 2 | D-002, D-008, D-010, D-048, D-060 | 0 mechanical, 1 judgement |
-| REQ-CAT-008 | A click on a card opens its detail | - | active | 1 | 2 | D-018, D-048 | 0 mechanical, 1 judgement |
-| REQ-CAT-009 | The detail shows the full analysis | - | active | 1 | 2 | D-018, D-048 | 0 mechanical, 2 judgement |
-| REQ-CAT-010 | Closing the detail | - | active | 1 | 2 | D-048 | 0 mechanical, 1 judgement |
-| REQ-CAT-011 | Each skill shows its own icon | - | active | 1 | 2 | D-029, D-039, D-069, D-070, D-094 | 0 mechanical, 2 judgement |
-| REQ-CAT-012 | What each skill shows without opening it | - | active | 1 | 2 | D-028, D-038, D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-013 | The catalogue scrolls instead of shrinking | - | active | 1 | 2 | D-027, D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-014 | Favourite mark | - | active | 2 | 2 | D-048, D-063, D-090, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-015 | Each project's skills are listed with their project | - | active | 2 | 2 | D-048, D-117 | 0 mechanical, 2 judgement |
-| REQ-CAT-016 | One global list ranked by use | - | active | 1 | 2 | D-068, D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-017 | Grouping by category is optional and keeps the order | - | active | 1 | 2 | D-068, D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-018 | Sort orders | - | active | 1 | 2 | D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-019 | Short descriptions in the list | - | active | 1 | 2 | D-071, D-076, D-094 | 0 mechanical, 2 judgement |
-| REQ-CAT-020 | List view or cards view | - | active | 1 | 2 | D-025, D-073, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-021 | The chosen view is remembered | - | active | 1 | 2 | D-073, D-074, D-075, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-022 | Short descriptions are kept in an editable file | - | active | 1 | 2 | D-063, D-076, D-094, D-117 | 0 mechanical, 2 judgement |
-| REQ-CAT-023 | A new skill gets its short description when it appears | - | active | 1 | 2 | D-076, D-094 | 0 mechanical, 1 judgement |
-| REQ-CAT-024 | Skills are read from the folders of any agent | - | active | 1 | 2 | D-116, D-117 | 0 mechanical, 2 judgement |
-| REQ-CAT-025 | Project skill folders of every agent are read | - | active | 1 | 2 | D-099, D-117 | 0 mechanical, 1 judgement |
-| REQ-CAT-026 | A skill found in several places is listed once | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
-| REQ-CAT-027 | Each skill shows the agent it belongs to | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
-| REQ-CAT-028 | The catalogue can be filtered by agent | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
-| REQ-CAT-029 | An empty catalogue says where it looked | - | active | 1 | 2 | D-116, D-117 | 0 mechanical, 1 judgement |
-| REQ-DAT-001 | Favourite marks are saved to a file | - | active | 2 | 2 | D-054, D-090, D-094 | 0 mechanical, 2 judgement |
-| REQ-DAT-002 | The repository stays private until the new design is ready | - | active | 1 | 2 | D-033, D-055 | 1 mechanical, 1 judgement |
-| REQ-DAT-003 | The watchlist is a file both the app and omp read | - | active | 1 | 2 | D-010, D-054 | 0 mechanical, 1 judgement |
-| REQ-DAT-004 | Generated files stay out of git | - | active | 1 | 2 | D-033, D-055 | 1 mechanical, 0 judgement |
-| REQ-DAT-005 | A short how-to-use note | - | active | 1 | 2 | D-035, D-039, D-062, D-063 | 0 mechanical, 1 judgement |
-| REQ-DAT-006 | SkillSpector only contacts the vulnerability database | - | active | 1 | 2 | D-062 | 0 mechanical, 1 judgement |
-| REQ-DAT-007 | Session logs are read on this Mac only | - | active | 1 | 2 | D-062 | 0 mechanical, 1 judgement |
-| REQ-DAT-008 | None of <private>'s data goes into the repository | - | active | 1 | 2 | D-055, D-113 | 0 mechanical, 1 judgement |
-| REQ-DAT-009 | Only a clean version of this package goes public | - | active | 1 | 2 | D-065, D-113 | 0 mechanical, 2 judgement |
-| REQ-DAT-010 | Custom skill folders are configured in the data folder | - | active | 1 | 2 | D-055, D-117 | 0 mechanical, 1 judgement |
-| REQ-DAT-011 | Data names are in English and the old names are still read | - | active | 1 | 2 | D-120 | 0 mechanical, 2 judgement |
-| REQ-DAT-012 | The public export carries no process or personal traces | - | active | 1 | 2 | D-119, D-123 | 0 mechanical, 1 judgement |
-| REQ-DIS-001 | A section to discover skills on GitHub | - | active | 1 | 2 | D-052, D-059, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-002 | A discovered skill can be opened on GitHub | - | active | 1 | 2 | D-058, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-003 | A discovered skill can be analysed | - | active | 1 | 2 | D-015, D-058, D-059, D-094 | 0 mechanical, 2 judgement |
-| REQ-DIS-004 | Discovering never installs | - | active | 1 | 2 | D-006, D-058, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-005 | Suggestions from what the user uses | - | active | 1 | 2 | D-059, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-006 | A random popular skill | - | active | 1 | 2 | D-059, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-007 | A discovered skill can go to the watchlist without an analysis | - | active | 1 | 2 | D-058, D-059, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-008 | GitHub is searched with the login already on the Mac | - | active | 2 | 2 | D-061, D-093, D-094 | 0 mechanical, 2 judgement |
-| REQ-DIS-009 | A box to type what to look for | - | active | 2 | 2 | D-085, D-093, D-094 | 0 mechanical, 1 judgement |
-| REQ-DIS-010 | Skills the user already knows carry a label | - | active | 1 | 2 | D-086, D-094 | 0 mechanical, 2 judgement |
-| REQ-DIS-011 | Without a GitHub session the search works within GitHub's limit | - | active | 1 | 2 | D-055, D-093, D-094 | 0 mechanical, 2 judgement |
-| REQ-DIS-012 | A notice explains how to sign in for a higher limit | - | active | 1 | 2 | D-093, D-094 | 0 mechanical, 2 judgement |
-| REQ-LAU-001 | No Terminal window | - | active | 1 | 2 | D-014, D-053 | 0 mechanical, 2 judgement |
-| REQ-LAU-002 | One double click starts everything | - | active | 1 | 2 | D-035, D-053, D-055 | 0 mechanical, 2 judgement |
-| REQ-LAU-003 | Fresh data at start | - | active | 1 | 2 | D-003, D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-004 | The server is reachable only from this Mac | - | active | 1 | 2 | D-035, D-053 | 1 mechanical, 1 judgement |
-| REQ-LAU-005 | Changes come only from Skill Dex's own page | - | active | 1 | 2 | D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-006 | The server stops when the tab closes | - | active | 1 | 2 | D-014, D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-007 | An analysis keeps running after the tab closes | - | active | 1 | 2 | D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-008 | Missing Node.js is reported | - | active | 1 | 2 | D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-009 | Refresh on demand | - | active | 1 | 2 | D-053 | 0 mechanical, 1 judgement |
-| REQ-LAU-010 | Without the server, the page says what to do | - | active | 1 | 2 | D-053 | 0 mechanical, 1 judgement |
+| REQ-CAT-008 | A click on a card opens its detail | - | fulfilled | 1 | 2 | D-018, D-048, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-009 | The detail shows the full analysis | - | fulfilled | 1 | 2 | D-018, D-048, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-010 | Closing the detail | - | fulfilled | 1 | 2 | D-048, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-011 | Each skill shows its own icon | - | fulfilled | 1 | 2 | D-029, D-039, D-069, D-070, D-094, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-012 | What each skill shows without opening it | - | fulfilled | 1 | 2 | D-028, D-038, D-070, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-013 | The catalogue scrolls instead of shrinking | - | fulfilled | 1 | 2 | D-027, D-070, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-014 | Favourite mark | - | fulfilled | 2 | 2 | D-048, D-063, D-090, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-015 | Each project's skills are listed with their project | - | fulfilled | 2 | 2 | D-048, D-117, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-016 | One global list ranked by use | - | fulfilled | 1 | 2 | D-068, D-070, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-017 | Grouping by category is optional and keeps the order | - | fulfilled | 1 | 2 | D-068, D-070, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-018 | Sort orders | - | fulfilled | 1 | 2 | D-070, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-019 | Short descriptions in the list | - | fulfilled | 1 | 2 | D-071, D-076, D-094, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-020 | List view or cards view | - | fulfilled | 1 | 2 | D-025, D-073, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-021 | The chosen view is remembered | - | fulfilled | 1 | 2 | D-073, D-074, D-075, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-022 | Short descriptions are kept in an editable file | - | fulfilled | 1 | 2 | D-063, D-076, D-094, D-117, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-023 | A new skill gets its short description when it appears | - | fulfilled | 1 | 2 | D-076, D-094, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-024 | Skills are read from the folders of any agent | - | fulfilled | 1 | 2 | D-116, D-117, D-124 | 0 mechanical, 2 judgement |
+| REQ-CAT-025 | Project skill folders of every agent are read | - | fulfilled | 1 | 2 | D-099, D-117, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-026 | A skill found in several places is listed once | - | fulfilled | 1 | 2 | D-117, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-027 | Each skill shows the agent it belongs to | - | fulfilled | 1 | 2 | D-117, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-028 | The catalogue can be filtered by agent | - | fulfilled | 1 | 2 | D-117, D-124 | 0 mechanical, 1 judgement |
+| REQ-CAT-029 | An empty catalogue says where it looked | - | fulfilled | 1 | 2 | D-116, D-117, D-124 | 0 mechanical, 1 judgement |
+| REQ-DAT-001 | Favourite marks are saved to a file | - | fulfilled | 2 | 2 | D-054, D-090, D-094, D-131 | 0 mechanical, 2 judgement |
+| REQ-DAT-002 | The repository stays private until the new design is ready | - | fulfilled | 1 | 2 | D-033, D-055, D-131 | 1 mechanical, 1 judgement |
+| REQ-DAT-003 | The watchlist is a file both the app and omp read | - | fulfilled | 1 | 2 | D-010, D-054, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-004 | Generated files stay out of git | - | fulfilled | 1 | 2 | D-033, D-055, D-131 | 1 mechanical, 0 judgement |
+| REQ-DAT-005 | A short how-to-use note | - | fulfilled | 1 | 2 | D-035, D-039, D-062, D-063, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-006 | SkillSpector only contacts the vulnerability database | - | fulfilled | 1 | 2 | D-062, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-007 | Session logs are read on this Mac only | - | fulfilled | 1 | 2 | D-062, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-008 | None of <private>'s data goes into the repository | - | fulfilled | 1 | 2 | D-055, D-113, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-009 | Only a clean version of this package goes public | - | fulfilled | 1 | 2 | D-065, D-113, D-131 | 0 mechanical, 2 judgement |
+| REQ-DAT-010 | Custom skill folders are configured in the data folder | - | fulfilled | 1 | 2 | D-055, D-117, D-131 | 0 mechanical, 1 judgement |
+| REQ-DAT-011 | Data names are in English and the old names are still read | - | fulfilled | 1 | 2 | D-120, D-131 | 0 mechanical, 2 judgement |
+| REQ-DAT-012 | The public export carries no process or personal traces | - | fulfilled | 1 | 2 | D-119, D-123, D-131 | 0 mechanical, 1 judgement |
+| REQ-DIS-001 | A section to discover skills on GitHub | - | fulfilled | 1 | 2 | D-052, D-059, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-002 | A discovered skill can be opened on GitHub | - | fulfilled | 1 | 2 | D-058, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-003 | A discovered skill can be analysed | - | fulfilled | 1 | 2 | D-015, D-058, D-059, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-DIS-004 | Discovering never installs | - | fulfilled | 1 | 2 | D-006, D-058, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-005 | Suggestions from what the user uses | - | fulfilled | 1 | 2 | D-059, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-006 | A random popular skill | - | fulfilled | 1 | 2 | D-059, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-007 | A discovered skill can go to the watchlist without an analysis | - | fulfilled | 1 | 2 | D-058, D-059, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-008 | GitHub is searched with the login already on the Mac | - | fulfilled | 2 | 2 | D-061, D-093, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-DIS-009 | A box to type what to look for | - | fulfilled | 2 | 2 | D-085, D-093, D-094, D-128 | 0 mechanical, 1 judgement |
+| REQ-DIS-010 | Skills the user already knows carry a label | - | fulfilled | 1 | 2 | D-086, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-DIS-011 | Without a GitHub session the search works within GitHub's limit | - | fulfilled | 1 | 2 | D-055, D-093, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-DIS-012 | A notice explains how to sign in for a higher limit | - | fulfilled | 1 | 2 | D-093, D-094, D-128 | 0 mechanical, 2 judgement |
+| REQ-LAU-001 | No Terminal window | - | fulfilled | 1 | 2 | D-014, D-053, D-130 | 0 mechanical, 2 judgement |
+| REQ-LAU-002 | One double click starts everything | - | fulfilled | 1 | 2 | D-035, D-053, D-055, D-130 | 0 mechanical, 2 judgement |
+| REQ-LAU-003 | Fresh data at start | - | fulfilled | 1 | 2 | D-003, D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-004 | The server is reachable only from this Mac | - | fulfilled | 1 | 2 | D-035, D-053, D-130 | 1 mechanical, 1 judgement |
+| REQ-LAU-005 | Changes come only from Skill Dex's own page | - | fulfilled | 1 | 2 | D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-006 | The server stops when the tab closes | - | fulfilled | 1 | 2 | D-014, D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-007 | An analysis keeps running after the tab closes | - | fulfilled | 1 | 2 | D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-008 | Missing Node.js is reported | - | fulfilled | 1 | 2 | D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-009 | Refresh on demand | - | fulfilled | 1 | 2 | D-053, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-010 | Without the server, the page says what to do | - | fulfilled | 1 | 2 | D-053, D-130 | 0 mechanical, 1 judgement |
 | REQ-LAU-011 | A fresh copy starts on any Mac | - | ready | 1 | 2 | D-055, D-094 | 0 mechanical, 2 judgement |
-| REQ-LAU-012 | Install instructions for anyone | - | active | 1 | 2 | D-055, D-094, D-105 | 0 mechanical, 1 judgement |
-| REQ-LAU-013 | The public instructions are in English | - | active | 1 | 2 | D-066, D-094 | 0 mechanical, 1 judgement |
-| REQ-LAU-014 | The README is for any SKILL.md agent | - | active | 1 | 2 | D-116, D-117, D-118 | 0 mechanical, 1 judgement |
-| REQ-LAU-015 | The launcher works best-effort on Linux | - | active | 1 | 2 | D-119, D-123 | 0 mechanical, 1 judgement |
-| REQ-SEC-001 | Scan the installed skills that changed | - | active | 1 | 2 | D-009, D-062 | 0 mechanical, 1 judgement |
-| REQ-SEC-002 | The scan sends no skill files to a model | - | active | 1 | 2 | D-009, D-062 | 1 mechanical, 0 judgement |
-| REQ-SEC-003 | The security state of each skill is visible | - | active | 1 | 2 | D-009, D-070, D-094 | 0 mechanical, 2 judgement |
-| REQ-SEC-004 | Findings are closed only under the approved criterion | - | active | 1 | 2 | D-045, D-056, D-094 | 0 mechanical, 3 judgement |
-| REQ-SEC-005 | Each closure names the condition that justifies it | - | active | 2 | 2 | D-056, D-094, D-101 | 0 mechanical, 1 judgement |
-| REQ-SEC-006 | Remaining alerts stay in front of <private> | - | active | 2 | 2 | D-013, D-045, D-056, D-102 | 0 mechanical, 1 judgement |
-| REQ-SEC-007 | A verdict for a skill not yet installed | - | active | 1 | 2 | D-012, D-062 | 0 mechanical, 1 judgement |
-| REQ-SEC-008 | Remote skills are checked from a temporary copy that is then deleted | - | active | 1 | 2 | D-006, D-062, D-094 | 0 mechanical, 2 judgement |
-| REQ-SEC-009 | A clean scan is not presented as a guarantee | - | active | 1 | 2 | D-062 | 0 mechanical, 1 judgement |
-| REQ-SEC-010 | Findings closed before the criterion are checked again | - | active | 1 | 2 | D-056, D-094 | 0 mechanical, 1 judgement |
-| REQ-SEC-011 | An owner closure reopens when the file or folder changes | - | active | 1 | 2 | D-101 | 0 mechanical, 1 judgement |
-| REQ-SEC-012 | A malformed request URL does not crash the server | - | active | 1 | 2 | D-114 | 0 mechanical, 1 judgement |
-| REQ-SEC-013 | The loopback API does not trust a client-asserted header | - | active | 1 | 2 | D-114 | 0 mechanical, 1 judgement |
-| REQ-SEC-014 | Triage exclusions look at the full finding text | - | active | 1 | 2 | D-056, D-114 | 0 mechanical, 1 judgement |
-| REQ-SEC-015 | Runnable files in templates or examples folders are not closed as guides | - | active | 1 | 2 | D-114 | 0 mechanical, 1 judgement |
-| REQ-UI-001 | Day and night mode | - | active | 1 | 2 | D-020, D-062 | 0 mechanical, 1 judgement |
-| REQ-UI-002 | The chosen theme is remembered | - | active | 1 | 2 | D-062 | 0 mechanical, 1 judgement |
-| REQ-UI-003 | A minimal main screen | - | active | 1 | 2 | D-021, D-024, D-038, D-070, D-094 | 0 mechanical, 1 judgement |
+| REQ-LAU-012 | Install instructions for anyone | - | fulfilled | 1 | 2 | D-055, D-094, D-105, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-013 | The public instructions are in English | - | fulfilled | 1 | 2 | D-066, D-094, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-014 | The README is for any SKILL.md agent | - | fulfilled | 1 | 2 | D-116, D-117, D-118, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-015 | The launcher works best-effort on Linux | - | active | 1 | 2 | D-119, D-123, D-130 | 0 mechanical, 1 judgement |
+| REQ-LAU-016 | Each server port has its own session token file | - | active | 1 | 2 | D-133 | 0 mechanical, 1 judgement |
+| REQ-SEC-001 | Scan the installed skills that changed | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-002 | The scan sends no skill files to a model | - | fulfilled | 1 | 2 | D-009, D-062, D-127 | 1 mechanical, 0 judgement |
+| REQ-SEC-003 | The security state of each skill is visible | - | fulfilled | 1 | 2 | D-009, D-070, D-094, D-127 | 0 mechanical, 2 judgement |
+| REQ-SEC-004 | Findings are closed only under the approved criterion | - | fulfilled | 1 | 2 | D-045, D-056, D-094, D-127 | 0 mechanical, 3 judgement |
+| REQ-SEC-005 | Each closure names the condition that justifies it | - | fulfilled | 2 | 2 | D-056, D-094, D-101, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-006 | Remaining alerts stay in front of <private> | - | fulfilled | 2 | 2 | D-013, D-045, D-056, D-102, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-007 | A verdict for a skill not yet installed | - | fulfilled | 1 | 2 | D-012, D-062, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-008 | Remote skills are checked from a temporary copy that is then deleted | - | fulfilled | 1 | 2 | D-006, D-062, D-094, D-127 | 0 mechanical, 2 judgement |
+| REQ-SEC-009 | A clean scan is not presented as a guarantee | - | fulfilled | 1 | 2 | D-062, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-010 | Findings closed before the criterion are checked again | - | fulfilled | 1 | 2 | D-056, D-094, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-011 | An owner closure reopens when the file or folder changes | - | fulfilled | 1 | 2 | D-101, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-012 | A malformed request URL does not crash the server | - | fulfilled | 1 | 2 | D-114, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-013 | The loopback API does not trust a client-asserted header | - | fulfilled | 1 | 2 | D-114, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-014 | Triage exclusions look at the full finding text | - | fulfilled | 1 | 2 | D-056, D-114, D-127 | 0 mechanical, 1 judgement |
+| REQ-SEC-015 | Runnable files in templates or examples folders are not closed as guides | - | fulfilled | 1 | 2 | D-114, D-127 | 0 mechanical, 1 judgement |
+| REQ-UI-001 | Day and night mode | - | fulfilled | 1 | 2 | D-020, D-062, D-132 | 0 mechanical, 1 judgement |
+| REQ-UI-002 | The chosen theme is remembered | - | fulfilled | 1 | 2 | D-062, D-132 | 0 mechanical, 1 judgement |
+| REQ-UI-003 | A minimal main screen | - | fulfilled | 1 | 2 | D-021, D-024, D-038, D-070, D-094, D-132 | 0 mechanical, 1 judgement |
 | REQ-UI-004 | The interface is in Spanish | - | superseded | 1 | - | D-062, D-063 | 0 mechanical, 1 judgement |
-| REQ-UI-005 | The interface is in English | - | active | 2 | 2 | D-063, D-084, D-094 | 0 mechanical, 1 judgement |
-| REQ-UI-006 | A left sidebar with the app name, sections, level and theme switch | - | active | 1 | 2 | D-052, D-067, D-070, D-072, D-083, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-001 | A section to review skill updates | - | active | 1 | 2 | D-072, D-094 | 0 mechanical, 2 judgement |
-| REQ-UPD-002 | Nothing updates without the user's action | - | active | 1 | 2 | D-006, D-072, D-082, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-003 | Every update is security-checked before it can be applied | - | active | 1 | 2 | D-079, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-004 | The user sees what an update changes | - | active | 1 | 2 | D-077, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-005 | Updates are found from the source repository and the version number | - | active | 1 | 2 | D-077, D-094 | 0 mechanical, 2 judgement |
-| REQ-UPD-006 | Updates are looked for only when the user asks | - | active | 1 | 2 | D-078, D-094 | 0 mechanical, 2 judgement |
-| REQ-UPD-007 | Only external skills are checked | - | active | 1 | 2 | D-080, D-094, D-120 | 0 mechanical, 1 judgement |
-| REQ-UPD-008 | A warning about the user's own edits | - | active | 1 | 2 | D-081, D-094 | 0 mechanical, 2 judgement |
-| REQ-UPD-009 | His version is saved before updating | - | active | 1 | 2 | D-081, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-010 | The "Update" button asks for confirmation | - | active | 1 | 2 | D-082, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-011 | A confirmed update replaces the skill's files | - | active | 1 | 2 | D-082, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-012 | A version can be skipped | - | active | 1 | 2 | D-091, D-094 | 0 mechanical, 1 judgement |
-| REQ-UPD-013 | A skill with no update source shows who it came from | - | active | 1 | 2 | D-106, D-110 | 0 mechanical, 2 judgement |
-| REQ-USE-001 | Uses are counted from the omp sessions | - | active | 2 | 2 | D-004, D-062, D-117 | 0 mechanical, 1 judgement |
-| REQ-USE-002 | Chart of uses per day | - | active | 1 | 2 | D-004, D-030, D-047 | 0 mechanical, 1 judgement |
-| REQ-USE-003 | The chart is on the main screen | - | active | 1 | 2 | D-030, D-070, D-094 | 0 mechanical, 1 judgement |
-| REQ-USE-004 | Activity of one skill | - | active | 1 | 2 | D-004, D-103 | 0 mechanical, 1 judgement |
-| REQ-USE-005 | Only season uses give experience | - | active | 1 | 2 | D-005, D-047, D-120 | 0 mechanical, 1 judgement |
-| REQ-USE-006 | Historical uses are shown apart | - | active | 1 | 2 | D-047 | 0 mechanical, 1 judgement |
+| REQ-UI-005 | The interface is in English | - | fulfilled | 2 | 2 | D-063, D-084, D-094, D-132 | 0 mechanical, 1 judgement |
+| REQ-UI-006 | A left sidebar with the app name, sections, level and theme switch | - | fulfilled | 1 | 2 | D-052, D-067, D-070, D-072, D-083, D-094, D-132 | 0 mechanical, 1 judgement |
+| REQ-UPD-001 | A section to review skill updates | - | fulfilled | 1 | 2 | D-072, D-094, D-129 | 0 mechanical, 2 judgement |
+| REQ-UPD-002 | Nothing updates without the user's action | - | fulfilled | 1 | 2 | D-006, D-072, D-082, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-003 | Every update is security-checked before it can be applied | - | fulfilled | 1 | 2 | D-079, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-004 | The user sees what an update changes | - | fulfilled | 1 | 2 | D-077, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-005 | Updates are found from the source repository and the version number | - | fulfilled | 1 | 2 | D-077, D-094, D-129 | 0 mechanical, 2 judgement |
+| REQ-UPD-006 | Updates are looked for only when the user asks | - | fulfilled | 1 | 2 | D-078, D-094, D-129 | 0 mechanical, 2 judgement |
+| REQ-UPD-007 | Only external skills are checked | - | fulfilled | 1 | 2 | D-080, D-094, D-120, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-008 | A warning about the user's own edits | - | fulfilled | 1 | 2 | D-081, D-094, D-129 | 0 mechanical, 2 judgement |
+| REQ-UPD-009 | His version is saved before updating | - | fulfilled | 1 | 2 | D-081, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-010 | The "Update" button asks for confirmation | - | fulfilled | 1 | 2 | D-082, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-011 | A confirmed update replaces the skill's files | - | fulfilled | 1 | 2 | D-082, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-012 | A version can be skipped | - | fulfilled | 1 | 2 | D-091, D-094, D-129 | 0 mechanical, 1 judgement |
+| REQ-UPD-013 | A skill with no update source shows who it came from | - | fulfilled | 1 | 2 | D-106, D-110, D-129 | 0 mechanical, 2 judgement |
+| REQ-UPD-014 | Updates never shows a check date and "No check yet" together | - | active | 1 | 2 | D-133 | 0 mechanical, 1 judgement |
+| REQ-USE-001 | Uses are counted from the omp sessions | - | fulfilled | 2 | 2 | D-004, D-062, D-117, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-002 | Chart of uses per day | - | fulfilled | 1 | 2 | D-004, D-030, D-047, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-003 | The chart is on the main screen | - | fulfilled | 1 | 2 | D-030, D-070, D-094, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-004 | Activity of one skill | - | fulfilled | 1 | 2 | D-004, D-103, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-005 | Only season uses give experience | - | fulfilled | 1 | 2 | D-005, D-047, D-120, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-006 | Historical uses are shown apart | - | fulfilled | 1 | 2 | D-047, D-125 | 0 mechanical, 1 judgement |
 | REQ-USE-007 | How the collection earns experience | - | superseded | 1 | - | D-003, D-023, D-070 | 0 mechanical, 1 judgement |
-| REQ-USE-008 | Titles of the collection levels | - | active | 1 | 2 | D-063, D-088, D-094 | 0 mechanical, 2 judgement |
-| REQ-USE-009 | Level of one skill | - | active | 1 | 2 | D-089, D-094 | 0 mechanical, 1 judgement |
+| REQ-USE-008 | Titles of the collection levels | - | fulfilled | 1 | 2 | D-063, D-088, D-094, D-125 | 0 mechanical, 2 judgement |
+| REQ-USE-009 | Level of one skill | - | fulfilled | 1 | 2 | D-089, D-094, D-125 | 0 mechanical, 1 judgement |
 | REQ-USE-010 | Achievements | - | descoped | 1 | - | D-089 | 0 mechanical, 1 judgement |
-| REQ-USE-011 | The most used skills are rewarded | - | active | 1 | 2 | D-023, D-062 | 0 mechanical, 1 judgement |
-| REQ-USE-012 | Unused skills are suggested for review | - | active | 1 | 2 | D-023, D-103 | 0 mechanical, 2 judgement |
-| REQ-USE-013 | Rarity by how uncommon the skill is on GitHub | - | active | 2 | 2 | D-089, D-121 | 0 mechanical, 2 judgement |
-| REQ-USE-014 | Reviewing never uninstalls | - | active | 1 | 2 | D-009, D-023, D-062 | 0 mechanical, 1 judgement |
-| REQ-USE-015 | Catalogue health panel | - | active | 2 | 2 | D-009, D-062, D-083, D-094 | 0 mechanical, 1 judgement |
-| REQ-USE-016 | Similar skills | - | active | 1 | 2 | D-009, D-046 | 0 mechanical, 1 judgement |
-| REQ-USE-017 | Advice for each pair of similar skills | - | active | 1 | 2 | D-046, D-094 | 0 mechanical, 2 judgement |
-| REQ-USE-018 | Each level costs more than the one before | - | active | 1 | 2 | D-025, D-050, D-094 | 0 mechanical, 1 judgement |
-| REQ-USE-019 | A congratulation message at each new level | - | active | 1 | 2 | D-051, D-057, D-094 | 0 mechanical, 1 judgement |
-| REQ-USE-020 | The level-up message is a centred card shown once | - | active | 2 | 2 | D-055, D-057, D-063, D-088, D-094 | 0 mechanical, 2 judgement |
-| REQ-USE-021 | Only season uses earn experience, 10 XP each | - | active | 1 | 2 | D-047, D-070, D-075, D-094 | 0 mechanical, 1 judgement |
-| REQ-USE-022 | The cost of each level | - | active | 1 | 2 | D-050, D-070, D-075, D-094 | 0 mechanical, 1 judgement |
+| REQ-USE-011 | The most used skills are rewarded | - | fulfilled | 1 | 2 | D-023, D-062, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-012 | Unused skills are suggested for review | - | fulfilled | 1 | 2 | D-023, D-103, D-125 | 0 mechanical, 2 judgement |
+| REQ-USE-013 | Rarity by how uncommon the skill is on GitHub | - | fulfilled | 2 | 2 | D-089, D-121, D-125 | 0 mechanical, 2 judgement |
+| REQ-USE-014 | Reviewing never uninstalls | - | fulfilled | 1 | 2 | D-009, D-023, D-062, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-015 | Catalogue health panel | - | fulfilled | 2 | 2 | D-009, D-062, D-083, D-094, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-016 | Similar skills | - | fulfilled | 1 | 2 | D-009, D-046, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-017 | Advice for each pair of similar skills | - | fulfilled | 1 | 2 | D-046, D-094, D-125 | 0 mechanical, 2 judgement |
+| REQ-USE-018 | Each level costs more than the one before | - | fulfilled | 1 | 2 | D-025, D-050, D-094, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-019 | A congratulation message at each new level | - | fulfilled | 1 | 2 | D-051, D-057, D-094, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-020 | The level-up message is a centred card shown once | - | fulfilled | 2 | 2 | D-055, D-057, D-063, D-088, D-094, D-125 | 0 mechanical, 2 judgement |
+| REQ-USE-021 | Only season uses earn experience, 10 XP each | - | fulfilled | 1 | 2 | D-047, D-070, D-075, D-094, D-125 | 0 mechanical, 1 judgement |
+| REQ-USE-022 | The cost of each level | - | fulfilled | 1 | 2 | D-050, D-070, D-075, D-094, D-125 | 0 mechanical, 1 judgement |
 | REQ-USE-023 | The mastered mark is shown in the Health section | - | descoped | 1 | - | D-083, D-090 | 0 mechanical, 1 judgement |
-| REQ-USE-024 | Uses are also counted from Claude Code and Codex logs | - | active | 1 | 2 | D-117 | 0 mechanical, 1 judgement |
+| REQ-USE-024 | Uses are also counted from Claude Code and Codex logs | - | fulfilled | 1 | 2 | D-117, D-125 | 0 mechanical, 1 judgement |
 
 ## Decisions to requirements
 
@@ -298,6 +300,16 @@
 | D-121 | Rarity is how uncommon a skill is on GitHub | owner | REQ-USE-013 |
 | D-122 | The result is accepted by area, with screenshots | owner | - |
 | D-123 | Builder changes made for the review | derived | REQ-ANA-030, REQ-DAT-012, REQ-LAU-015 |
+| D-124 | The catalogue area is accepted | owner | REQ-CAT-001, REQ-CAT-002, REQ-CAT-003, REQ-CAT-004, REQ-CAT-005, REQ-CAT-008, REQ-CAT-009, REQ-CAT-010, REQ-CAT-011, REQ-CAT-012, REQ-CAT-013, REQ-CAT-014, REQ-CAT-015, REQ-CAT-016, REQ-CAT-017, REQ-CAT-018, REQ-CAT-019, REQ-CAT-020, REQ-CAT-021, REQ-CAT-022, REQ-CAT-023, REQ-CAT-024, REQ-CAT-025, REQ-CAT-026, REQ-CAT-027, REQ-CAT-028, REQ-CAT-029 |
+| D-125 | The usage and game area is accepted | owner | REQ-USE-001, REQ-USE-002, REQ-USE-003, REQ-USE-004, REQ-USE-005, REQ-USE-006, REQ-USE-008, REQ-USE-009, REQ-USE-011, REQ-USE-012, REQ-USE-013, REQ-USE-014, REQ-USE-015, REQ-USE-016, REQ-USE-017, REQ-USE-018, REQ-USE-019, REQ-USE-020, REQ-USE-021, REQ-USE-022, REQ-USE-024 |
+| D-126 | The analysis and watchlist area is accepted | owner | REQ-ANA-001, REQ-ANA-002, REQ-ANA-003, REQ-ANA-004, REQ-ANA-005, REQ-ANA-006, REQ-ANA-007, REQ-ANA-008, REQ-ANA-009, REQ-ANA-010, REQ-ANA-011, REQ-ANA-012, REQ-ANA-013, REQ-ANA-014, REQ-ANA-015, REQ-ANA-016, REQ-ANA-017, REQ-ANA-018, REQ-ANA-019, REQ-ANA-020, REQ-ANA-021, REQ-ANA-022, REQ-ANA-024, REQ-ANA-025, REQ-ANA-026, REQ-ANA-027, REQ-ANA-028, REQ-ANA-029, REQ-ANA-030 |
+| D-127 | The security area is accepted | owner | REQ-SEC-001, REQ-SEC-002, REQ-SEC-003, REQ-SEC-004, REQ-SEC-005, REQ-SEC-006, REQ-SEC-007, REQ-SEC-008, REQ-SEC-009, REQ-SEC-010, REQ-SEC-011, REQ-SEC-012, REQ-SEC-013, REQ-SEC-014, REQ-SEC-015 |
+| D-128 | The Discover area is accepted | owner | REQ-DIS-001, REQ-DIS-002, REQ-DIS-003, REQ-DIS-004, REQ-DIS-005, REQ-DIS-006, REQ-DIS-007, REQ-DIS-008, REQ-DIS-009, REQ-DIS-010, REQ-DIS-011, REQ-DIS-012 |
+| D-129 | The updates area is accepted | owner | REQ-UPD-001, REQ-UPD-002, REQ-UPD-003, REQ-UPD-004, REQ-UPD-005, REQ-UPD-006, REQ-UPD-007, REQ-UPD-008, REQ-UPD-009, REQ-UPD-010, REQ-UPD-011, REQ-UPD-012, REQ-UPD-013 |
+| D-130 | The launch and local server area is accepted | owner | REQ-LAU-001, REQ-LAU-002, REQ-LAU-003, REQ-LAU-004, REQ-LAU-005, REQ-LAU-006, REQ-LAU-007, REQ-LAU-008, REQ-LAU-009, REQ-LAU-010, REQ-LAU-012, REQ-LAU-013, REQ-LAU-014, REQ-LAU-015 |
+| D-131 | The data and privacy area is accepted | owner | REQ-DAT-001, REQ-DAT-002, REQ-DAT-003, REQ-DAT-004, REQ-DAT-005, REQ-DAT-006, REQ-DAT-007, REQ-DAT-008, REQ-DAT-009, REQ-DAT-010, REQ-DAT-011, REQ-DAT-012 |
+| D-132 | The interface area is accepted | owner | REQ-UI-001, REQ-UI-002, REQ-UI-003, REQ-UI-005, REQ-UI-006 |
+| D-133 | The two small fixes and the spec-public refresh are approved | owner | REQ-LAU-016, REQ-UPD-014 |
 
 ## Open points
 
@@ -346,6 +358,8 @@
 | OP-041 | Should this audit finding be fixed: the loopback API trusting the Origin header? | decided | D-114 |
 | OP-042 | Should this audit finding be fixed: triage exclusions looking only at a 140-character snippet? | decided | D-114 |
 | OP-043 | Should this audit finding be fixed: templates, examples and samples folders treated as inert even for runnable files? | decided | D-114 |
+| OP-044 | Should the "Last checked" and "No check yet" messages in Updates agree? | decided | D-133 |
+| OP-045 | Should each server port have its own session token file? | decided | D-133 |
 
 ## Units to requirements
 

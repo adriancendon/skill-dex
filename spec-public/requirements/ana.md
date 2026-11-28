@@ -12,10 +12,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: The local server is running.
 - exceptions: An empty text, a text over 300 characters or with a line break is refused with a message.
 - source: D-015, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-002 The entry shows that it is being analysed
 - pattern: state
@@ -28,10 +29,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-015, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-003 Only one analysis at a time
 - pattern: unwanted
@@ -44,10 +46,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-016, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-004 Limited permissions
 - pattern: ubiquitous
@@ -60,10 +63,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: `bash` is not sandboxed; its limits are instructions in the prompt (R-005).
 - source: D-017, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-005 Time and cost limit
 - pattern: ubiquitous
@@ -75,10 +79,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043, D-036
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-006 An analysis never installs
 - pattern: ubiquitous
@@ -90,10 +95,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-006, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-007 What the report says, in order
 - pattern: ubiquitous
@@ -105,10 +111,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-007, D-043, D-084
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-084 v2
+- accepted_by: D-126 v2
 - changes:
   - v2 D-084: the three verdicts are named by meaning in English, not as the Spanish words "Instalar", "Instalar con cambios" and "No instalar"
 - note: built in 749b7e7, confirmed by D-094.
@@ -123,10 +130,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-015, D-018, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-009 The watchlist entry is filled in
 - pattern: event
@@ -138,10 +146,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-008, D-015, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-010 An analysis never discards by itself
 - pattern: ubiquitous
@@ -153,10 +162,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043, D-044
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-011 Already investigated skills are recognised
 - pattern: event
@@ -168,10 +178,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: An entry whose previous analysis failed is analysed again directly.
 - source: D-010, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-012 Analyse a known skill again
 - pattern: event
@@ -183,10 +194,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: No other analysis is running.
 - exceptions: none
 - source: D-043, D-044
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-013 Cancel a running analysis
 - pattern: event
@@ -198,10 +210,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-014 Remove a failed attempt
 - pattern: event
@@ -213,10 +226,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-015 Only failed attempts can be removed
 - pattern: unwanted
@@ -229,10 +243,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-010, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-016 An analysis cut off by closing the app is marked failed
 - pattern: event
@@ -244,10 +259,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-017 A discard needs a reason
 - pattern: unwanted
@@ -260,10 +276,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-010, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-018 A discarded entry is kept with its reason and date
 - pattern: event
@@ -275,10 +292,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-010, D-043, D-044, D-060
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-019 Recover a discarded entry
 - pattern: event
@@ -290,10 +308,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043, D-044
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-020 An installed skill leaves the watchlist view
 - pattern: state
@@ -305,10 +324,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: An entry installed under another folder name stays in the watchlist.
 - source: D-043, D-008, D-060
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-021 The full output of each analysis is kept
 - pattern: event
@@ -320,10 +340,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-022 SkillSpector runs inside every analysis
 - pattern: ubiquitous
@@ -335,10 +356,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: Tools that are not skills (a CLI, a proxy) are reviewed by hand instead.
 - source: D-012, D-043
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-043 v1
+- accepted_by: D-126 v1
 
 ### REQ-ANA-024 The previous discard reason is kept as history
 - pattern: event
@@ -351,10 +373,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-044
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-044 v1
+- accepted_by: D-126 v1
 - note: built in 749b7e7, confirmed by D-094.
 
 ### REQ-ANA-025 A discard without a written reason shows the report's verdict
@@ -367,10 +390,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-044
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-044 v1
+- accepted_by: D-126 v1
 - builder_choice: whether the verdict is also written into `discard_reason` in `Seguimiento/watchlist.json`
 
 ### REQ-ANA-026 Analysis reports are written in English
@@ -383,10 +407,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: Quotes from the analysed skill keep their own language.
 - source: D-084
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-084 v1
+- accepted_by: D-126 v1
 - builder_choice: the English verdict words that replace "Instalar", "Instalar con cambios" and "No instalar", and the places that read them (`Tecnico/server.mjs`, `Tecnico/web/`)
 - note: built in 749b7e7, confirmed by D-094.
 
@@ -401,10 +426,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: The report of <skill> stays in Spanish and its entry stays discarded: its regeneration hit the cost cap of one analysis.
 - source: D-092, D-100
-- status: active
+- status: fulfilled
 - version: 2
 - priority: 2
 - ratified_by: D-100 v2
+- accepted_by: D-126 v2
 - changes:
   - v2 D-100: <skill> keeps its Spanish report
 - builder_choice: the order of the runs, and whether the Spanish report is kept apart until the English one exists
@@ -420,10 +446,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-126 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-ANA-029 Agent tasks are disabled when no CLI is available
@@ -436,10 +463,11 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-117
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-117 v1
+- accepted_by: D-126 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
 
 ### REQ-ANA-030 The model of each runner is configurable
@@ -452,8 +480,9 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 - conditions: none
 - exceptions: none
 - source: D-123
-- status: active
+- status: fulfilled
 - version: 1
 - priority: 2
 - ratified_by: D-119 v1
+- accepted_by: D-126 v1
 - note: built on branch multi-agente, merged and pushed 2026-11-28
