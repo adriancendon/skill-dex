@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { buildPrompt, parseAnalysis, checkReport, entryFields, verdictOf, REPORT_SECTIONS, ANALYSIS_MODEL } from '../analysis.mjs';
+import { buildPrompt, parseAnalysis, checkReport, entryFields, verdictOf, REPORT_SECTIONS } from '../analysis.mjs';
+import { DEFAULT_MODELS } from '../runner.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const fixture = fs.readFileSync(path.join(here, 'fixtures/analysis-output.txt'), 'utf8');
@@ -34,7 +35,13 @@ describe('analysis prompt', () => {
     assert.match(p, /<<<QUERY https:\/\/github\.com\/example\/lint-helper QUERY>>>/);
     assert.match(p, /node \/x\/skillcheck\.mjs/);
   });
-  it('runs on an OpenAI model', () => assert.match(ANALYSIS_MODEL, /^openai-codex\//));
+  it('omp runs default to an OpenAI model', () => assert.match(DEFAULT_MODELS.omp, /^openai-codex\//));
+  it('tells each runner how to follow a guide skill, and Codex gets the built-in steps', () => {
+    assert.match(buildPrompt('x', '/x/skillcheck.mjs', { guide: 'my-analyst', runner: 'claude' }), /load the "my-analyst" skill with the Skill tool/);
+    const codex = buildPrompt('x', '/x/skillcheck.mjs', { guide: 'my-analyst', runner: 'codex', skillDirs: ['~/.codex/skills', '~/.agents/skills'] });
+    assert.doesNotMatch(codex, /my-analyst/);
+    assert.match(codex, /list ~\/\.codex\/skills ~\/\.agents\/skills/);
+  });
 });
 
 describe('analysis parser', () => {

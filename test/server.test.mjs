@@ -39,8 +39,8 @@ before(async () => {
   fs.cpSync(path.join(repo, 'web'), path.join(app, 'web'), { recursive: true, filter: f => path.basename(f) !== 'data.js' });
   fs.writeFileSync(path.join(app, 'web/data.js'), 'window.SKILLDEX = null;\n');
   port = await freePort();
-  const env = { ...process.env, HOME: path.join(root, 'home'), SKILLDEX_DATA: data, PORT: String(port), OMP_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false' };
-  for (const k of Object.keys(env)) if (k === 'SKILLDEX_WATCHLIST' || k.startsWith('SKILLDEX_UPD_') || k === 'SKILLSPECTOR_BIN') delete env[k];
+  const env = { ...process.env, HOME: path.join(root, 'home'), SKILLDEX_DATA: data, PORT: String(port), OMP_BIN: '/usr/bin/false', CLAUDE_BIN: '/usr/bin/false', CODEX_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false' };
+  for (const k of Object.keys(env)) if (k === 'SKILLDEX_WATCHLIST' || k.startsWith('SKILLDEX_UPD_') || k.startsWith('SKILLDEX_MODEL_') || ['SKILLSPECTOR_BIN', 'SKILLDEX_RUNNER', 'SKILLDEX_SKILL_DIRS'].includes(k)) delete env[k];
   server = spawn(process.execPath, ['server.mjs'], { cwd: app, env, stdio: ['ignore', 'pipe', 'pipe'] });
   server.stdout.on('data', d => { log += d; }); server.stderr.on('data', d => { log += d; });
   for (let i = 0; i < 100 && !log.includes('Skill Dex at'); i++) {

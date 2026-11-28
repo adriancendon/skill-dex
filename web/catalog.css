@@ -147,6 +147,7 @@ small,.muted{color:var(--muted)}
 .sec-tag .ico{width:14px;height:14px}
 .project-tag{display:inline-flex;gap:3px;align-items:center;color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:10px;font-weight:500;white-space:nowrap}
 .project-tag .ico{width:12px;height:12px}
+.agent-tag{color:var(--muted);font-weight:450}
 .usage-cell{text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
 .usage-cell small{font-size:10px;margin-left:4px}
 .usage-history{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:3px;white-space:nowrap}
@@ -158,6 +159,12 @@ small,.muted{color:var(--muted)}
 .favourite[aria-pressed=true]{color:var(--blue)}
 .favourite[aria-pressed=true] svg{fill:var(--blue-soft)}
 .empty{padding:40px 0;color:var(--muted)}
+.empty-state{padding:28px 0;max-width:680px;color:var(--ink);font-size:13px}
+.empty-state h3{font-size:16px;margin-bottom:8px}
+.empty-state p{margin:8px 0;color:var(--muted)}
+.empty-state ul{margin:8px 0 12px 18px;line-height:1.9}
+.empty-state code{font-size:12px;background:var(--side);border-radius:4px;padding:1px 5px;color:var(--ink)}
+.runner-notice{margin:-12px 0 18px}
 
 /* Cards view: same order, filters and grouping as the list */
 .cards-view .column-head{display:none}

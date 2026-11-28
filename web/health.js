@@ -60,6 +60,7 @@ function renderPairs() {
   $('pair-status').textContent = !pairs.length || !missing ? ''
     : !SRV ? 'Advice is written by the local server. Open Skill Dex.app to get the missing advice.'
     : !ps ? 'Checking for advice…'
+    : ps.off ? ps.off
     : ps.running.length ? `An agent is writing advice for ${plural(ps.running.length, 'pair')} now, in the background. One job runs at a time.`
     : ps.busy ? 'Missing advice waits until the running analysis or background job finishes.'
     : ps.failed.length && !ps.waiting.length ? 'The missing advice could not be written this time. It is tried again the next time Skill Dex opens.'
@@ -74,5 +75,5 @@ async function loadPairs() {
   } catch { pairState = pairState || { advice: {}, running: [], waiting: [], failed: [], busy: false }; }
   if (view !== 'health') return;
   renderPairs();
-  if (pairState.running.length || pairState.busy || pairState.waiting.length) pairPoll = setTimeout(loadPairs, 8000);
+  if (!pairState.off && (pairState.running.length || pairState.busy || pairState.waiting.length)) pairPoll = setTimeout(loadPairs, 8000);
 }

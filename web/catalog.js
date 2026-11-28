@@ -9,6 +9,9 @@ const g = id => st[id] || (st[id] = {});
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const SRV = location.protocol.startsWith('http');
+// The agent CLI that runs analyses and background descriptions (runner.mjs); off when none is installed.
+const RUNNER = D.runner || { available: true, kind: 'omp', label: 'omp' };
+const limitText = () => RUNNER.kind === 'codex' ? 'stops after 20 minutes (Codex offers no cost limit)' : 'stops at $1.50 or 20 minutes';
 
 // ---------- Icons (proposal A's badges): the skill's own icon in skills-meta.json, else from words of the description, else from the category ----------
 const P = {
@@ -199,8 +202,11 @@ function secTag(s) {
   return `<span class="sec-tag" title="No security alerts after triage. A scan is not a guarantee of safety.">${svg('shieldCheck')}<span class="sr-only">No security alerts</span></span>`;
 }
 // Skills that live inside a project carry its name (REQ-CAT-015); the same skill in two projects shows two labels.
-const projectTag = s => s.project ? `<span class="project-tag" title="Lives in the ${esc(s.project)} project. omp loads it only in sessions opened there.">${svg('folder')}<span class="sr-only">Project: </span>${esc(s.project)}</span>` : '';
-const flags = s => `${projectTag(s)}${secTag(s)}${untried(s) ? '<span class="attention">Untried</span>' : ''}`;
+const projectTag = s => s.project ? `<span class="project-tag" title="Lives in the ${esc(s.project)} project. Agents load it only in sessions opened there.">${svg('folder')}<span class="sr-only">Project: </span>${esc(s.project)}</span>` : '';
+// Which agents have the skill in their skill folders: omp, Claude Code, Codex, Shared (~/.agents/skills), Custom, or several.
+const agentList = s => s.agents?.length ? s.agents : ['omp'];
+const agentTag = s => `<span class="project-tag agent-tag" title="In the skill folders of ${esc(agentList(s).join(', '))}">${svg('terminal')}<span class="sr-only">Agents: </span>${esc(agentList(s).join(' · '))}</span>`;
+const flags = s => `${agentTag(s)}${projectTag(s)}${secTag(s)}${untried(s) ? '<span class="attention">Untried</span>' : ''}`;
 const usedSort = () => ['total', 'season'].includes($('sort').value);
 function rankOf(s, rank) { return usedSort() && rank < 10 && ($('sort').value === 'season' ? season(s) : total(s)) > 0 ? rank + 1 : ''; }
 function favButton(s) {
@@ -221,10 +227,10 @@ function compareFor(sort) {
     : (sort === 'total' ? total(b) - total(a) : season(b) - season(a)) || total(b) - total(a) || a.name.localeCompare(b.name);
 }
 function renderLibrary() {
-  const q = $('search').value.trim().toLowerCase(), category = $('category').value, origin = $('origin').value, sort = $('sort').value, grouped = $('group-category').checked;
+  const q = $('search').value.trim().toLowerCase(), category = $('category').value, origin = $('origin').value, agent = $('agent').value, sort = $('sort').value, grouped = $('group-category').checked;
   const global = [...D.skills].sort(compareFor(sort)), ranks = new Map(global.map((s, i) => [s.id, i]));
-  const selected = global.filter(s => (!q || [s.name, s.description, s.short, s.category, catName(s.category), s.project].join(' ').toLowerCase().includes(q))
-    && (!category || s.category === category) && (!origin || s.origin === origin)
+  const selected = global.filter(s => (!q || [s.name, s.description, s.short, s.category, catName(s.category), s.project, ...agentList(s)].join(' ').toLowerCase().includes(q))
+    && (!category || s.category === category) && (!origin || s.origin === origin) && (!agent || agentList(s).includes(agent))
     && (filter !== 'favourites' || g(s.id).f) && (filter !== 'review' || needsReview(s)));
   const render = s => (libraryMode === 'cards' ? card : row)(s, ranks.get(s.id));
   $('library-view').classList.toggle('cards-view', libraryMode === 'cards');
@@ -245,8 +251,16 @@ function renderLibrary() {
       return `<details class="category"${collapsed.has(c) ? '' : ' open'} data-group="${esc(c)}"><summary style="--hue:${hue(c)}"><span class="dot"></span>${esc(catName(c))}<span class="group-count">${list.length}</span></summary><div class="${libraryMode === 'cards' ? 'card-grid' : ''}">${list.map(render).join('')}</div></details>`;
     }).join('');
   } else html = `<div class="flat-list">${selected.map(render).join('')}</div>`;
-  $('skill-list').innerHTML = selected.length ? html : '<p class="empty">No skills match this view. Try another search or filter.</p>';
+  $('skill-list').innerHTML = !D.skills.length ? emptyLibrary() : selected.length ? html : '<p class="empty">No skills match this view. Try another search or filter.</p>';
   document.querySelectorAll('[data-group]').forEach(d => d.addEventListener('toggle', () => { d.open ? collapsed.delete(d.dataset.group) : collapsed.add(d.dataset.group); }));
+}
+// A brand-new user with no skills anywhere: where Skill Dex looked, and how to add another folder.
+function emptyLibrary() {
+  const S = D.sources || { global: [], projectDirs: [], projectRoots: [] }, code = t => `<code>${esc(t)}</code>`;
+  return `<div class="empty-state"><h3>No skills found yet</h3><p>Skill Dex lists the SKILL.md skills of your AI agents: omp, Claude Code, Codex and any agent that uses the shared <code>~/.agents/skills</code> folder. It looked here and found none:</p>
+    <ul>${S.global.map(x => `<li>${code(x.dir)} <span class="muted">${esc(x.agent)}${x.found ? '' : ', folder not there'}</span></li>`).join('')}</ul>
+    <p>It also looks in the ${S.projectDirs.map(code).join(', ')} folders of projects under ${S.projectRoots.map(code).join(', ') || 'your projects folder'}.</p>
+    <p><strong>Keep your skills somewhere else?</strong> Add the folder to ${code('config.json')} in ${code(D.dataDir || 'the data folder')}, for example ${code('{"skill_dirs": ["~/my-skills"]}')}, or set ${code('SKILLDEX_SKILL_DIRS')} (folders separated by colons). Then press Refresh.</p></div>`;
 }
 function toggleFavourite(id) { g(id).f = !g(id).f; save(); renderLibrary(); }
 
@@ -258,9 +272,9 @@ function wlActs(s, inDetail) {
   const id = esc(s.id), open = inDetail ? '' : `<button type="button" class="outline" data-open="w:${id}">View analysis</button>`;
   const src = !inDetail && safeSource(s.source) ? `<a class="text-button" href="${esc(s.source)}" target="_blank" rel="noopener noreferrer">${isGitHub(s.source) ? 'Open on GitHub' : 'Open source page'}<span class="sr-only"> (opens in a new tab)</span></a>` : '';
   if (s.status === 'analizando') return `<span class="running" role="status">Analysing… <b class="el" data-id="${id}">running</b></span><button type="button" class="outline" data-cancel="${id}">Cancel</button>`;
-  if (s.status === 'error') return `<button type="button" class="outline" data-retry="${id}">Retry</button><button type="button" class="text-button" data-remove="${id}">Remove attempt</button>${src}`;
+  if (s.status === 'error') return `${RUNNER.available ? `<button type="button" class="outline" data-retry="${id}">Retry</button>` : ''}<button type="button" class="text-button" data-remove="${id}">Remove attempt</button>${src}`;
   if (s.status === 'descartada') return `${open}<button type="button" class="text-button" data-recover="${id}">Recover to watchlist</button>${src}`;
-  const analyse = s.status === 'en-analisis' && !s.report ? `<button type="button" class="outline" data-analyse-entry="${id}">Analyse</button>` : ''; // "Awaiting analysis"
+  const analyse = RUNNER.available && s.status === 'en-analisis' && !s.report ? `<button type="button" class="outline" data-analyse-entry="${id}">Analyse</button>` : ''; // "Awaiting analysis"
   return `${analyse}${open}<button type="button" class="text-button" data-discard="${id}">Discard with a reason</button>${src}`;
 }
 function watchRow(s) {
@@ -333,7 +347,7 @@ async function refresh(security) {
 // ---------- Analyse a skill ----------
 const dlg = $('analyse-dialog');
 function openAnalyse() {
-  $('analyse-body').innerHTML = `<form id="analyse-form" novalidate><h2 id="analyse-title">Analyse a skill</h2><p>Paste a GitHub URL or type a name. It is investigated <b>without installing anything</b>, and the result appears in your watchlist. If it was investigated before, you will see what you decided.</p><p>The agent has limited permissions: reading, web search and a temporary clone. One analysis runs at a time. It usually takes 3–5 minutes, uses your plan's quota and stops at $1.50 or 20 minutes.</p><label for="analyse-url">Skill name or GitHub URL</label><input id="analyse-url" placeholder="https://github.com/owner/repo" autocomplete="off" aria-describedby="analyse-message"><div id="analyse-message" class="analyse-message" role="status" aria-live="polite"></div><div class="dialog-buttons"><button type="button" class="outline" data-close-analyse>Cancel</button><button type="submit" class="primary" id="analyse-submit">Analyse without installing</button></div></form>`;
+  $('analyse-body').innerHTML = `<form id="analyse-form" novalidate><h2 id="analyse-title">Analyse a skill</h2><p>Paste a GitHub URL or type a name. It is investigated <b>without installing anything</b>, and the result appears in your watchlist. If it was investigated before, you will see what you decided.</p><p>${esc(RUNNER.label || 'The agent')} runs it with limited permissions: reading, web search and a temporary clone. One analysis runs at a time. It usually takes 3–5 minutes, uses your plan's quota and ${limitText()}.</p><label for="analyse-url">Skill name or GitHub URL</label><input id="analyse-url" placeholder="https://github.com/owner/repo" autocomplete="off" aria-describedby="analyse-message"><div id="analyse-message" class="analyse-message" role="status" aria-live="polite"></div><div class="dialog-buttons"><button type="button" class="outline" data-close-analyse>Cancel</button><button type="submit" class="primary" id="analyse-submit">Analyse without installing</button></div></form>`;
   $('analyse-form').addEventListener('submit', e => { e.preventDefault(); runAnalyse(); });
   if (!dlg.open) dlg.showModal();
   $('analyse-url').focus();
@@ -358,9 +372,9 @@ async function runAnalyse(force, q) {
     const why = x.status === 'descartada' ? `You discarded it${x.discarded_at ? ' on ' + esc(longDate(x.discarded_at)) : ''} because: <b>${esc(x.discard_reason || x.verdict || 'no reason recorded')}</b>` : `Status: ${esc(statusName(x))}${x.analyzed_at ? ' · analysed on ' + esc(longDate(x.analyzed_at)) : ''}. ${esc(x.verdict || '')}`;
     const last = (x.discard_history || []).at(-1); // an earlier discard stays visible after recovering (REQ-ANA-024)
     const before = last ? `</p><p>Discarded before${last.discarded_at ? ' on ' + esc(longDate(last.discarded_at)) : ''}: ${esc(last.reason || 'no reason recorded')}${x.discard_history.length > 1 ? ` (and ${x.discard_history.length - 1} earlier)` : ''}.` : '';
-    $('analyse-body').innerHTML = `<h2 id="analyse-title">Already investigated: ${esc(x.name)}</h2><p>${why}${before}</p><div class="dialog-buttons"><button type="button" class="outline" data-close-analyse>Close</button><button type="button" class="outline" data-open="w:${esc(x.id)}">View report</button><button type="button" class="primary" data-reanalyse="${esc(q)}">Analyse again (uses quota)</button></div>`;
+    $('analyse-body').innerHTML = `<h2 id="analyse-title">Already investigated: ${esc(x.name)}</h2><p>${why}${before}</p><div class="dialog-buttons"><button type="button" class="outline" data-close-analyse>Close</button><button type="button" class="outline" data-open="w:${esc(x.id)}">View report</button>${RUNNER.available ? `<button type="button" class="primary" data-reanalyse="${esc(q)}">Analyse again (uses quota)</button>` : ''}</div>`;
     if (!dlg.open) dlg.showModal();
-    dlg.querySelector('[data-reanalyse]').focus();
+    (dlg.querySelector('[data-reanalyse]') || dlg.querySelector('[data-close-analyse]')).focus();
     return;
   }
   const msg = r.data.error || 'The analysis could not be started.';
@@ -409,7 +423,7 @@ document.addEventListener('click', e => {
   else if (d.recover) setWatch(d.recover, 'en-analisis');
   else if (d.cancel) cancelJob(d.cancel);
   else if (d.retry) retryJob(d.retry);
-  else if (d.analyseEntry) { const w = D.watchlist.find(x => x.id === d.analyseEntry); if (w && confirm(`Analyse ${w.name} now? It uses your plan's quota and stops at $1.50 or 20 minutes. Nothing is installed.`)) retryJob(w.id); }
+  else if (d.analyseEntry) { const w = D.watchlist.find(x => x.id === d.analyseEntry); if (w && confirm(`Analyse ${w.name} now? It uses your plan's quota and ${limitText()}. Nothing is installed.`)) retryJob(w.id); }
   else if (d.remove) removeAttempt(d.remove);
   else if (d.reanalyse) runAnalyse(true, d.reanalyse);
   else if ('closeAnalyse' in d) dlg.close();
@@ -420,7 +434,7 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) && !document.querySelector('dialog[open]')) { e.preventDefault(); if (view !== 'library') setView('library'); $('search').focus(); }
 });
-['search', 'category', 'origin', 'sort', 'group-category'].forEach(id => $(id).addEventListener(id === 'search' ? 'input' : 'change', renderLibrary));
+['search', 'category', 'origin', 'agent', 'sort', 'group-category'].forEach(id => $(id).addEventListener(id === 'search' ? 'input' : 'change', renderLibrary));
 
 // Ping keeps the server alive while the tab is open and shows the elapsed time of a running analysis.
 if (SRV) {
@@ -439,6 +453,14 @@ if (SRV) {
 
 // ---------- Start ----------
 $('category').innerHTML = '<option value="">All categories</option>' + [...new Set(D.skills.map(s => s.category).filter(Boolean))].sort((a, b) => catName(a).localeCompare(catName(b))).map(c => `<option value="${esc(c)}">${esc(catName(c))}</option>`).join('');
+const AGENT_ORDER = ['omp', 'Claude Code', 'Codex', 'Shared', 'Custom'];
+$('agent').innerHTML = '<option value="">All agents</option>' + [...new Set(D.skills.flatMap(agentList))].sort((a, b) => (AGENT_ORDER.indexOf(a) + 1 || 99) - (AGENT_ORDER.indexOf(b) + 1 || 99)).map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+if (!RUNNER.available) { // no agent CLI: analyses and background descriptions are off, everything else works
+  $('analyse-button').disabled = true;
+  $('analyse-button').setAttribute('aria-describedby', 'runner-notice');
+  $('runner-notice').textContent = RUNNER.notice;
+  $('runner-notice').hidden = false;
+}
 $('search-icon').innerHTML = svg('search');
 $('analyse-icon').innerHTML = svg('plusSquare');
 $('refresh-button').innerHTML = svg('refresh') + 'Refresh';

@@ -1,4 +1,4 @@
-// Scans every installed skill and every project skill (skill-sources.mjs) with SkillSpector (static, --no-llm).
+// Scans every skill of every agent and every project skill (skill-sources.mjs) with SkillSpector (static, --no-llm).
 // Only skills that changed are scanned again. Every finding is saved in cache/security.json; triage is applied in
 // scan.mjs, so it can be adjusted without scanning again.
 import fs from 'node:fs';
@@ -21,7 +21,7 @@ function hashDir(d) {
     if (fs.statSync(f).isDirectory()) walk(f); else { h.update(e.name); h.update(fs.readFileSync(f)); } } })(d);
   return h.digest('hex');
 }
-// Keyed like the catalogue: the folder name for omp skills, "<folder>@<project>" for project skills.
+// Keyed like the catalogue: the folder name (or "<folder>@<agent>") for global skills, "<folder>@<project>" for project skills.
 const jobs = listSkillDirs().map(({ id, dir }) => ({ id, real: dir, hash: hashDir(dir) }));
 const todo = jobs.filter(j => cache[j.id]?.hash !== j.hash || cache[j.id]?.v !== SCHEMA);
 let i = 0;

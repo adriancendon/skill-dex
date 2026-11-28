@@ -1,20 +1,20 @@
-// Advice for each pair of similar skills (REQ-USE-017, D-046), written once per pair by an OpenAI omp agent
+// Advice for each pair of similar skills (REQ-USE-017, D-046), written once per pair by the agent CLI of runner.mjs
 // into pair-advice.json in the data folder: { "a|b": { outcome, advice, generated_at } }, ids sorted, editable by hand.
 // Background job: only missing pairs, one job at a time, never alongside an analysis or another background job.
 // The advice is text for the user; nothing here touches a skill folder (REQ-USE-014).
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
+import { runAgent } from './runner.mjs';
 import { dataFile, shownPath } from './paths.mjs';
 
 const OUTCOMES = ['keep-one', 'adapt', 'separate'];
-let cfg = null; // { file, dataFile, cacheDir, omp, model, busy }
+let cfg = null; // { file, dataFile, cacheDir, runner (→ chooseRunner() result), busy }
 let pairJob = null; // { child, cancelled, keys }
 const tried = new Set(); // keys attempted in this server run, so a failure is not retried in a loop
 
-export function init({ here, omp, model, busy }) {
-  cfg = { file: dataFile('pair-advice.json'), dataFile: path.join(here, 'web/data.js'), cacheDir: path.join(here, 'cache'), omp, model, busy };
+export function init({ here, runner, busy }) {
+  cfg = { file: dataFile('pair-advice.json'), dataFile: path.join(here, 'web/data.js'), cacheDir: path.join(here, 'cache'), runner, busy };
 }
 export const running = () => !!pairJob;
 export const pairKey = (a, b) => [a, b].sort().join('|');
@@ -57,17 +57,16 @@ ADVICE>>>`;
 // Called by the server whenever it is idle (after start, a refresh, an analysis or the short-description job).
 export function fill() {
   if (!cfg || pairJob || cfg.busy()) return;
+  const runner = cfg.runner();
+  if (!runner.available) return; // no agent CLI: stays "Advice pending"
   const pairs = missingPairs(true);
   if (!pairs.length) return;
   const keys = pairs.map(p => p.key);
   keys.forEach(k => tried.add(k));
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'skilldex-pairs-'));
-  const args = ['-p', '--model', cfg.model, '--no-tools', '--no-skills', '--no-rules', '--no-context-files', '--no-extensions', '--no-lsp', '--no-session', '--no-title', '--thinking', 'low', '--max-time', '4m', '--max-cost', '0.4', prompt(pairs)];
-  const child = spawn(cfg.omp, args, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
-  const me = pairJob = { child, cancelled: false, keys };
-  let out = '', done = false;
-  child.stdout.on('data', d => { out += d; }); child.stderr.on('data', d => { out += d; });
-  const finish = code => {
+  const me = pairJob = { child: null, cancelled: false, keys };
+  let done = false;
+  const finish = (code, out) => {
     if (done) return; done = true;
     if (pairJob === me) pairJob = null;
     fs.rmSync(cwd, { recursive: true, force: true });
@@ -90,8 +89,7 @@ export function fill() {
     fs.writeFileSync(tmp, JSON.stringify(cur, null, 2) + '\n');
     fs.renameSync(tmp, cfg.file);
   };
-  child.on('error', () => finish(-1)); // omp not available: stays "Advice pending"
-  child.on('close', finish);
+  me.child = runAgent(runner, 'text', prompt(pairs), { cwd, minutes: 4, cost: 0.4 }, finish);
 }
 export function stop() { if (pairJob) { pairJob.cancelled = true; pairJob.child.kill('SIGTERM'); pairJob = null; } }
 
@@ -103,5 +101,6 @@ export function route(method, pathname) {
   if (!advice) return { code: 500, body: { error: `${shownPath(cfg.file)} could not be read; it was left untouched.` } };
   const missing = missingPairs(false).map(p => p.key);
   const runningKeys = new Set(pairJob?.keys || []);
-  return { code: 200, body: { advice, running: missing.filter(k => runningKeys.has(k)), waiting: missing.filter(k => !runningKeys.has(k) && !tried.has(k)), failed: missing.filter(k => !runningKeys.has(k) && tried.has(k)), busy: !!cfg.busy() } };
+  const runner = cfg.runner();
+  return { code: 200, body: { advice, running: missing.filter(k => runningKeys.has(k)), waiting: missing.filter(k => !runningKeys.has(k) && !tried.has(k)), failed: missing.filter(k => !runningKeys.has(k) && tried.has(k)), busy: !!cfg.busy(), off: runner.available ? '' : runner.notice } };
 }

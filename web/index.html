@@ -51,6 +51,7 @@ try { document.documentElement.dataset.theme = localStorage.getItem('skilldex.th
     <div><h1 id="page-title">Your skill library</h1><p class="subtitle" id="page-subtitle">A clear view of what helps you do your best work.</p></div>
     <button type="button" class="primary" id="analyse-button" aria-label="Analyse a skill"><span id="analyse-icon"></span><span class="primary-label">Analyse a skill</span></button>
   </header>
+  <p class="notice runner-notice" id="runner-notice" role="status" hidden></p>
   <section class="overview" id="overview" aria-label="Usage overview">
     <div>
       <div class="section-top"><h2>Daily rhythm</h2><small>Last 30 days</small></div>
@@ -68,11 +69,12 @@ try { document.documentElement.dataset.theme = localStorage.getItem('skilldex.th
   <div id="library-view">
     <div class="review-nudge" id="nudge"></div>
     <section aria-labelledby="library-title">
-      <div class="library-heading"><h2 id="library-title">Library <span id="library-count"></span></h2><span class="muted small">Installed in omp</span></div>
+      <div class="library-heading"><h2 id="library-title">Library <span id="library-count"></span></h2><span class="muted small">Installed for your agents</span></div>
       <div class="filters">
         <label class="search"><span id="search-icon"></span><span class="sr-only">Search skills</span><input id="search" type="search" placeholder="Find a skill or a purpose…" autocomplete="off"></label>
         <label class="sr-only" for="category">Filter by category</label><select id="category"></select>
         <label class="sr-only" for="origin">Filter by origin</label><select id="origin"><option value="">All origins</option><option value="tercero">Third-party</option><option value="usuario">Your own</option><option value="auto-aprendida">Self-learned</option><option value="proyecto">Project</option></select>
+        <label class="sr-only" for="agent">Filter by agent</label><select id="agent"></select>
         <label class="sr-only" for="sort">Sort skills</label><select id="sort"><option value="season">Most used (season)</option><option value="total" selected>Most used (all time)</option><option value="last">Recently used</option><option value="name">Name</option></select>
       </div>
       <div class="list-options">

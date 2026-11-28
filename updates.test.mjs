@@ -172,3 +172,22 @@ test('no-source metadata overrides recorded sources, is shown before checking, a
     assert.equal(item(u, 'gift').status, 'no-source');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('a skill folder that is itself a git clone records its remote and commit as its source', async () => {
+  const { findOrigin } = await import('./updates.mjs');
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'skilldex-upd-clone-')));
+  try {
+    const skill = path.join(dir, 'clone-skill');
+    w(path.join(skill, 'SKILL.md'), '---\nname: clone-skill\n---\nFixture\n');
+    git(skill, 'init', '-q'); git(skill, 'add', '.'); git(skill, 'commit', '-qm', 'one');
+    assert.equal(findOrigin(skill, 'clone-skill'), null, 'no remote: source unknown');
+    git(skill, 'remote', 'add', 'origin', 'https://github.com/example/clone-skill.git');
+    const o = findOrigin(skill, 'clone-skill');
+    assert.equal(o.url, 'https://github.com/example/clone-skill.git');
+    assert.equal(o.commit, git(skill, 'rev-parse', 'HEAD'));
+    assert.equal(o.path, '.');
+    const sub = path.join(skill, 'nested');
+    w(path.join(sub, 'SKILL.md'), '---\nname: nested\n---\n');
+    assert.equal(findOrigin(sub, 'nested'), null, 'a folder inside a bigger clone is not taken as the clone');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});

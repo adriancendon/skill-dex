@@ -1,16 +1,19 @@
 // Skill Dex local server (127.0.0.1 only). Serves the web page; refreshes data, manages the watchlist, runs skill analyses
 // and background jobs (short descriptions, pair advice), skill update checks and Discover searches.
-// Jobs that use omp run one at a time: an analysis first, then short descriptions, then pair advice; none of them runs
-// while an update check or an update is in progress, and an update check never starts during an analysis.
+// Jobs that use an agent CLI (runner.mjs: omp, Claude Code or Codex) run one at a time: an analysis first, then short
+// descriptions, then pair advice; none of them runs while an update check or an update is in progress, and an update
+// check never starts during an analysis. With no runner available, analyses and background jobs are off.
 import http from 'node:http';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFile, spawn } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import * as marks from './marks.mjs';
 import * as pairs from './pairs.mjs';
-import { ANALYSIS_MODEL, buildPrompt, parseBlock, parseAnalysis, entryFields } from './analysis.mjs';
+import { buildPrompt, parseBlock, parseAnalysis, entryFields } from './analysis.mjs';
+import { chooseRunner, runAgent, supportsSkills } from './runner.mjs';
+import { sources } from './skill-sources.mjs';
 import { readWatchlist, writeWatchlist, setWatchStatus, startReanalysis } from './watchlist.mjs';
 import { createUpdates, updatesRoute } from './updates.mjs';
 import { createDiscover } from './discover.mjs';
@@ -39,11 +42,9 @@ const readJSON = (p, d) => { try { return JSON.parse(fs.readFileSync(p, 'utf8'))
 // ---------- Short descriptions written by an agent for skills that lack one (REQ-CAT-023) ----------
 // One background job at a time, never alongside an analysis; it only adds missing ids to the file.
 const SHORTS = dataFile('short-descriptions.json');
-const SHORT_MODEL = 'openai-codex/gpt-6.1-sol'; // architecture rule: OpenAI models only
-const OMP = process.env.OMP_BIN || [path.join(os.homedir(), '.local/bin/omp'), '/opt/homebrew/bin/omp', '/usr/local/bin/omp'].find(p => fs.existsSync(p)) || 'omp';
 let shortJob = null; // { child, cancelled }
 const shortTried = new Set(); // ids already attempted in this server run, so a failure is not retried in a loop
-pairs.init({ here, omp: OMP, model: SHORT_MODEL, busy: () => !!(job || shortJob || updates.busy()) }); // pair advice waits for everything else
+pairs.init({ here, runner: () => chooseRunner(), busy: () => !!(job || shortJob || updates.busy()) }); // pair advice waits for everything else
 function missingShorts() {
   try {
     const txt = fs.readFileSync(path.join(WEB, 'data.js'), 'utf8');
@@ -67,16 +68,15 @@ SHORTS>>>`;
 }
 function fillShorts() {
   if (job || shortJob || pairs.running() || updates.busy()) return;
+  const runner = chooseRunner();
+  if (!runner.available) return; // no agent CLI: the fallback lines stay
   const items = missingShorts();
   if (!items.length) return pairs.fill();
   items.forEach(s => shortTried.add(s.id));
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'skilldex-short-'));
-  const args = ['-p', '--model', SHORT_MODEL, '--no-tools', '--no-skills', '--no-rules', '--no-context-files', '--no-extensions', '--no-lsp', '--no-session', '--no-title', '--thinking', 'low', '--max-time', '3m', '--max-cost', '0.3', shortPrompt(items)];
-  const child = spawn(OMP, args, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
-  const me = shortJob = { child, cancelled: false };
-  let out = '', done = false;
-  child.stdout.on('data', d => { out += d; }); child.stderr.on('data', d => { out += d; });
-  const finish = async code => {
+  const me = shortJob = { child: null, cancelled: false };
+  let done = false;
+  const finish = async (code, out) => {
     if (done) return; done = true;
     if (shortJob === me) shortJob = null;
     fs.rmSync(cwd, { recursive: true, force: true });
@@ -97,8 +97,7 @@ function fillShorts() {
     fs.writeFileSync(SHORTS, JSON.stringify(cur, null, 2) + '\n');
     try { await rescan(); } catch {}
   };
-  child.on('error', () => finish(-1)); // omp not available: the fallback line stays
-  child.on('close', finish);
+  me.child = runAgent(runner, 'text', shortPrompt(items), { cwd, minutes: 3, cost: 0.3 }, finish);
 }
 function stopShorts() { if (shortJob) { shortJob.cancelled = true; shortJob.child.kill('SIGTERM'); shortJob = null; } }
 
@@ -122,15 +121,14 @@ function guideSkill() {
   const g = String(process.env.SKILLDEX_ANALYSIS_SKILL || readJSON(dataFile('config.json'), {}).analysis_skill || '');
   return /^[\w.-]{1,80}$/.test(g) ? g : '';
 }
+// The installed skill folders an analysis compares with, as shown to the user (~ for the home folder).
+const skillDirs = () => sources().global.filter(s => fs.existsSync(s.dir)).map(s => shownPath(s.dir));
 function startJob(id, q, prev = null) { // prev: the entry's status before a report regeneration, put back afterwards
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'skilldex-job-'));
-  const meta = loadMeta();
-  const args = ['-p', '--model', ANALYSIS_MODEL, '--tools', 'read,bash,web_search,grep,glob', '--no-session', '--no-title', '--max-time', '20m', '--max-cost', '1.5', buildPrompt(q, path.join(here, 'skillcheck.mjs'), { categories: meta.keys, guide: guideSkill() })];
-  const child = spawn(OMP, args, { cwd, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
-  let out = '';
-  child.stdout.on('data', d => { out += d; }); child.stderr.on('data', d => { out += d; });
-  job = { id, child, startedAt: Date.now(), regen: !!prev };
-  child.on('close', async code => {
+  const meta = loadMeta(), runner = chooseRunner(), skillcheck = path.join(here, 'skillcheck.mjs');
+  const prompt = buildPrompt(q, skillcheck, { categories: meta.keys, guide: supportsSkills(runner.kind) ? guideSkill() : '', runner: runner.kind, skillDirs: skillDirs() });
+  job = { id, child: null, startedAt: Date.now(), regen: !!prev, runner: runner.label };
+  const onDone = async (code, out) => {
     const cancelled = job?.cancelled, log = path.join(here, 'cache', `job-${id}.log`);
     fs.rmSync(cwd, { recursive: true, force: true });
     fs.mkdirSync(path.dirname(log), { recursive: true });
@@ -154,13 +152,16 @@ function startJob(id, q, prev = null) { // prev: the entry's status before a rep
     try { await rescan(); } catch {}
     job = null;
     nextJob();
-  });
+  };
+  job.child = runAgent(runner, 'analysis', prompt, { cwd, minutes: 20, cost: 1.5, skillcheck }, onDone);
 }
 // After an analysis: the next queued report regeneration, otherwise the background jobs.
 function nextJob() {
   if (job || updates.busy()) return;
   while (regen.queue.length) {
     const id = regen.queue.shift(), list = readWL(), w = list.find(x => x.id === id);
+    const runner = chooseRunner();
+    if (!runner.available) { regen.done.push({ id, ok: false, error: runner.notice }); continue; }
     if (!w || w.status === 'analizando') { regen.done.push({ id, ok: false, error: w ? 'It was already being analysed.' : 'Not on the watchlist.' }); continue; }
     const prev = w.status || 'en-analisis';
     w.regen_from = prev; w.status = 'analizando'; w.started_at = new Date().toISOString();
@@ -244,6 +245,8 @@ async function handle(req, res) {
           if (ex.status === 'analizando') return send(res, 409, { error: 'That skill is already being analysed.' });
           if (ex.status !== 'error') return send(res, 200, { existing: { id: ex.id, name: ex.name, status: ex.status, verdict: ex.verdict, discard_reason: ex.discard_reason, discarded_at: ex.discarded_at, discard_history: ex.discard_history || [], analyzed_at: ex.analyzed_at } });
         }
+        const runner = chooseRunner(); // an earlier investigation is shown even with no agent CLI installed
+        if (!runner.available) return send(res, 409, { error: runner.notice });
         const id = ex ? ex.id : idFromQuery(q);
         if (ex) startReanalysis(ex);
         else list.push({ id, name: q.startsWith('http') ? id : q, source: /^https?:\/\//.test(q) ? q : '', category: loadMeta().fallback, status: 'analizando', started_at: new Date().toISOString(), note: 'Analysis in progress…' });

@@ -87,8 +87,10 @@ function main() {
     let buf; try { buf = fs.readFileSync(path.join(base, f)); } catch { continue; }
     if (buf.includes(0)) continue; // binary
     const text = buf.toString('utf8');
-    // The MIT holder's public account handle is intentional attribution, not private identity.
-    const scanText = f === 'LICENSE' ? text.replace(/^Copyright \(c\) \d{4} [A-Za-z0-9_-]+$/m, '') : text;
+    // The MIT holder's public account handle is intentional attribution, not private identity; so is this repository's
+    // own public address (the clone command in the README).
+    const scanText = (f === 'LICENSE' ? text.replace(/^Copyright \(c\) \d{4} [A-Za-z0-9_-]+$/m, '') : text)
+      .replace(/https:\/\/github\.com\/[A-Za-z0-9_-]+\/skill-dex(?:\.git)?(?![\w.-])/g, 'https://github.com/OWNER/skill-dex');
     const hits = findPersonal(scanText, terms, localTerms);
     total += hits.length;
     if (!quiet) for (const h of hits) console.log(`${f}:${h.line}  [${h.kind}]  ${h.match}`);

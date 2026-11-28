@@ -7,11 +7,12 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFile } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { BIN, compact, triage, loadTriage } from './lib-security.mjs';
 import { dataFile, shownPath } from './paths.mjs';
 import { loadMeta } from './categories.mjs';
+import { listSkillDirs } from './skill-sources.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -60,36 +61,60 @@ function parseTable(txt, id) { // | Skill | Repositorio | Ruta en el repositorio
   const sub = rawPath.split(/\s+\+\s+/)[0].trim().replace(/^\/+|\/+$/g, '');
   return { url, commit, path: sub || null, extraFiles: /\s\+\s/.test(rawPath), recordedChanges: iL >= 0 ? row[iL] || '' : '' };
 }
-export function findOrigin(real, id) {
-  for (const [file, parse] of [[path.join(real, 'ORIGEN.md'), t => parseInner(t)], [path.join(path.dirname(real), 'ORIGEN.md'), t => parseTable(t, id)]]) {
+// A skill folder that is itself a git clone with a remote: its remote and its checked-out commit, read with git.
+function gitOrigin(real) {
+  if (!fs.existsSync(path.join(real, '.git'))) return null;
+  const run = args => execFileSync('git', ['-C', real, '-c', 'core.hooksPath=/dev/null', ...args], { encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'], env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } }).trim();
+  try {
+    if (run(['rev-parse', '--show-toplevel']) !== fs.realpathSync(real)) return null; // only a clone whose top folder is the skill
+    const url = run(['remote', 'get-url', 'origin']), commit = run(['rev-parse', 'HEAD']);
+    return /^https:\/\//.test(url) && SHA.test(commit) ? { url, commit, path: '.', extraFiles: false, recordedChanges: '', manifest: path.join(real, '.git'), gitClone: true } : null;
+  } catch { return null; }
+}
+// name: the skill's folder name, looked up in a table of the parent folder's ORIGEN.md.
+export function findOrigin(real, name) {
+  for (const [file, parse] of [[path.join(real, 'ORIGEN.md'), t => parseInner(t)], [path.join(path.dirname(real), 'ORIGEN.md'), t => parseTable(t, name)]]) {
     let txt; try { txt = fs.readFileSync(file, 'utf8'); } catch { continue; }
     const o = parse(txt);
     if (o) return { ...o, manifest: file };
   }
-  return null;
+  return gitOrigin(real);
 }
 
-// Every installed skill sorted into: external (has a recorded source), own (symlinked from one of his own folders),
-// unknown (a plain folder that records no source). Self-learned skills are counted, never checked (REQ-UPD-007).
+// The installed skills: every agent's global folders (skill-sources.mjs), or the two folders a test passes.
+// [{ id, name (folder), link (where an agent finds it), real, selfLearned }]
+function installedSkills(cfg) {
+  if (cfg.listSkills) return cfg.listSkills().map(s => ({ id: s.id, name: s.skill || s.name, link: s.locations[0].path, real: s.dir, selfLearned: s.origin === 'auto-aprendida' }));
+  const list = d => { try { return fs.readdirSync(d).filter(n => !n.startsWith('.')).sort(); } catch { return []; } };
+  const out = [];
+  for (const [dir, selfLearned] of [[cfg.skillsDir, false], [cfg.managedDir, true]]) {
+    for (const id of list(dir)) {
+      const link = path.join(dir, id);
+      let real; try { real = fs.realpathSync(link); } catch { continue; }
+      if (fs.existsSync(path.join(real, 'SKILL.md'))) out.push({ id, name: id, link, real, selfLearned });
+    }
+  }
+  return out;
+}
+
+// Every installed skill sorted into: external (has a recorded source: ORIGEN.md, or its folder is a git clone),
+// own (symlinked from one of the user's own folders), unknown (a plain folder that records no source).
+// Self-learned skills are counted, never checked (REQ-UPD-007).
 export function inventory(cfg) {
   const out = { external: [], own: [], unknown: [], noSource: [], selfLearned: 0 };
   const meta = loadMeta(cfg.metaPath);
-  const list = d => { try { return fs.readdirSync(d).sort(); } catch { return []; } };
-  for (const id of list(cfg.managedDir)) if (fs.existsSync(path.join(cfg.managedDir, id, 'SKILL.md'))) out.selfLearned++;
-  for (const id of list(cfg.skillsDir)) {
-    const link = path.join(cfg.skillsDir, id);
-    let real; try { real = fs.realpathSync(link); } catch { continue; }
-    if (!fs.existsSync(path.join(real, 'SKILL.md'))) continue;
+  for (const { id, name, link, real, selfLearned } of installedSkills(cfg)) {
+    if (selfLearned) { out.selfLearned++; continue; }
     const entry = meta.entry(id);
     if (entry.update_source === 'none') {
       const from = String(entry.from || '').trim();
       out.noSource.push({ id, status: 'no-source', reason: from ? `From ${from}, no update source` : 'No update source' });
       continue;
     }
-    const origin = findOrigin(real, id);
+    const origin = findOrigin(real, name);
     if (origin) out.external.push({ id, real, origin });
     else if (fs.lstatSync(link).isSymbolicLink() && !/skills-terceros/.test(real)) out.own.push({ id, real });
-    else out.unknown.push({ id, real, reason: /skills-terceros/.test(real) ? 'Its folder of third-party skills has no line for it in ORIGEN.md.' : 'No source recorded: there is no ORIGEN.md with its repository and version.' });
+    else out.unknown.push({ id, real, reason: /skills-terceros/.test(real) ? 'Its folder of third-party skills has no line for it in ORIGEN.md.' : 'No source recorded: there is no ORIGEN.md with its repository and version, and its folder is not a git clone.' });
   }
   return out;
 }
@@ -124,9 +149,11 @@ function describeFiles(files) {
 
 export function createUpdates(opts = {}) {
   const env = process.env, home = os.homedir();
+  const legacy = opts.skillsDir || env.SKILLDEX_UPD_SKILLS; // tests: two given folders instead of every agent's folders
   const cfg = {
     skillsDir: opts.skillsDir || env.SKILLDEX_UPD_SKILLS || path.join(home, '.omp/agent/skills'),
     managedDir: opts.managedDir || env.SKILLDEX_UPD_MANAGED || path.join(home, '.omp/agent/managed-skills'),
+    listSkills: legacy ? null : (opts.listSkills || (() => listSkillDirs({ projects: false }))),
     metaPath: opts.metaPath || dataFile('skills-meta.json'),
     statePath: opts.statePath || env.SKILLDEX_UPD_STATE || dataFile('updates-state.json'),
     backupDir: opts.backupDir || env.SKILLDEX_UPD_BACKUPS || dataFile('backups'),
@@ -300,7 +327,9 @@ export function createUpdates(opts = {}) {
     const can = applicable(i);
     if (!can.ok) throw Object.assign(new Error(can.why), { code: 409 });
     if (can.needsAck && ack !== true) throw Object.assign(new Error('Confirm that you read the security findings first.'), { code: 400 });
-    const real = fs.realpathSync(path.join(cfg.skillsDir, id));
+    const skill = inventory(cfg).external.find(x => x.id === id);
+    if (!skill) throw Object.assign(new Error('This skill is no longer installed with a recorded source. Check for updates again.'), { code: 409 });
+    const real = skill.real;
     if (snapshot(localFiles(real)) !== i.localSnapshot) throw Object.assign(new Error('Your copy of this skill changed since the check. Check for updates again before updating.'), { code: 409 });
     for (const w of i.writes) { // what was security-checked is exactly what gets installed
       const p = path.join(i.staged, w.path);
@@ -328,8 +357,7 @@ export function createUpdates(opts = {}) {
       for (let d = path.dirname(dest); inside(real, d) && fs.readdirSync(d).length === 0; d = path.dirname(d)) fs.rmdirSync(d);
     }
     const st = readState();
-    const origin = findOrigin(real, id);
-    st.applied[id] = { url: origin?.url || null, path: i.path || '.', commit: i.latest.commit, version: i.latest.version || '', from: i.base.commit, applied_at: new Date().toISOString(), backup: shown(backup) };
+    st.applied[id] = { url: skill.origin.url || null, path: i.path || '.', commit: i.latest.commit, version: i.latest.version || '', from: i.base.commit, applied_at: new Date().toISOString(), backup: shown(backup) };
     if (st.skipped[id]) { delete st.skipped[id]; }
     writeJSON(cfg.statePath, st);
     setItem(id, { status: 'up-to-date', updated_now: true, base: i.latest, backup: shown(backup), files: i.files, writes: [], removes: [] });
@@ -380,7 +408,7 @@ export function updatesRoute(u, method, pathname, b, send) {
   const action = pathname.slice('/api/updates/'.length);
   const id = String(b.id || ''), commit = String(b.commit || '');
   const fail = e => send(e.code || 500, { error: String(e.message).slice(0, 300) });
-  if (action !== 'check' && (!/^\w[\w.-]*$/.test(id) || !/^[0-9a-f]{40}$/.test(commit))) { send(400, { error: 'Invalid skill or version' }); return true; }
+  if (action !== 'check' && (!/^\w[\w.-]*(@[\w.-]+)?$/.test(id) || !/^[0-9a-f]{40}$/.test(commit))) { send(400, { error: 'Invalid skill or version' }); return true; } // "<folder>@<agent>" ids too
   try {
     if (action === 'check') { if (u.busy()) send(409, { error: 'A check or an update is already running.' }); else { u.check(); send(202, { ok: true }); } }
     else if (action === 'apply') u.apply(id, commit, b.ack === true).then(r => send(200, { ok: true, ...r }), fail);

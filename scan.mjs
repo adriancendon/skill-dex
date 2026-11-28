@@ -1,13 +1,13 @@
 // Scans the installed skills and the watchlist and writes web/data.js (generated, git-ignored).
 import fs from 'node:fs';
 import path from 'node:path';
-import os from 'node:os';
 import { triage } from './lib-security.mjs';
-import { listSkillDirs, usageResolver } from './skill-sources.mjs';
+import { sources, listSkillDirs, usageResolver, PROJECT_SKILL_DIRS, AGENTS } from './skill-sources.mjs';
+import { scanUsage } from './usage.mjs';
+import { chooseRunner } from './runner.mjs';
 import { HERE as here, DATA, dataFile, WATCHLIST, ANALYSIS_DIR, shownPath } from './paths.mjs';
 import { loadMeta } from './categories.mjs';
 
-const home = os.homedir();
 const readJSON = (p, d) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return d; } };
 const meta = loadMeta();
 const watch = readJSON(WATCHLIST, []);
@@ -27,10 +27,12 @@ function frontmatter(txt) {
 }
 const count = d => { let n = 0; try { for (const e of fs.readdirSync(d, { withFileTypes: true })) n += e.isDirectory() ? count(path.join(d, e.name)) : 1; } catch {} return n; };
 
-// omp skills plus each project's skills (skill-sources.mjs). Project skills are read-only, keyed "<folder>@<project>",
-// and carry their project label; reports, meta and the watchlist match omp skills by folder name only.
+// Every agent's skills plus each project's skills (skill-sources.mjs), one entry per skill with the agents that have
+// it. Project skills are read-only, keyed "<folder>@<project>", and carry their project label; reports, meta and the
+// watchlist match global skills by id, then folder name.
+const src = sources();
 const skills = [];
-for (const { id, name, dir: real, origin, project, projectPath } of listSkillDirs()) {
+for (const { id, name, dir: real, origin, agents, locations, skill, project, projectPath } of listSkillDirs({ src })) {
   const txt = fs.readFileSync(path.join(real, 'SKILL.md'), 'utf8');
   const fm = frontmatter(txt);
   const m = meta.entry(id, name);
@@ -38,7 +40,8 @@ for (const { id, name, dir: real, origin, project, projectPath } of listSkillDir
   skills.push({
     id, name: fm.name || name, description: fm.description || '',
     origin: /skills-terceros/.test(real) ? 'tercero' : origin,
-    ...(project ? { skill: name, project, projectPath } : {}),
+    agents, locations: locations.map(l => ({ agent: l.agent, path: shownPath(l.path) })),
+    ...(skill ? { skill } : {}), ...(project ? { project, projectPath } : {}),
     author: fm.author || '', version: fm.version || '',
     category: meta.valid(m.category || meta.infer(name, fm.description)), icon: m.icon || '', emoji: m.emoji || '',
     lines: txt.split('\n').length, files: count(real), path: real,
@@ -49,34 +52,11 @@ for (const { id, name, dir: real, origin, project, projectPath } of listSkillDir
   });
 }
 
-// ---- Uso real: cuenta lecturas de skills en las sesiones de omp ----
-const SESS = path.join(home, '.omp/agent/sessions');
-const seen = new Set(), usage = {}; // usage[id] = {total, days:{YYYY-MM-DD:n}, last}
-const resolveUse = usageResolver(skills);
-function walk(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else if (e.name.endsWith('.jsonl')) scanFile(p); } }
-function scanFile(f) {
-  let cwd = ''; // the session header names the folder it ran in; it decides which project's skill a skill:// read means
-  for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
-    if (!cwd && line.includes('"type":"session"')) { try { cwd = JSON.parse(line).cwd || ''; } catch {} }
-    if (!line.includes('"toolCall"') || !line.includes('"read"')) continue;
-    let o; try { o = JSON.parse(line); } catch { continue; }
-    const ts = o.timestamp, c = o.message?.role === 'assistant' && o.message.content;
-    if (!Array.isArray(c)) continue;
-    for (const t of c) {
-      if (t.type !== 'toolCall' || t.name !== 'read' || seen.has(t.id)) continue;
-      const p = t.arguments?.path || '';
-      const id = resolveUse(p, cwd);
-      if (!id) continue;
-      seen.add(t.id);
-      const u = (usage[id] ??= { total: 0, days: {}, last: '' });
-      const day = ts.slice(0, 10); u.total++; u.days[day] = (u.days[day] || 0) + 1; if (ts > u.last) u.last = ts;
-    }
-  }
-}
-if (fs.existsSync(SESS)) walk(SESS);
+// ---- Real use: each agent's local logs (usage.mjs says what is counted and what is not) ----
+const usage = scanUsage(src, usageResolver(skills));
 const inicio = readJSON(dataFile('config.json'), {}).inicio || '1970-01-01';
 for (const s of skills) {
-  const u = s.usage = usage[s.id] || { total: 0, days: {}, last: '' };
+  const u = s.usage = usage[s.id] || { total: 0, days: {}, last: '', agents: {} };
   u.since = Object.entries(u.days).reduce((a, [d, n]) => a + (d >= inicio ? n : 0), 0);
 }
 // ---- Seguridad (SkillSpector + triaje de falsos positivos) ----
@@ -106,7 +86,7 @@ const never = skills.filter(s => s.usage.total === 0).map(s => s.id);
 const dormant = skills.filter(s => s.usage.total > 0 && s.usage.since === 0).map(s => s.id);
 const warnings = [];
 for (const s of skills) {
-  if (!s.description) warnings.push({ id: s.id, msg: 'No description: omp cannot tell when to activate it' });
+  if (!s.description) warnings.push({ id: s.id, msg: 'No description: the agent cannot tell when to activate it' });
   else if (s.description.length > 600) warnings.push({ id: s.id, msg: `Very long description (${s.descTokens} tokens), loaded in every session` });
   if (s.bodyTokens > 8000) warnings.push({ id: s.id, msg: `Heavy skill (~${s.bodyTokens} tokens when loaded)` });
   if (s.security && ['revisar', 'critico'].includes(s.security.level)) warnings.push({ id: s.id, msg: `Security: ${s.security.counts.revisar + s.security.counts.caducada} finding(s) to review after triage` });
@@ -117,7 +97,7 @@ const health = {
   heavy: [...skills].sort((a, b) => b.bodyTokens - a.bodyTokens).slice(0, 5).map(s => ({ id: s.id, tokens: s.bodyTokens })),
   securityScanned: skills.filter(s => s.security).length,
 };
-const installed = new Set(skills.filter(s => s.origin !== 'proyecto').map(s => s.id)); // a skill living only inside a project is not installed in omp
+const installed = new Set(skills.filter(s => s.origin !== 'proyecto').flatMap(s => [s.id, s.skill].filter(Boolean))); // a skill living only inside a project is not installed globally
 const wl = watch.filter(w => !installed.has(w.id)).map(w => ({ status: w.status || 'en-analisis', description: w.note || '', origin: w.source || '', ...w, category: meta.valid(w.category), icon: meta.entry(w.id).icon || '', name: w.name || w.id, report: (() => { try { return fs.readFileSync(path.join(ANALYSIS_DIR, w.id + '.md'), 'utf8'); } catch { return null; } })() }));
 
 // ---- Short descriptions (short-descriptions.json in the data folder, {id: "short English line"}, editable by hand) ----
@@ -132,6 +112,15 @@ for (const s of [...skills, ...wl]) {
   s.short = own || firstSentence(s.description || s.note);
   if (!own) s.shortMissing = true;
 }
+// Where this scan looked, for the empty state and the runner that analyses and background jobs would use.
+const looked = {
+  global: src.global.map(g => ({ agent: AGENTS[g.agent], dir: shownPath(g.dir), found: fs.existsSync(g.dir) })),
+  projectDirs: PROJECT_SKILL_DIRS.map(d => d.sub), projectRoots: src.projectRoots.map(shownPath),
+};
+const r = chooseRunner();
+const runner = { kind: r.kind, label: r.label, setting: r.setting, available: r.available, notice: r.notice };
 fs.writeFileSync(path.join(here, 'web/data.js'),
-  'window.SKILLS_DATA = ' + JSON.stringify({ generated: new Date().toISOString(), inicio, dataDir: shownPath(DATA), categories: meta.forPage(), health, skills, watchlist: wl }, null, 1) + ';\n');
-console.log(`OK: ${skills.length} installed, ${wl.length} on the watchlist`);
+  'window.SKILLS_DATA = ' + JSON.stringify({ generated: new Date().toISOString(), inicio, dataDir: shownPath(DATA), categories: meta.forPage(), sources: looked, runner, health, skills, watchlist: wl }, null, 1) + ';\n');
+const byAgent = {};
+for (const s of skills) for (const a of s.agents) byAgent[a] = (byAgent[a] || 0) + 1;
+console.log(`OK: ${skills.length} installed (${Object.entries(byAgent).map(([a, n]) => `${a} ${n}`).join(', ') || 'none'}), ${wl.length} on the watchlist`);

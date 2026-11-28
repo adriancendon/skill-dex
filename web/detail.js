@@ -92,6 +92,7 @@
     return `<section class="drawer-section" aria-labelledby="detail-usage-title"><h3 id="detail-usage-title">How you use it</h3>
       <div class="detail-stats"><div><b>${season(s)}</b><span>This season · ${season(s) * 10} XP</span></div><div><b>${before(s)}</b><span>Before season · no XP</span></div><div><b>${total(s)}</b><span>All time</span></div></div>
       <p>Last used: ${text(dateText(s.usage?.last))}.</p>
+      ${Object.keys(s.usage?.agents || {}).length ? `<p class="agent-uses">Uses by agent: ${Object.entries(s.usage.agents).sort((a, b) => b[1] - a[1]).map(([a, n]) => `${text(a)} ${num(n)}`).join(' · ')}.</p>` : ''}
       <div class="chart" role="img" aria-label="Daily uses over the last 30 days: ${days.map((d, i) => dateText(d) + ': ' + values[i]).join('; ')}">${chartHTML(values)}</div>
       <div class="chart-axis" aria-hidden="true"><span>${dateText(days[0])}</span><span>${dateText(days[29])}</span></div>
       <p>${note}</p>
@@ -113,10 +114,10 @@
 
   function installedDetail(s) {
     return `${tile(s)}<h2 id="detail-title" tabindex="-1">${text(s.name)}</h2><p class="full-description">${text(s.description || 'No description recorded.')}</p>
-      <div class="badges">${s.project ? `<span class="badge">Project: ${text(s.project)}</span>` : `<span class="badge">Installed</span><span class="badge">${text(ORIGINS[s.origin] || s.origin)}</span>`}${s.version ? `<span class="badge">v${text(s.version)}</span>` : ''}</div>
-      ${s.project ? `<p class="project-note">Lives in the ${text(s.project)} project. omp loads it only in sessions opened there. Skill Dex only reads it.</p>` : ''}
+      <div class="badges">${s.project ? `<span class="badge">Project: ${text(s.project)}</span>` : `<span class="badge">Installed</span><span class="badge">${text(ORIGINS[s.origin] || s.origin)}</span>`}${agentList(s).map(a => `<span class="badge">${text(a)}</span>`).join('')}${s.version ? `<span class="badge">v${text(s.version)}</span>` : ''}</div>
+      ${s.project ? `<p class="project-note">Lives in the ${text(s.project)} project. Agents load it only in sessions opened there. Skill Dex only reads it.</p>` : ''}
       ${favouriteAction(s)}${usage(s)}${security(s, true)}${fullReport(s, true)}
-      <section class="drawer-section"><details class="disclosure"><summary>Technical sheet<span>Context, files and local path</span></summary><dl class="facts">${metric('~' + num(s.descTokens), 'Description tokens, every session')}${metric('~' + num(s.bodyTokens), 'Tokens when activated')}${metric(num(s.lines), 'Lines')}${metric(num(s.files), 'Files')}${s.author ? metric(s.author, 'Author') : ''}</dl><p class="path"><strong>Local path</strong><code>${text(s.path)}</code></p></details></section>`;
+      <section class="drawer-section"><details class="disclosure"><summary>Technical sheet<span>Context, files and local path</span></summary><dl class="facts">${metric('~' + num(s.descTokens), 'Description tokens, every session')}${metric('~' + num(s.bodyTokens), 'Tokens when activated')}${metric(num(s.lines), 'Lines')}${metric(num(s.files), 'Files')}${s.author ? metric(s.author, 'Author') : ''}</dl><p class="path"><strong>Local path</strong><code>${text(s.path)}</code></p>${(s.locations || []).length > 1 || (s.locations || []).some(l => l.path !== s.path) ? `<p class="path"><strong>Where agents find it</strong>${s.locations.map(l => `<code>${text(l.agent)}: ${text(l.path)}</code>`).join('')}</p>` : ''}</details></section>`;
   }
 
   // Earlier discards kept when an entry was recovered or analysed again (REQ-ANA-024), newest first.

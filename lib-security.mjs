@@ -6,6 +6,7 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dataFile } from './paths.mjs';
+import { sources, listSkillDirs } from './skill-sources.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const TRIAGE_PATH = dataFile('security-triage.json');
@@ -198,7 +199,7 @@ export function triage(c, reviewed = [], rootDir = null) {
 }
 
 // ---- Hand-reviewed triage ----
-// Returns the skill id only when it can be told without doubt (known local folders).
+// Returns the skill id only when it can be told without doubt (known local skill folders of any agent).
 // A URL cannot tell which skill it is, so nothing is closed for it.
 export function skillIdFromSrc(src, isUrl = false) {
   if (isUrl) return null;
@@ -207,9 +208,16 @@ export function skillIdFromSrc(src, isUrl = false) {
     // puede ser un symlink al repo real y la identidad de skill viene de la ruta instalada.
     const normalized = path.resolve(src);
     const home = os.homedir();
+    const under = base => { const rel = path.relative(base, normalized); return rel && !rel.startsWith('..') && !path.isAbsolute(rel) ? rel.split(path.sep)[0] : null; };
     for (const base of [path.join(home, '.omp', 'agent', 'skills'), path.join(home, '.omp', 'agent', 'managed-skills')]) {
-      const rel = path.relative(base, normalized);
-      if (rel && !rel.startsWith('..') && !path.isAbsolute(rel)) return rel.split(path.sep)[0];
+      const name = under(base);
+      if (name) return name;
+    }
+    // Other agents' folders: the catalogue entry that has this very folder (its id may be "<folder>@<agent>").
+    const where = sources(), hit = where.global.map(g => [g.dir, under(g.dir)]).find(([, name]) => name);
+    if (hit) {
+      const folder = path.join(hit[0], hit[1]);
+      return listSkillDirs({ src: where, projects: false }).find(s => s.locations.some(l => l.path === folder))?.id || null;
     }
   } catch {}
   return null;

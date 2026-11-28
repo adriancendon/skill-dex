@@ -11,7 +11,8 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const chromeBin = process.env.CHROME_BIN || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const root = fs.mkdtempSync('/tmp/skilldex-demo-');
 const home = path.join(root, 'home'), app = path.join(root, 'app'), data = path.join(root, 'data');
-const env = { ...process.env, HOME: home, SKILLDEX_DATA: data, PORT: '4182', OMP_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false', GH_CONFIG_DIR: path.join(home, '.config/gh') };
+const env = { ...process.env, HOME: home, SKILLDEX_DATA: data, PORT: '4182', OMP_BIN: '/usr/bin/false', CLAUDE_BIN: '/usr/bin/false', CODEX_BIN: '/usr/bin/false', GH_BIN: '/usr/bin/false', GH_CONFIG_DIR: path.join(home, '.config/gh') };
+for (const k of ['SKILLDEX_RUNNER', 'SKILLDEX_SKILL_DIRS', 'SKILLDEX_MODEL_OMP', 'SKILLDEX_MODEL_CLAUDE', 'SKILLDEX_MODEL_CODEX']) delete env[k];
 delete env.SKILLDEX_WATCHLIST;
 delete env.SKILLDEX_UPD_SKILLS;
 delete env.SKILLDEX_UPD_MANAGED;
@@ -85,6 +86,32 @@ try {
     }
   }
   put(path.join(home, '.omp/agent/sessions', 'demo.jsonl'), lines.join('\n') + '\n');
+  // Skills of other agents: two omp skills that Claude Code also has (the same folder), skills only Claude Code has,
+  // and a shared skill that Codex links to; their uses come from made-up Claude Code and Codex logs.
+  const skillText = (id, description) => `---\nname: ${id}\ndescription: ${description}\n---\n\n# ${id}\n\nAn original demonstration skill.\n`;
+  for (const id of ['draft-outline', 'layout-lab']) { fs.mkdirSync(path.join(home, '.claude/skills'), { recursive: true }); fs.symlinkSync(path.join(home, '.omp/agent/skills', id), path.join(home, '.claude/skills', id)); }
+  const others = [
+    ['.claude/skills', 'commit-coach', 'Write clear commit messages from a diff', 'Development', 'terminal'],
+    ['.claude/skills', 'meeting-notes', 'Turn a meeting transcript into decisions and tasks', 'Other', 'checklist'],
+    ['.agents/skills', 'api-sketch', 'Sketch a small web API before building it', 'Development', 'braces'],
+    ['.codex/skills', 'diff-reader', 'Explain a code change in plain words', 'Development', 'code'],
+  ];
+  for (const [dir, id, description, category, icon] of others) {
+    put(path.join(home, dir, id, 'SKILL.md'), skillText(id, description));
+    meta[id] = { category, icon }; shorts[id] = description;
+  }
+  fs.mkdirSync(path.join(home, '.codex/skills'), { recursive: true });
+  fs.symlinkSync(path.join(home, '.agents/skills/api-sketch'), path.join(home, '.codex/skills/api-sketch'));
+  const claude = [], codex = [JSON.stringify({ timestamp: startDay.toISOString(), type: 'session_meta', payload: { id: 'demo', cwd: home } })];
+  for (let day = 0; day < 30; day++) {
+    const date = new Date(startDay); date.setUTCDate(date.getUTCDate() + day);
+    const at = n => new Date(date.getTime() + 3600000 + n * 60000).toISOString();
+    for (let n = 0; n < 2 + (day % 3); n++) claude.push(JSON.stringify({ type: 'assistant', timestamp: at(n), cwd: home, message: { role: 'assistant', content: [{ type: 'tool_use', id: `demo-claude-${++call}`, name: 'Skill', input: { skill: n % 2 ? 'draft-outline' : 'commit-coach' } }] } }));
+    if (day % 4 === 0) claude.push(JSON.stringify({ type: 'user', uuid: `demo-slash-${day}`, timestamp: at(9), cwd: home, message: { role: 'user', content: '<command-name>/meeting-notes</command-name>' } }));
+    for (let n = 0; n < 1 + (day % 2); n++) codex.push(JSON.stringify({ timestamp: at(20 + n), type: 'response_item', payload: { type: 'function_call', call_id: `demo-codex-${++call}`, name: 'exec_command', arguments: JSON.stringify({ cmd: n ? 'cat ~/.codex/skills/diff-reader/SKILL.md' : 'cat ~/.agents/skills/api-sketch/SKILL.md' }) } }));
+  }
+  put(path.join(home, '.claude/projects/-demo/demo.jsonl'), claude.join('\n') + '\n');
+  put(path.join(home, '.codex/sessions', 'demo', 'rollout-demo.jsonl'), codex.join('\n') + '\n');
   const watchlist = [
     { id: 'table-scout', name: 'table-scout', note: 'Turn a small dataset into a useful table', category: 'Development', status: 'en-analisis' },
     { id: 'motion-notes', name: 'motion-notes', note: 'Plan gentle motion for interface feedback', category: 'Design', status: 'recomendada' },
