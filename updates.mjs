@@ -1,7 +1,8 @@
 // Skill updates (REQ-UPD-001 to 012). Looks for updates only when the user presses "Check for updates" and changes a
-// skill only after a confirmed "Update". A skill's source is what it records itself: an ORIGEN.md inside its folder
-// ("Fuente:"/"Source:", "Commit:", optional "Ruta:"/"Path:") or a table in the ORIGEN.md of the folder that holds it
-// (Skill | Repositorio | Ruta en el repositorio | Commit). Skills that record nothing are reported as "Source unknown".
+// skill only after a confirmed "Update". A skill's source is what it records itself: an ORIGIN.md inside its folder
+// ("Source:", "Commit:", optional "Path:") or a table in the ORIGIN.md of the folder that holds it
+// (Skill | Repository | Path | Commit). The older file name ORIGEN.md and its Spanish labels are read too.
+// Skills that record nothing are reported as "Source unknown".
 // The check reads the source with a blobless git clone in a temp folder; the installed copy is never touched by it.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -11,6 +12,7 @@ import { execFile, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { BIN, compact, triage, loadTriage } from './lib-security.mjs';
 import { dataFile, shownPath } from './paths.mjs';
+import { ORIGIN_FILES, THIRD_PARTY_DIR, normalizeTriage } from './names.mjs';
 import { loadMeta } from './categories.mjs';
 import { listSkillDirs } from './skill-sources.mjs';
 
@@ -40,14 +42,15 @@ export function repoUrl(cell) {
 }
 export function githubSlug(url) { const m = String(url || '').match(/^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?\/?$/); return m ? `${m[1]}/${m[2]}` : null; }
 
-function parseInner(txt) { // "- Fuente: URL" / "- Commit: sha" / "- Ruta: path"
+// The Spanish labels (Fuente, Repositorio, Ruta, Cambios locales) are those of older ORIGEN.md files.
+function parseInner(txt) { // "- Source: URL" / "- Commit: sha" / "- Path: path"
   const get = re => (txt.match(re) || [])[1]?.trim();
   const url = repoUrl(get(/^\s*[-*]?\s*(?:Fuente|Source|Repositorio|Repository)\s*:\s*(\S+)/im));
   const commit = get(/^\s*[-*]?\s*Commit\s*:\s*`?([0-9a-f]{7,40})`?/im);
   const sub = get(/^\s*[-*]?\s*(?:Ruta(?: en el repositorio)?|Path)\s*:\s*`?([^`\s]+)`?/im);
   return url && commit ? { url, commit, path: sub ? sub.replace(/^\/+|\/+$/g, '') : null } : null;
 }
-function parseTable(txt, id) { // | Skill | Repositorio | Ruta en el repositorio | Commit | ...
+function parseTable(txt, id) { // | Skill | Repository | Path | Commit | Local changes | ...
   const rows = txt.split('\n').filter(l => /^\s*\|/.test(l)).map(l => l.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim()));
   const head = rows.find(r => r.some(c => /^skill$/i.test(c)) && r.some(c => /^commit$/i.test(c)));
   if (!head) return null;
@@ -71,9 +74,13 @@ function gitOrigin(real) {
     return /^https:\/\//.test(url) && SHA.test(commit) ? { url, commit, path: '.', extraFiles: false, recordedChanges: '', manifest: path.join(real, '.git'), gitClone: true } : null;
   } catch { return null; }
 }
-// name: the skill's folder name, looked up in a table of the parent folder's ORIGEN.md.
+// name: the skill's folder name, looked up in a table of the parent folder's ORIGIN.md (or older ORIGEN.md).
 export function findOrigin(real, name) {
-  for (const [file, parse] of [[path.join(real, 'ORIGEN.md'), t => parseInner(t)], [path.join(path.dirname(real), 'ORIGEN.md'), t => parseTable(t, name)]]) {
+  const tries = [
+    ...ORIGIN_FILES.map(f => [path.join(real, f), t => parseInner(t)]),
+    ...ORIGIN_FILES.map(f => [path.join(path.dirname(real), f), t => parseTable(t, name)]),
+  ];
+  for (const [file, parse] of tries) {
     let txt; try { txt = fs.readFileSync(file, 'utf8'); } catch { continue; }
     const o = parse(txt);
     if (o) return { ...o, manifest: file };
@@ -84,7 +91,7 @@ export function findOrigin(real, name) {
 // The installed skills: every agent's global folders (skill-sources.mjs), or the two folders a test passes.
 // [{ id, name (folder), link (where an agent finds it), real, selfLearned }]
 function installedSkills(cfg) {
-  if (cfg.listSkills) return cfg.listSkills().map(s => ({ id: s.id, name: s.skill || s.name, link: s.locations[0].path, real: s.dir, selfLearned: s.origin === 'auto-aprendida' }));
+  if (cfg.listSkills) return cfg.listSkills().map(s => ({ id: s.id, name: s.skill || s.name, link: s.locations[0].path, real: s.dir, selfLearned: s.origin === 'self-learned' }));
   const list = d => { try { return fs.readdirSync(d).filter(n => !n.startsWith('.')).sort(); } catch { return []; } };
   const out = [];
   for (const [dir, selfLearned] of [[cfg.skillsDir, false], [cfg.managedDir, true]]) {
@@ -97,7 +104,7 @@ function installedSkills(cfg) {
   return out;
 }
 
-// Every installed skill sorted into: external (has a recorded source: ORIGEN.md, or its folder is a git clone),
+// Every installed skill sorted into: external (has a recorded source: ORIGIN.md, or its folder is a git clone),
 // own (symlinked from one of the user's own folders), unknown (a plain folder that records no source).
 // Self-learned skills are counted, never checked (REQ-UPD-007).
 export function inventory(cfg) {
@@ -113,8 +120,8 @@ export function inventory(cfg) {
     }
     const origin = findOrigin(real, name);
     if (origin) out.external.push({ id, real, origin });
-    else if (fs.lstatSync(link).isSymbolicLink() && !/skills-terceros/.test(real)) out.own.push({ id, real });
-    else out.unknown.push({ id, real, reason: /skills-terceros/.test(real) ? 'Its folder of third-party skills has no line for it in ORIGEN.md.' : 'No source recorded: there is no ORIGEN.md with its repository and version, and its folder is not a git clone.' });
+    else if (fs.lstatSync(link).isSymbolicLink() && !THIRD_PARTY_DIR.test(real)) out.own.push({ id, real });
+    else out.unknown.push({ id, real, reason: THIRD_PARTY_DIR.test(real) ? 'Its folder of third-party skills has no line for it in ORIGIN.md.' : 'No source recorded: there is no ORIGIN.md with its repository and version, and its folder is not a git clone.' });
   }
   return out;
 }
@@ -164,7 +171,11 @@ export function createUpdates(opts = {}) {
   };
   const RESULTS = path.join(cfg.cacheDir, 'results.json'), STAGED = path.join(cfg.cacheDir, 'staged');
   const readState = () => ({ last_checked: null, skipped: {}, applied: {}, ...readJSON(cfg.statePath, {}) });
-  const readResults = () => readJSON(RESULTS, { checked_at: null, items: [], own: 0, selfLearned: 0 });
+  const readResults = () => { // a check saved by an older version may hold the older security names
+    const r = readJSON(RESULTS, { checked_at: null, items: [], own: 0, selfLearned: 0 });
+    for (const i of r.items || []) if (i.security) normalizeTriage(i.security);
+    return r;
+  };
   const shown = shownPath;
   let job = null; // { kind, step, done, total } — one check or update at a time
   let lastError = null; // why the last check stopped, if it failed as a whole
@@ -179,7 +190,7 @@ export function createUpdates(opts = {}) {
     }
     return map;
   }
-  async function locate(gitDir, base, real) { // the folder of the repository that is this skill, when ORIGEN.md does not say
+  async function locate(gitDir, base, real) { // the folder of the repository that is this skill, when ORIGIN.md does not say
     const all = (await git(gitDir, ['ls-tree', '-r', '-z', '--full-tree', base])).split('\0').filter(l => /\t(?:.*\/)?SKILL\.md$/.test(l));
     const entries = all.map(l => { const m = l.match(/ ([0-9a-f]+)\t([\s\S]*)$/); return { sha: m[1], dir: path.posix.dirname(m[2]) }; });
     const mine = blobSha(fs.readFileSync(path.join(real, 'SKILL.md')));
@@ -192,7 +203,7 @@ export function createUpdates(opts = {}) {
       (err, out) => { try { res(JSON.parse(out)); } catch { res(null); } }));
     if (!r) return { status: 'failed' };
     const c = compact(r), t = triage(c, cfg.loadTriage(id), dir);
-    return { status: 'done', level: t.level, counts: t.counts, revisar: t.revisar, caducada: t.caducada, info: t.info, coverage: c.coverage, raw: c.recommendation };
+    return { status: 'done', level: t.level, counts: t.counts, review: t.review, stale: t.stale, info: t.info, coverage: c.coverage, raw: c.recommendation };
   }
 
   async function compare(gitDir, skill, state) {
@@ -307,8 +318,8 @@ export function createUpdates(opts = {}) {
     if (i.security?.status === 'unavailable') return { ok: false, why: 'The security scanner is not installed, so the new version could not be checked.' };
     if (i.security?.status === 'pending') return { ok: false, why: 'Its security check has not run yet. Press Check for updates.' };
     if (i.security?.status !== 'done') return { ok: false, why: i.security?.error || 'The security check could not run on the new version. Try Check for updates again.' };
-    if (BLOCK_CRITICAL && i.security.level === 'critico') return { ok: false, why: 'The security check found a critical problem in the new version. It cannot be applied from here.' };
-    return { ok: true, needsAck: ['revisar', 'critico'].includes(i.security.level) };
+    if (BLOCK_CRITICAL && i.security.level === 'critical') return { ok: false, why: 'The security check found a critical problem in the new version. It cannot be applied from here.' };
+    return { ok: true, needsAck: ['review', 'critical'].includes(i.security.level) };
   };
 
   function publicState() {

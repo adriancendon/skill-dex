@@ -42,12 +42,12 @@ export function sources(opts = {}) {
     home,
     // In the order ids are given: omp first, so his existing ids never change.
     global: [
-      { dir: path.join(home, '.omp/agent/skills'), agent: 'omp', origin: 'usuario' },
-      { dir: path.join(home, '.omp/agent/managed-skills'), agent: 'omp', origin: 'auto-aprendida' },
-      { dir: path.join(home, '.claude/skills'), agent: 'claude', origin: 'usuario' },
-      { dir: path.join(home, '.codex/skills'), agent: 'codex', origin: 'usuario' },
-      { dir: path.join(home, '.agents/skills'), agent: 'shared', origin: 'usuario' },
-      ...[...new Set(extra)].map(dir => ({ dir, agent: 'custom', origin: 'usuario' })),
+      { dir: path.join(home, '.omp/agent/skills'), agent: 'omp', origin: 'user' },
+      { dir: path.join(home, '.omp/agent/managed-skills'), agent: 'omp', origin: 'self-learned' },
+      { dir: path.join(home, '.claude/skills'), agent: 'claude', origin: 'user' },
+      { dir: path.join(home, '.codex/skills'), agent: 'codex', origin: 'user' },
+      { dir: path.join(home, '.agents/skills'), agent: 'shared', origin: 'user' },
+      ...[...new Set(extra)].map(dir => ({ dir, agent: 'custom', origin: 'user' })),
     ],
     projectRoots: opts.projectRoots || [path.join(home, 'Developer')],
     sessions: {
@@ -159,7 +159,7 @@ export function listSkillDirs(opts = {}) {
       const same = byReal.get(f.real); // copies in other projects stay separate entries (REQ-CAT-015)
       if (same) { addLocation(same, agent, f.link); continue; }
       const base = `${f.name}@${p.label}`, id = ids.has(base) ? `${base}@${agent}` : base;
-      const e = { id, name: f.name, dir: f.real, origin: 'proyecto', agents: [], locations: [], skill: f.name, project: p.label, projectPath: p.path };
+      const e = { id, name: f.name, dir: f.real, origin: 'project', agents: [], locations: [], skill: f.name, project: p.label, projectPath: p.path };
       addLocation(e, agent, f.link);
       out.push(e); ids.add(id); byReal.set(f.real, e);
     }
@@ -184,7 +184,7 @@ export function usageResolver(skills) {
   const folder = s => s.skill || s.id;
   for (const s of skills) {
     byDir.set(s.path, s.id);
-    if (s.origin === 'proyecto') projects.push(s);
+    if (s.origin === 'project') projects.push(s);
     else { const f = folder(s); if (!globals.has(f)) globals.set(f, []); globals.get(f).push(s); }
   }
   const byName = (name, cwd, agent = 'omp') => {

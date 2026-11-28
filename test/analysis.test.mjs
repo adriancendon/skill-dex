@@ -53,14 +53,16 @@ describe('analysis parser', () => {
     assert.deepStrictEqual(r.format, { ok: true, missing: [], inOrder: true });
   });
   it('fills the watchlist fields; the status follows the verdict', () => {
-    const cats = { keys: ['SEO', 'Rendimiento y calidad', 'Otras'], fallback: 'Otras' };
+    const cats = { keys: ['SEO', 'Quality', 'Other'], fallback: 'Other' };
     const r = parseAnalysis(fixture), f = entryFields(r.result, { name: 'lint-helper', source: '' }, '2026-11-27', cats);
     assert.deepStrictEqual(f, {
-      name: 'Example Lint Helper', source: 'https://github.com/example/lint-helper', category: 'Rendimiento y calidad',
-      status: 'recomendada', score: 7, verdict: r.result.verdict, note: r.result.note, analyzed_at: '2026-11-27',
+      name: 'Example Lint Helper', source: 'https://github.com/example/lint-helper', category: 'Quality',
+      status: 'recommended', score: 7, verdict: r.result.verdict, note: r.result.note, analyzed_at: '2026-11-27',
     });
-    assert.strictEqual(entryFields({ verdict: 'Do not install: no omp support.', status: 'recomendada', category: 'Nope' }, { name: 'n' }, 'd', cats).status, 'en-analisis');
-    assert.strictEqual(entryFields({ verdict: 'Do not install.' }, { name: 'n' }, 'd', cats).category, 'Otras');
+    assert.strictEqual(entryFields({ verdict: 'Do not install: no omp support.', status: 'recommended', category: 'Nope' }, { name: 'n' }, 'd', cats).status, 'awaiting-analysis');
+    assert.strictEqual(entryFields({ verdict: 'Do not install.' }, { name: 'n' }, 'd', cats).category, 'Other');
+    // a result with no verdict follows its status, also when an older agent answers with the older status name
+    assert.strictEqual(entryFields({ status: 'recomendada' }, { name: 'n' }, 'd', cats).status, 'recommended');
   });
   it('flags a report whose sections are missing or out of order', () => {
     const swapped = fixture.replace('## Security', '## TMP').replace('## Reviews and score', '## Security').replace('## TMP', '## Reviews and score');

@@ -6,9 +6,9 @@
 # it once, the server swaps it for a cookie, and requests without it are refused.
 #
 # Settings (environment variables, or a `skilldex.conf` file next to this script with KEY=value lines):
-#   SKILLDEX_DATA  folder for your data (watchlist, reports, config). Default: a "Seguimiento" folder next to
-#                  this repository's folder if it exists, otherwise ~/Library/Application Support/Skill Dex (macOS)
-#                  or ${XDG_DATA_HOME:-~/.local/share}/Skill Dex (Linux).
+#   SKILLDEX_DATA  the data folder (watchlist, reports, config). Default: ~/Library/Application Support/Skill Dex
+#                  (macOS) or ${XDG_DATA_HOME:-~/.local/share}/Skill Dex (Linux). A folder named "Seguimiento" next
+#                  to this repository's folder, the name earlier versions used, is still found and used when present.
 #   PORT           local port. Default 4173.
 #   SKILLDEX_RUNNER, OMP_BIN, CLAUDE_BIN, CODEX_BIN  which agent CLI runs analyses (see README); only needed for them.
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
@@ -21,7 +21,7 @@ say_error() {
   [ -n "$MAC" ] && command -v osascript >/dev/null 2>&1 && osascript -e "display dialog \"$1\" buttons {\"OK\"} with icon stop" >/dev/null 2>&1
   return 0
 }
-if [ -z "$SKILLDEX_DATA" ]; then
+if [ -z "$SKILLDEX_DATA" ]; then # the same rule as paths.mjs
   if [ -d "$APP_DIR/../Seguimiento" ]; then SKILLDEX_DATA="$(cd "$APP_DIR/../Seguimiento" && pwd -P)"
   elif [ -n "$MAC" ]; then SKILLDEX_DATA="$HOME/Library/Application Support/Skill Dex"
   else SKILLDEX_DATA="${XDG_DATA_HOME:-$HOME/.local/share}/Skill Dex"; fi

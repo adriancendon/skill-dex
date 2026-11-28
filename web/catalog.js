@@ -71,16 +71,17 @@ const P = {
   archive: '<rect x="3" y="3" width="18" height="5" rx="1"/><path d="M5 8v13h14V8M9 12h6"/>',
   folder: '<path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/>'
 };
+// English and Spanish words, so that descriptions written in either language get a fitting icon.
 const BY_WORD = [[/seguridad|security|vulnerab|malic|secret/i, 'shieldSearch'], [/email|correo/i, 'mail'], [/voz|voice/i, 'mic'], [/seo|search|búsqueda/i, 'search'], [/rendimiento|performance|speed|velocidad/i, 'bolt'], [/animat|motion|scroll/i, 'motion'], [/diseñ|design|\bui\b|\bux\b/i, 'palette'], [/copy|texto|escrib|writ/i, 'feather'], [/\bads\b|anuncio|campañ/i, 'megaphone'], [/analytics|métric|medi/i, 'bars'], [/test|prueba/i, 'scales'], [/\bcli\b|terminal|comando|command/i, 'terminal'], [/mapa|local|maps/i, 'pin'], [/github|repo/i, 'upload'], [/cloud|server|worker/i, 'cloud']];
 // Categories come from the scan (skills-meta.json in the data folder, or the built-in list): name, colours and icon.
 const CATEGORIES = D.categories || {};
-const ORIGINS = { tercero: 'Third-party', usuario: 'Your own', 'auto-aprendida': 'Self-learned', proyecto: 'Project' };
+const ORIGINS = { 'third-party': 'Third-party', user: 'Your own', 'self-learned': 'Self-learned', project: 'Project' };
 const svg = k => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${P[k] || P.box}</svg>`;
 const iconKey = s => (P[s.icon] && s.icon) || BY_WORD.find(([r]) => r.test(s.description || s.note || ''))?.[1] || CATEGORIES[s.category]?.icon || 'box';
 const catName = c => CATEGORIES[c]?.name || c || 'Other';
 const hue = c => CATEGORIES[c]?.[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'color'] || '#76879c';
 const total = s => s.usage?.total || 0, season = s => s.usage?.since || 0, before = s => Math.max(0, total(s) - season(s));
-const pending = s => (s.security?.counts?.revisar || 0) + (s.security?.counts?.caducada || 0);
+const pending = s => (s.security?.counts?.review || 0) + (s.security?.counts?.stale || 0);
 const untried = s => !!s.usage && total(s) === 0;
 const tile = s => `<span class="icon-tile${untried(s) ? ' empty' : ''}" style="--hue:${hue(s.category)}" aria-hidden="true">${svg(iconKey(s))}</span>`;
 const shortLine = s => s.short || s.description || s.note || 'No description supplied.';
@@ -99,9 +100,18 @@ const xp = D.skills.reduce((a, s) => a + season(s) * 10, 0); // REQ-USE-021: 10 
 const LEVEL_TITLES = ['Newcomer', 'Explorer', 'Builder', 'Craftsman', 'Strategist', 'Expert', 'Master', 'Legend']; // a new title every 2 levels
 const levelTitle = level => LEVEL_TITLES[Math.min(LEVEL_TITLES.length - 1, Math.floor((Math.max(1, level) - 1) / 2))];
 const skillLevel = s => Math.floor(Math.sqrt(season(s))); // 1 use is level 1, 4 uses level 2, 9 uses level 3
-const RARITIES = [[40, 'Legendary'], [15, 'Epic'], [6, 'Rare'], [-Infinity, 'Common']]; // score = lines / 100 + files
-const rarity = s => RARITIES.find(([min]) => (s.lines || 0) / 100 + (s.files || 0) > min)[1];
-const rarityDot = s => `<span class="rarity-dot ${rarity(s).toLowerCase()}" role="img" aria-label="${rarity(s)} rarity" title="${rarity(s)} rarity, from the skill's size"></span>`;
+// Rarity: how uncommon the skill is on GitHub, from the scan (rarity.mjs): public repositories with a SKILL.md of that
+// name. 1 Legendary, 2-9 Epic, 10-49 Rare, 50 or more Common; not found or not known: Common.
+const rarity = s => ['Legendary', 'Epic', 'Rare'].includes(s.rarity?.tier) ? s.rarity.tier : 'Common';
+const rarityBasis = s => {
+  const r = s.rarity || {};
+  if (r.local) return 'not looked up, project skills stay on this computer';
+  if (!Number.isInteger(r.repos)) return 'unknown';
+  const repos = plural(r.repos, 'public GitHub repository', 'public GitHub repositories');
+  if (r.files > 100) return `found in at least ${repos} (more than 100 matching SKILL.md files)`;
+  return r.repos ? `found in ${repos}` : 'not found in any public GitHub repository';
+};
+const rarityDot = s => `<span class="rarity-dot ${rarity(s).toLowerCase()}" role="img" aria-label="${rarity(s)} rarity" title="${rarity(s)} rarity: ${rarityBasis(s)}"></span>`;
 
 // ---------- State ----------
 let view = 'library', filter = 'all', period = 'season';
@@ -129,12 +139,12 @@ function renderLevel() {
 // ---------- Overview ----------
 function chartHTML(values) {
   const max = Math.max(1, ...values);
-  return values.map((n, i) => `<span class="bar-slot${days[i] >= D.inicio ? ' season' : ''}" data-tip="${dateText(days[i])}: ${plural(n, 'use')}"><i style="height:${Math.max(2, n / max * 100)}%"></i></span>`).join('');
+  return values.map((n, i) => `<span class="bar-slot${days[i] >= D.seasonStart ? ' season' : ''}" data-tip="${dateText(days[i])}: ${plural(n, 'use')}"><i style="height:${Math.max(2, n / max * 100)}%"></i></span>`).join('');
 }
 function renderChart() {
   const values = days.map(d => D.skills.reduce((n, s) => n + (s.usage?.days?.[d] || 0), 0)), sum = values.reduce((a, b) => a + b, 0);
   $('main-chart').innerHTML = chartHTML(values);
-  $('main-chart').setAttribute('aria-label', `Daily skill uses over the 30 days ending ${dateText(days[29])}: ${sum} uses. The season began ${dateText(D.inicio)}; its days are underlined. ${days.map((d, i) => dateText(d) + ': ' + values[i]).join('; ')}`);
+  $('main-chart').setAttribute('aria-label', `Daily skill uses over the 30 days ending ${dateText(days[29])}: ${sum} uses. The season began ${dateText(D.seasonStart)}; its days are underlined. ${days.map((d, i) => dateText(d) + ': ' + values[i]).join('; ')}`);
   $('activity-total').textContent = plural(sum, 'use');
   $('activity-caption').textContent = `across ${plural(values.filter(Boolean).length, 'active day')}`;
   $('main-axis').innerHTML = `<span>${dateText(days[0])}</span><span>${dateText(days[14])}</span><span>${dateText(days[29])}</span>`;
@@ -143,7 +153,7 @@ function renderRank() {
   const value = period === 'season' ? season : total;
   const ranked = D.skills.filter(s => value(s) > 0).sort((a, b) => value(b) - value(a) || a.name.localeCompare(b.name)).slice(0, 3);
   $('rank').innerHTML = ranked.map((s, i) => `<button type="button" class="rank-row" data-open="s:${esc(s.id)}" aria-label="${i + 1}. ${esc(s.name)}, ${plural(value(s), 'use')} ${period === 'season' ? 'this season' : 'in total'}. Open details">${tile(s)}<span class="rank-name">${esc(s.name)}</span><span class="rank-number">${value(s)}</span></button>`).join('') || '<p class="muted">Your next use starts the season.</p>';
-  $('rank-note').textContent = period === 'season' ? `This season began ${dateText(D.inicio)}. Keep putting these to work.` : 'Your most trusted tools, over the whole collection history.';
+  $('rank-note').textContent = period === 'season' ? `This season began ${dateText(D.seasonStart)}. Keep putting these to work.` : 'Your most trusted tools, over the whole collection history.';
   document.querySelectorAll('[data-period]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.period === period)));
 }
 function renderNudge() {
@@ -164,8 +174,8 @@ const VIEWS = {
 };
 function navCount(v) {
   if (v === 'library') return D.skills.length;
-  if (v === 'watchlist') return D.watchlist.filter(w => w.status !== 'descartada').length;
-  if (v === 'discarded') return D.watchlist.filter(w => w.status === 'descartada').length;
+  if (v === 'watchlist') return D.watchlist.filter(w => w.status !== 'discarded').length;
+  if (v === 'discarded') return D.watchlist.filter(w => w.status === 'discarded').length;
   if (v === 'updates') return window.updatesCount ? window.updatesCount() : ''; // pending updates (updates.js)
   return ''; // Discover and Health show no count
 }
@@ -196,8 +206,8 @@ function spark(s) {
 function secTag(s) {
   const x = s.security, n = pending(s);
   if (!x) return '<span class="sec-tag" title="No security scan yet. Not having a scan does not mean it is safe.">Not scanned</span>';
-  if (n) return `<span class="attention${x.level === 'critico' ? ' bad' : ''}" title="Security findings still waiting for your decision after triage">${n} to check</span>`;
-  if (x.level === 'critico' || x.level === 'revisar') return '<span class="attention bad">Check security</span>';
+  if (n) return `<span class="attention${x.level === 'critical' ? ' bad' : ''}" title="Security findings still waiting for your decision after triage">${n} to check</span>`;
+  if (x.level === 'critical' || x.level === 'review') return '<span class="attention bad">Check security</span>';
   if (x.level === 'info') return `<span class="sec-tag" title="Minor security notices only, after triage. A scan is not a guarantee of safety.">${svg('shield')}Minor notes</span>`;
   return `<span class="sec-tag" title="No security alerts after triage. A scan is not a guarantee of safety.">${svg('shieldCheck')}<span class="sr-only">No security alerts</span></span>`;
 }
@@ -219,7 +229,7 @@ function row(s, rank) {
 }
 function card(s, rank) {
   const n = rankOf(s, rank);
-  return `<article class="skill-card" data-card="s:${esc(s.id)}" style="--hue:${hue(s.category)}"><div class="card-head">${tile(s)}${n ? `<span class="skill-rank top" aria-label="Rank ${n}">#${n}</span>` : ''}<span class="skill-mark" title="Skill level from season uses; rarity from the skill's size">${rarityDot(s)}Lv ${skillLevel(s)} · ${rarity(s)}</span>${favButton(s)}</div><button type="button" class="card-main" data-open="s:${esc(s.id)}"><span class="skill-name">${esc(s.name)}</span><span class="skill-purpose">${esc(shortLine(s))}</span></button><div class="card-meta"><span class="category-tag">${esc(catName(s.category))}</span>${flags(s)}</div><div class="card-foot"><div class="usage-cell">${season(s)}<small>this season / ${total(s)} total</small><span class="usage-history">${before(s)} before season · no XP · last ${dateText(s.usage?.last)}</span></div>${spark(s)}</div></article>`;
+  return `<article class="skill-card" data-card="s:${esc(s.id)}" style="--hue:${hue(s.category)}"><div class="card-head">${tile(s)}${n ? `<span class="skill-rank top" aria-label="Rank ${n}">#${n}</span>` : ''}<span class="skill-mark" title="Skill level from season uses; rarity from how uncommon the skill is on GitHub">${rarityDot(s)}Lv ${skillLevel(s)} · ${rarity(s)}</span>${favButton(s)}</div><button type="button" class="card-main" data-open="s:${esc(s.id)}"><span class="skill-name">${esc(s.name)}</span><span class="skill-purpose">${esc(shortLine(s))}</span></button><div class="card-meta"><span class="category-tag">${esc(catName(s.category))}</span>${flags(s)}</div><div class="card-foot"><div class="usage-cell">${season(s)}<small>this season / ${total(s)} total</small><span class="usage-history">${before(s)} before season · no XP · last ${dateText(s.usage?.last)}</span></div>${spark(s)}</div></article>`;
 }
 function compareFor(sort) {
   return (a, b) => sort === 'name' ? a.name.localeCompare(b.name)
@@ -265,22 +275,22 @@ function emptyLibrary() {
 function toggleFavourite(id) { g(id).f = !g(id).f; save(); renderLibrary(); }
 
 // ---------- Watchlist and Discarded ----------
-const statusName = s => s.status === 'analizando' ? 'Analysing…' : s.status === 'recomendada' ? 'Recommended, not installed' : s.status === 'descartada' ? 'Discarded, record kept' : s.status === 'error' ? 'Analysis failed' : s.report ? 'Analysed · decision pending' : 'Awaiting analysis';
-const statusClass = s => ({ analizando: 'analysing', recomendada: 'recommended', error: 'failed' }[s.status] || '');
+const statusName = s => s.status === 'analysing' ? 'Analysing…' : s.status === 'recommended' ? 'Recommended, not installed' : s.status === 'discarded' ? 'Discarded, record kept' : s.status === 'error' ? 'Analysis failed' : s.report ? 'Analysed · decision pending' : 'Awaiting analysis';
+const statusClass = s => ({ analysing: 'analysing', recommended: 'recommended', error: 'failed' }[s.status] || '');
 const fmtElapsed = n => `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
 function wlActs(s, inDetail) {
   const id = esc(s.id), open = inDetail ? '' : `<button type="button" class="outline" data-open="w:${id}">View analysis</button>`;
   const src = !inDetail && safeSource(s.source) ? `<a class="text-button" href="${esc(s.source)}" target="_blank" rel="noopener noreferrer">${isGitHub(s.source) ? 'Open on GitHub' : 'Open source page'}<span class="sr-only"> (opens in a new tab)</span></a>` : '';
-  if (s.status === 'analizando') return `<span class="running" role="status">Analysing… <b class="el" data-id="${id}">running</b></span><button type="button" class="outline" data-cancel="${id}">Cancel</button>`;
+  if (s.status === 'analysing') return `<span class="running" role="status">Analysing… <b class="el" data-id="${id}">running</b></span><button type="button" class="outline" data-cancel="${id}">Cancel</button>`;
   if (s.status === 'error') return `${RUNNER.available ? `<button type="button" class="outline" data-retry="${id}">Retry</button>` : ''}<button type="button" class="text-button" data-remove="${id}">Remove attempt</button>${src}`;
-  if (s.status === 'descartada') return `${open}<button type="button" class="text-button" data-recover="${id}">Recover to watchlist</button>${src}`;
-  const analyse = RUNNER.available && s.status === 'en-analisis' && !s.report ? `<button type="button" class="outline" data-analyse-entry="${id}">Analyse</button>` : ''; // "Awaiting analysis"
+  if (s.status === 'discarded') return `${open}<button type="button" class="text-button" data-recover="${id}">Recover to watchlist</button>${src}`;
+  const analyse = RUNNER.available && s.status === 'awaiting-analysis' && !s.report ? `<button type="button" class="outline" data-analyse-entry="${id}">Analyse</button>` : ''; // "Awaiting analysis"
   return `${analyse}${open}<button type="button" class="text-button" data-discard="${id}">Discard with a reason</button>${src}`;
 }
 function watchRow(s) {
-  const discarded = s.status === 'descartada';
+  const discarded = s.status === 'discarded';
   const why = discarded ? `<p class="watch-verdict"><strong>Why discarded${s.discarded_at ? ` (${esc(longDate(s.discarded_at))})` : ''}:</strong> ${esc(s.discard_reason || s.verdict || 'No reason recorded.')}</p>` : s.verdict ? `<p class="watch-verdict">${esc(s.verdict)}</p>` : '';
-  return `<article class="watch-row" data-card="w:${esc(s.id)}" style="--hue:${hue(s.category)}">${tile(s)}<div class="watch-copy"><button type="button" class="watch-name" data-open="w:${esc(s.id)}">${esc(s.name)}</button><p>${esc(shortLine(s))}</p><span class="status ${statusClass(s)}">${esc(statusName(s))}${s.score != null && s.status !== 'analizando' ? ` · ${esc(s.score)}/10` : ''}</span>${why}${s.status === 'error' ? `<div class="notice error">${esc(s.error || 'The analysis could not be completed.')}</div>` : ''}<div class="watch-actions">${wlActs(s)}</div></div></article>`;
+  return `<article class="watch-row" data-card="w:${esc(s.id)}" style="--hue:${hue(s.category)}">${tile(s)}<div class="watch-copy"><button type="button" class="watch-name" data-open="w:${esc(s.id)}">${esc(s.name)}</button><p>${esc(shortLine(s))}</p><span class="status ${statusClass(s)}">${esc(statusName(s))}${s.score != null && s.status !== 'analysing' ? ` · ${esc(s.score)}/10` : ''}</span>${why}${s.status === 'error' ? `<div class="notice error">${esc(s.error || 'The analysis could not be completed.')}</div>` : ''}<div class="watch-actions">${wlActs(s)}</div></div></article>`;
 }
 let watchQuery = '', watchSort = 'status';
 function renderOther() {
@@ -298,10 +308,10 @@ function renderOther() {
 }
 function renderWatchList() {
   const discarded = view === 'discarded', q = watchQuery.trim().toLowerCase();
-  const entries = D.watchlist.filter(s => (s.status === 'descartada') === discarded)
+  const entries = D.watchlist.filter(s => (s.status === 'discarded') === discarded)
     .filter(s => !q || [s.name, s.description, s.short, s.category, catName(s.category), s.note, s.verdict, s.discard_reason].filter(Boolean).join(' ').toLowerCase().includes(q));
   if (watchSort === 'name') entries.sort((a, b) => a.name.localeCompare(b.name));
-  else entries.sort((a, b) => Number(b.status === 'analizando') - Number(a.status === 'analizando'));
+  else entries.sort((a, b) => Number(b.status === 'analysing') - Number(a.status === 'analysing'));
   $('watch-list').innerHTML = entries.length ? entries.map(watchRow).join('') : `<p class="empty">${q ? 'No entries match this search.' : discarded ? 'No discarded entries yet. When you discard one, its report and your reason stay here.' : 'Nothing here yet. Use Analyse a skill to investigate one. Nothing will be installed.'}</p>`;
 }
 
@@ -324,7 +334,7 @@ async function setWatch(id, status, reason) { if (await api('/api/watch', { id, 
 function discard(id) {
   const w = D.watchlist.find(x => x.id === id);
   const r = prompt(`Why are you passing on "${w.name}"? The entry, its report and your reason are kept.`, w.verdict || '');
-  if (r?.trim()) setWatch(id, 'descartada', r.trim());
+  if (r?.trim()) setWatch(id, 'discarded', r.trim());
 }
 async function cancelJob(id) {
   if (!confirm('Cancel the running analysis?')) return;
@@ -369,7 +379,7 @@ async function runAnalyse(force, q) {
   if (r.status === 202) { reloadTo('watchlist'); return; }
   if (r.status === 200 && r.data.existing) {
     const x = r.data.existing;
-    const why = x.status === 'descartada' ? `You discarded it${x.discarded_at ? ' on ' + esc(longDate(x.discarded_at)) : ''} because: <b>${esc(x.discard_reason || x.verdict || 'no reason recorded')}</b>` : `Status: ${esc(statusName(x))}${x.analyzed_at ? ' · analysed on ' + esc(longDate(x.analyzed_at)) : ''}. ${esc(x.verdict || '')}`;
+    const why = x.status === 'discarded' ? `You discarded it${x.discarded_at ? ' on ' + esc(longDate(x.discarded_at)) : ''} because: <b>${esc(x.discard_reason || x.verdict || 'no reason recorded')}</b>` : `Status: ${esc(statusName(x))}${x.analyzed_at ? ' · analysed on ' + esc(longDate(x.analyzed_at)) : ''}. ${esc(x.verdict || '')}`;
     const last = (x.discard_history || []).at(-1); // an earlier discard stays visible after recovering (REQ-ANA-024)
     const before = last ? `</p><p>Discarded before${last.discarded_at ? ' on ' + esc(longDate(last.discarded_at)) : ''}: ${esc(last.reason || 'no reason recorded')}${x.discard_history.length > 1 ? ` (and ${x.discard_history.length - 1} earlier)` : ''}.` : '';
     $('analyse-body').innerHTML = `<h2 id="analyse-title">Already investigated: ${esc(x.name)}</h2><p>${why}${before}</p><div class="dialog-buttons"><button type="button" class="outline" data-close-analyse>Close</button><button type="button" class="outline" data-open="w:${esc(x.id)}">View report</button>${RUNNER.available ? `<button type="button" class="primary" data-reanalyse="${esc(q)}">Analyse again (uses quota)</button>` : ''}</div>`;
@@ -420,7 +430,7 @@ document.addEventListener('click', e => {
   else if (d.open) { const [k, id] = d.open.split(/:(.*)/); if (dlg.open) dlg.close(); openDetail(k, id); }
   else if (d.favourite) toggleFavourite(d.favourite);
   else if (d.discard) discard(d.discard);
-  else if (d.recover) setWatch(d.recover, 'en-analisis');
+  else if (d.recover) setWatch(d.recover, 'awaiting-analysis');
   else if (d.cancel) cancelJob(d.cancel);
   else if (d.retry) retryJob(d.retry);
   else if (d.analyseEntry) { const w = D.watchlist.find(x => x.id === d.analyseEntry); if (w && confirm(`Analyse ${w.name} now? It uses your plan's quota and ${limitText()}. Nothing is installed.`)) retryJob(w.id); }
@@ -438,7 +448,7 @@ document.addEventListener('keydown', e => {
 
 // Ping keeps the server alive while the tab is open and shows the elapsed time of a running analysis.
 if (SRV) {
-  let wasRunning = D.watchlist.some(w => w.status === 'analizando');
+  let wasRunning = D.watchlist.some(w => w.status === 'analysing');
   const ping = async () => {
     try {
       const run = (await (await fetch('/api/ping')).json()).running;

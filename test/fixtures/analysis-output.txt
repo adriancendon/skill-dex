@@ -2,7 +2,7 @@ Checking the repository and the security scan…
 Done.
 
 <<<RESULT
-{"name":"Example Lint Helper","source":"https://github.com/example/lint-helper","category":"Rendimiento y calidad","status":"en-analisis","score":7,"verdict":"Install with changes: keep only the lint rules and drop the auto-fix script.","note":"Runs a fixed set of lint checks on demand. Useful, but its auto-fix script rewrites files without asking."}
+{"name":"Example Lint Helper","source":"https://github.com/example/lint-helper","category":"Quality","status":"awaiting-analysis","score":7,"verdict":"Install with changes: keep only the lint rules and drop the auto-fix script.","note":"Runs a fixed set of lint checks on demand. Useful, but its auto-fix script rewrites files without asking."}
 RESULT>>>
 <<<REPORT
 # Example Lint Helper: analysis
@@ -17,7 +17,7 @@ Runs a fixed set of lint checks on a project and explains each finding in plain 
 Our score: **7/10**, because the checks are solid but the auto-fix script is risky.
 
 ## Security
-skillcheck: needs review. The one "revisar" finding (`fs.writeFileSync` in `fix.js`) is real: the script rewrites files without asking.
+skillcheck: needs review. The one "REVIEW BY HAND" finding (`fs.writeFileSync` in `fix.js`) is real: the script rewrites files without asking.
 
 ## Activation: automatic or manual
 omp loads it by itself when you ask to "lint this project" or "check code quality". You can also call it with `/skill:lint-helper`.

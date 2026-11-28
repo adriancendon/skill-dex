@@ -15,10 +15,10 @@
   window.updatesCount = () => (S ? items('update').length || '' : '');
 
   function secLine(i) {
-    const s = i.security || {}, c = s.counts || {}, n = (c.revisar || 0) + (c.caducada || 0);
+    const s = i.security || {}, c = s.counts || {}, n = (c.review || 0) + (c.stale || 0);
     if (s.status === 'done') {
-      if (s.level === 'critico') return ['bad', `Security check: critical finding in the new version${S.blockCritical ? '. Update is blocked' : ''}`];
-      if (s.level === 'revisar') return ['warn', `Security check: ${plural(n, 'finding')} to review before updating`];
+      if (s.level === 'critical') return ['bad', `Security check: critical finding in the new version${S.blockCritical ? '. Update is blocked' : ''}`];
+      if (s.level === 'review') return ['warn', `Security check: ${plural(n, 'finding')} to review before updating`];
       if (s.level === 'info') return ['ok', 'Security check: only minor notes, nothing to review'];
       return ['ok', 'Security check: nothing to review'];
     }
@@ -80,7 +80,7 @@
     const s = skillOf(id), y = yours(i), le = i.localEdits || { edited: [], added: [], missing: [] };
     const touched = new Set(i.files.map(f => f.path));
     const keptEdited = le.edited.filter(p => !touched.has(p)), keptAdded = le.added.filter(p => !touched.has(p));
-    const sec = i.security || {}, findings = [...(sec.revisar || []), ...(sec.caducada || [])];
+    const sec = i.security || {}, findings = [...(sec.review || []), ...(sec.stale || [])];
     const gh = i.github ? `https://github.com/${i.github}` : '';
     if (!drawer.open) opener = trigger || document.activeElement;
     $('detail-category').textContent = 'Updates / Review changes';
@@ -95,7 +95,7 @@
         ${y.length ? `<p class="upd-warning">${svg('shield')}You changed ${esc(y.map(f => f.path).join(', '))} by hand. Updating replaces ${y.length === 1 ? 'that file' : 'those files'} with the new version. Skill Dex saves a copy of your whole current version first, so you can get your changes back.</p>` : '<p>None of your own changes are replaced by this update.</p>'}
         ${keptEdited.length || keptAdded.length ? `<p>Kept as you have them: ${esc([...keptEdited, ...keptAdded.map(p => `${p} (added by you)`)].join(', '))}.</p>` : ''}
         ${keptDeleted(i).length ? `<p>You deleted ${plural(keptDeleted(i).length, 'file')} that the new version changes (${esc(keptDeleted(i).join(', '))}). ${keptDeleted(i).length === 1 ? 'It stays' : 'They stay'} deleted.</p>` : ''}
-        ${i.extraFiles ? '<p>Its ORIGEN.md says this skill also includes files copied from other places of the repository. Those stay as they are.</p>' : ''}</section>
+        ${i.extraFiles ? '<p>Its source record (ORIGIN.md) says this skill also includes files copied from other places of the repository. Those stay as they are.</p>' : ''}</section>
       <section class="drawer-section"><h3>Security check of the new version</h3>${secHTML(i)}
         ${findings.length ? `<ul class="upd-findings">${findings.map(f => `<li><b>${esc(f.cat)}: ${esc(f.pattern)}</b> <code>${esc(f.file)}${f.line ? `:${esc(f.line)}` : ''}</code><br><span class="muted">“${esc(f.snippet)}”</span>${f.why ? `<br><span class="muted">${esc(f.why)}</span>` : ''}</li>`).join('')}</ul>` : ''}
         ${sec.status === 'done' ? `<p class="muted small">SkillSpector, static and without AI, with your false-positive criterion. ${sec.counts?.info ? `${plural(sec.counts.info, 'minor note')}. ` : ''}A clean scan is not a guarantee.</p>` : ''}</section>
@@ -116,7 +116,7 @@
     if (!i || !i.can?.ok) return;
     const s = skillOf(id), y = yours(i), kd = new Set(keptDeleted(i));
     const writes = i.files.filter(f => f.change !== 'removed' && !kd.has(f.path)).length, removes = i.files.filter(f => f.change === 'removed').length;
-    const sec = i.security, findings = [...(sec.revisar || []), ...(sec.caducada || [])];
+    const sec = i.security, findings = [...(sec.review || []), ...(sec.stale || [])];
     confirmDlg.innerHTML = `<form method="dialog" id="upd-form"><h2 id="upd-confirm-title">Update ${esc(s.name)}?</h2>
       <p>First, a copy of your current version is saved in <b>${esc(S.backupDir || `${D.dataDir}/backups`)}/${esc(id)}/</b>. Then Skill Dex writes ${plural(writes, 'file')}${removes ? ` and removes ${removes}` : ''} that the new version changes. Everything else in the skill stays as you have it.</p>
       ${y.length ? `<p class="upd-warning">${svg('shield')}Your changes to ${esc(y.map(f => f.path).join(', '))} will be replaced. They stay in the copy.</p>` : ''}

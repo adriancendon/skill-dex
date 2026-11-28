@@ -135,7 +135,7 @@ function discClear() {
 // Analyse reuses "Analyse a skill": known entries are answered with what was decided (REQ-DIS-003 AC2), new ones open the dialog to confirm.
 function discAnalyse(it) {
   const i = it.info || {};
-  if ((it.label === 'watchlist' || it.label === 'discarded') && !['error', 'analizando'].includes(i.status)) { runAnalyse(false, i.source || i.name || it.url); return; }
+  if ((it.label === 'watchlist' || it.label === 'discarded') && !['error', 'analysing'].includes(i.status)) { runAnalyse(false, i.source || i.name || it.url); return; }
   openAnalyse();
   $('analyse-url').value = (it.label && i.source) || it.url;
 }
@@ -154,7 +154,7 @@ async function discAdd(it, btn) {
   btn.disabled = false;
   if (!r) return;
   if (r.status === 201) {
-    const info = { id: r.data.id, name: it.name, source: it.url, status: 'en-analisis' }; // the same skill can be in results, suggestions and the pick
+    const info = { id: r.data.id, name: it.name, source: it.url, status: 'awaiting-analysis' }; // the same skill can be in results, suggestions and the pick
     [DISC.search?.items, DISC.popular?.items, ...(DISC.suggest?.groups || []).map(g => g.items)].forEach(list => (list || []).forEach(x => { if (discKey(x) === discKey(it)) Object.assign(x, { label: 'watchlist', info }); }));
     discFillResults(); discFillSuggest(); discFillPopular();
     document.querySelector(`[data-disc-add="${CSS.escape(discKey(it))}"]`)?.focus();

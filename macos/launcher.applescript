@@ -1,7 +1,7 @@
--- Skill Dex launcher: reads the repository folder from Contents/Resources/repo-path.txt (or $SKILLDEX_HOME) and runs lanzar.sh.
+-- Skill Dex launcher: reads the repository folder from Contents/Resources/repo-path.txt (or $SKILLDEX_HOME) and runs launch.sh.
 on run
 	set appPath to POSIX path of (path to me)
-	set cmd to "REPO=\"${SKILLDEX_HOME:-$(head -n 1 " & quoted form of (appPath & "Contents/Resources/repo-path.txt") & " 2>/dev/null)}\"; if [ -x \"$REPO/lanzar.sh\" ]; then \"$REPO/lanzar.sh\"; else exit 3; fi"
+	set cmd to "REPO=\"${SKILLDEX_HOME:-$(head -n 1 " & quoted form of (appPath & "Contents/Resources/repo-path.txt") & " 2>/dev/null)}\"; if [ -x \"$REPO/launch.sh\" ]; then \"$REPO/launch.sh\"; else exit 3; fi"
 	try
 		do shell script cmd
 	on error

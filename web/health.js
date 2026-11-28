@@ -13,7 +13,7 @@ function renderHealthView(box) {
       <p class="block-note">Similar descriptions do not mean duplicate functions. Each pair gets one piece of advice: keep one, adapt them, or keep both separate. You decide; the advice changes nothing.</p>
       <p class="block-note" id="pair-status" role="status" aria-live="polite"></p><ul class="pair-list" id="pair-list"></ul></section>
     <section class="health-block" aria-labelledby="data-title"><div class="section-top"><h2 id="data-title">Data</h2></div>
-      <div class="health-tools"><p>Last scan: ${esc(new Date(D.generated).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }))}. Season started ${esc(longDate(D.inicio))}.</p><div class="watch-actions"><button type="button" class="outline" data-refresh="data">Refresh data</button><button type="button" class="outline" data-refresh="security">Refresh and scan security</button></div><p class="block-note">${SRV ? `Analyses and background jobs run one at a time, with limited permissions. Your data folder is ${esc(D.dataDir || 'not recorded in this scan')}.` : 'Opened without the local server. Open Skill Dex.app to analyse, refresh or manage the watchlist.'}</p></div></section>`;
+      <div class="health-tools"><p>Last scan: ${esc(new Date(D.generated).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }))}. Season started ${esc(longDate(D.seasonStart))}.</p><div class="watch-actions"><button type="button" class="outline" data-refresh="data">Refresh data</button><button type="button" class="outline" data-refresh="security">Refresh and scan security</button></div><p class="block-note">${SRV ? `Analyses and background jobs run one at a time, with limited permissions. Your data folder is ${esc(D.dataDir || 'not recorded in this scan')}.` : 'Opened without the local server. Open Skill Dex.app to analyse, refresh or manage the watchlist.'}</p></div></section>`;
   renderPairs();
   if (SRV) loadPairs();
 }
@@ -28,12 +28,12 @@ function healthCards(H) {
   const longest = [...D.skills].sort((a, b) => b.descTokens - a.descTokens).slice(0, 8);
   const heavy = H.heavy.map(x => ({ s: byId(x.id), t: x.tokens }));
   const scanned = D.skills.filter(s => s.security), flagged = scanned.filter(s => pending(s) > 0);
-  const noise = scanned.reduce((a, s) => a + (s.security.counts?.ruido || 0), 0), rawAlert = scanned.filter(s => s.security.raw !== 'SAFE').length;
+  const noise = scanned.reduce((a, s) => a + (s.security.counts?.noise || 0), 0), rawAlert = scanned.filter(s => s.security.raw !== 'SAFE').length;
   return [
     cardH(tokens(H.totalDescTokens), 'of descriptions, loaded in every session: a fixed cost', 'Longest descriptions', longest.map(s => open(s, tokens(s.descTokens)))),
     cardH(heavy[0] ? tokens(heavy[0].t) : 'No sizes', heavy[0] ? `for ${esc(heavy[0].s.name)}, the heaviest when activated. Skills only load when used.` : 'No skill sizes in this scan.', 'Heaviest skills', heavy.map(x => open(x.s, tokens(x.t)))),
     cardH(`${H.never.length} never used`, 'No recorded use in the available history.', 'See them', H.never.map(id => open(byId(id))), 'Every skill has been used at least once.'),
-    cardH(`${H.dormant.length} quiet this season`, `Used before ${esc(dateText(D.inicio))}, not since. Not the same as never used.`, 'See them', H.dormant.map(id => { const s = byId(id); return open(s, `last used ${esc(dateText(s.usage?.last))}`); }), 'Every used skill is active this season.'),
+    cardH(`${H.dormant.length} quiet this season`, `Used before ${esc(dateText(D.seasonStart))}, not since. Not the same as never used.`, 'See them', H.dormant.map(id => { const s = byId(id); return open(s, `last used ${esc(dateText(s.usage?.last))}`); }), 'Every used skill is active this season.'),
     cardH(plural(H.warnings.length, 'load warning'), 'Context for your decisions, not orders to delete.', 'See warnings', H.warnings.map(w => open(byId(w.id), esc(w.msg))), 'No load warnings.'),
     cardH(`${flagged.length} to check`, `Security, of ${scanned.length} scanned: ${rawAlert} flagged before triage, ${noise} notices classed as noise. The remaining alerts stay open until you decide.`, 'Pending findings', flagged.map(s => open(s, `${pending(s)} to check`)), 'No findings waiting for you.')
   ].join('');

@@ -13,12 +13,12 @@ The screenshot uses made-up skills and simulated activity, not a real user's cat
 
 ## Requirements
 
-- macOS (tested) or Linux (best effort: `lanzar.sh` uses `xdg-open` and prints messages to the terminal; the double-click app is macOS-only). Windows is not supported.
+- macOS (tested) or Linux (best effort: `launch.sh` uses `xdg-open` and prints messages to the terminal; the double-click app is macOS-only). Windows is not supported.
 - [Node.js](https://nodejs.org) 24 or newer; verified locally with **24.21.0**.
 - A browser.
 - Skills in any of the folders listed under [Where Skill Dex looks](#where-skill-dex-looks). No agent needs to be installed to browse the catalog, usage, Health, Updates and Discover.
 - Optional, for "Analyse a skill", short descriptions and advice on similar skills: one agent command-line tool, [omp](https://github.com/can1357/oh-my-pi), [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`claude`) or [Codex](https://github.com/openai/codex) (`codex`), signed in to its own account. See [Runners](#runners). Without one, those three features are turned off with a notice and everything else works.
-- Optional: [GitHub CLI (`gh`)](https://cli.github.com) and `gh auth login` for authenticated Discover searches. Without a login, Discover uses public repository search with lower limits. Updates uses `git`, not a GitHub login; `git` must be installed to check source repositories.
+- Optional: [GitHub CLI (`gh`)](https://cli.github.com) and `gh auth login` for authenticated Discover searches and for each skill's rarity (see [Rarity](#rarity)). Without a login, Discover uses public repository search with lower limits and every skill counts as Common. Updates uses `git`, not a GitHub login; `git` must be installed to check source repositories.
 - Optional: Python 3.12–3.15 and SkillSpector for security scans and applying skill updates (setup below).
 
 ## Install
@@ -54,14 +54,14 @@ rebuild the app or edit that file. On first launch macOS may ask you to confirm 
 ### Option B: from a terminal
 
 ```sh
-./lanzar.sh                   # scans, starts the server in the background, opens the browser
+./launch.sh                   # scans, starts the server in the background, opens the browser
 # or, in the foreground:
 node scan.mjs && node server.mjs   # then open http://localhost:4173/?k=$(cat cache/session-token)
 ```
 
 The server only listens on `127.0.0.1` and stops by itself when you close the browser tab. Opening the app again while it is running just opens a new tab.
 
-Each time the server starts it writes a new random secret to `cache/session-token` (readable only by your user, git-ignored). `lanzar.sh` opens `http://localhost:<port>/?k=<secret>`; the server swaps it for an `HttpOnly`, `SameSite=Strict` cookie and redirects to `/`. Every other request, pages and API alike, needs that cookie (local scripts can send the secret in an `X-Skilldex-Token` header instead) and a `Host` of `localhost` or `127.0.0.1` with the server's port; anything else gets a 403 page asking you to open Skill Dex from its app icon. Other user accounts on the same Mac, programs that cannot read your files, and websites therefore cannot use the local API.
+Each time the server starts it writes a new random secret to `cache/session-token` (readable only by your user, git-ignored). `launch.sh` opens `http://localhost:<port>/?k=<secret>`; the server swaps it for an `HttpOnly`, `SameSite=Strict` cookie and redirects to `/`. Every other request, pages and API alike, needs that cookie (local scripts can send the secret in an `X-Skilldex-Token` header instead) and a `Host` of `localhost` or `127.0.0.1` with the server's port; anything else gets a 403 page asking you to open Skill Dex from its app icon. Other user accounts on the same Mac, programs that cannot read your files, and websites therefore cannot use the local API.
 
 ## Where Skill Dex looks
 
@@ -88,6 +88,20 @@ Everything below is read only; folders that do not exist are skipped.
 
 A path is matched by its real folder first, then by the skill's folder name (preferring the copy that agent has). Skill Dex's own analysis runs are not saved as sessions, so they are never counted.
 
+## Rarity
+
+Each skill's rarity says how uncommon it is on GitHub, not how big it is. Skill Dex asks GitHub's code search, through your `gh` login, for public `SKILL.md` files that declare the skill's name (`filename:SKILL.md "name: <name>"`), keeps only the files whose `name:` line is exactly that name, and counts the repositories they are in:
+
+| Public repositories | Rarity |
+| --- | --- |
+| 1 | Legendary |
+| 2 to 9 | Epic |
+| 10 to 49 | Rare |
+| 50 or more, or more than 100 matching files | Common |
+| none, not known yet, no `gh`, no login or an error | Common |
+
+The skill's detail shows the basis ("found in 3 public GitHub repositories", or "unknown"). The server looks names up in the background, three at a time and well under GitHub's limit of 10 code searches a minute, so the page never waits; results are kept for 7 days in `cache/rarity.json` (git-ignored). Only the names of global skills are searched; project skills are never looked up.
+
 ## Runners
 
 "Analyse a skill", the short descriptions written for skills that lack one and the advice on similar skills need an agent command-line tool, the **runner**. Choose it with `"runner"` in `config.json` or `SKILLDEX_RUNNER`: `auto` (default: the first installed of omp, claude, codex), `omp`, `claude`, `codex` or `none`. A runner chosen by name that is not installed is not replaced by another. Binaries are found through `OMP_BIN`, `CLAUDE_BIN`, `CODEX_BIN`, then `~/.local/bin`, Homebrew, `/usr/local/bin` and `PATH`. Each runs in an empty temporary folder, with the tightest limits its CLI documents:
@@ -108,7 +122,7 @@ Everything Skill Dex writes goes in a **data folder**:
 
 | Setting | Meaning | Default |
 | --- | --- | --- |
-| `SKILLDEX_DATA` | data folder | a `Seguimiento` folder next to the repository folder if it exists, otherwise `~/Library/Application Support/Skill Dex` on macOS or `${XDG_DATA_HOME:-~/.local/share}/Skill Dex` on Linux (when started with `lanzar.sh`) |
+| `SKILLDEX_DATA` | data folder | `~/Library/Application Support/Skill Dex` on macOS, `${XDG_DATA_HOME:-~/.local/share}/Skill Dex` on Linux. A folder named `Seguimiento` next to the repository folder, the name earlier versions used, is still found and used when it exists |
 | `PORT` | local port | `4173` |
 | `SKILLDEX_SKILL_DIRS` | extra skill folders, separated by colons (same as `skill_dirs` in `config.json`) | none |
 | `SKILLDEX_RUNNER` | `auto`, `omp`, `claude`, `codex` or `none` (same as `runner` in `config.json`) | `auto` |
@@ -117,7 +131,7 @@ Everything Skill Dex writes goes in a **data folder**:
 | `SKILLDEX_ANALYSIS_SKILL` | an installed skill whose analysis steps "Analyse a skill" follows (same as `analysis_skill` in `config.json`) | none: built-in steps |
 | `SKILLDEX_HOME` | repository folder used by the app (overrides `repo-path.txt`) | the built-in path |
 
-Set them as environment variables, or put `KEY=value` lines in a `skilldex.conf` file next to `lanzar.sh` (git-ignored). Generated files (`web/data.js`, `cache/`) are also git-ignored. With an empty data folder the app opens with an empty watchlist and lists only your installed skills.
+Set them as environment variables, or put `KEY=value` lines in a `skilldex.conf` file next to `launch.sh` (git-ignored). Generated files (`web/data.js`, `cache/`) are also git-ignored. With an empty data folder the app opens with an empty watchlist and lists only your installed skills.
 
 For example, create a private `skilldex.conf` (do not commit it):
 
@@ -126,21 +140,23 @@ SKILLDEX_DATA="$HOME/Library/Application Support/Skill Dex"
 PORT=4173
 ```
 
-`lanzar.sh` reads this file. When starting `node` directly, export the same environment variables yourself. `GH_BIN` can override the GitHub CLI binary; `SKILLSPECTOR_BIN` overrides the scanner used for Updates.
+`launch.sh` reads this file. When starting `node` directly, export the same environment variables yourself. `GH_BIN` can override the GitHub CLI binary; `SKILLSPECTOR_BIN` overrides the scanner used for Updates.
 
 Files in the data folder, all plain JSON or Markdown you can edit by hand (each is created when first needed):
 
 | File | What it holds |
 | --- | --- |
-| `watchlist.json` | skills you are evaluating or discarded, with the reasons |
-| `analisis/<id>.md` | analysis reports |
-| `config.json` | `{"inicio": "YYYY-MM-DD"}`: start of the current season (only uses since then earn XP); optional `"analysis_skill": "<skill name>"`, `"runner"`, `"models"` and `"skill_dirs"` (see above) |
+| `watchlist.json` | skills you are evaluating or discarded, with the reasons; `status` is `awaiting-analysis`, `analysing`, `recommended`, `discarded` or `error` |
+| `reports/<id>.md` | analysis reports |
+| `config.json` | `{"season_start": "YYYY-MM-DD"}`: start of the current season (only uses since then earn XP); optional `"analysis_skill": "<skill name>"`, `"runner"`, `"models"` and `"skill_dirs"` (see above) |
 | `marks.json` | your favourites: `{"favourites": [ids]}` |
 | `skills-meta.json` | categories and icons, see below |
 | `short-descriptions.json` | one short English line per skill id |
 | `pair-advice.json` | advice for similar skill pairs |
 | `security-triage.json` | security findings reviewed by hand |
-| `updates-state.json`, `backups/` | skipped update versions, and copies saved before each update |
+| `updates-state.json`, `backups/` | skipped update versions, and copies saved before each update or data migration |
+
+Data folders written by earlier versions used Spanish names: an `analisis/` folder, `"inicio"` in `config.json` and the watchlist statuses `en-analisis`, `analizando`, `recomendada` and `descartada`. They are still read as they are, and every change Skill Dex writes uses the new names. To convert such a folder at once, run `node tools/migrate-data.mjs --dry-run` to see what would change, then `node tools/migrate-data.mjs`; it also gives each of your own categories in `skills-meta.json` its shown name as its key (the watchlist and skill entries follow), and it copies every file it changes into `backups/migration-<timestamp>/` first.
 
 ### Categories and icons: `skills-meta.json`
 
@@ -158,20 +174,21 @@ Files in the data folder, all plain JSON or Markdown you can edit by hand (each 
 - `_categories` (optional) replaces the built-in list (SEO, Marketing & ads, Performance & quality, Design & UI, Development, Other). The key is what is stored in the watchlist and in analysis results; `name` is shown; `color`/`dark` are the light and dark mode colours; `keywords` is a regular expression; the `fallback` category takes whatever matches nothing.
 - An entry per skill (by id, or folder name for project skills) sets its category and icon. A skill without an entry gets the first category whose keywords match its name, then its description, otherwise the fallback.
 - A skill without an icon gets one from words of its description, else its category's icon. Icon names are the keys of `P` in `web/catalog.js`.
-- `update_source: "none"` declares that a skill has no update source, even if its folder records an old source. Updates never checks it and displays `From <from>, no update source`; with no `from` (or an empty value), it displays `No update source`. `from` is optional attribution kept only in your local data. Other skills use their `ORIGEN.md` repository and commit, when present; a skill folder that is itself a git clone with an `https` remote is checked against that remote from its checked-out commit. Updates covers the global skills of every agent; anything else is listed as Source unknown.
+- `update_source: "none"` declares that a skill has no update source, even if its folder records an old source. Updates never checks it and displays `From <from>, no update source`; with no `from` (or an empty value), it displays `No update source`. `from` is optional attribution kept only in your local data. Other skills use the repository and commit recorded in an `ORIGIN.md` next to them (inside the skill folder, or a table in the folder that holds it; the older name `ORIGEN.md` is read too), when present; a skill folder that is itself a git clone with an `https` remote is checked against that remote from its checked-out commit. Updates covers the global skills of every agent; anything else is listed as Source unknown.
 
 ## Privacy
 
 - Scanning the catalog and usage is local and sends no telemetry. The server binds to `127.0.0.1`, answers only requests that carry the secret of the current launch (see above) and rejects changes from other origins.
 - Your skills list, usage counts, watchlist, reports and favourites stay on your computer, outside the repository, in the data folder (favourites also keep a copy in the browser's local storage).
-- Discover (GitHub search) and Updates (reading a skill's source) go online only when you use them.
+- Discover (GitHub search) and Updates (reading a skill's source) go online only when you use them. With a `gh` login, the server also sends the names of your global skills to GitHub's code search to work out their rarity (see [Rarity](#rarity)); without `gh` or a login nothing is sent.
 - "Analyse a skill" and the background descriptions launch your local runner (omp, Claude Code or Codex); the skill text it analyses is sent by that tool to its model, under your own account with that tool.
 - Before publishing a fork, run `node tools/privacy-check.mjs --exclude spec/`: it scans tracked and non-ignored new files, including `spec-public/`, for home paths, e-mails, tokens, session paths and installed skill ids. Add private names, project names and client names to git-ignored `privacy.local.txt`, one per line; the checker and specification exporter load these optional terms at runtime. Keep that file private. The MIT copyright's public account handle is intentional attribution.
 
 ## Tools
 
 - `node tools/privacy-check.mjs [--dir PATH] [--exclude PREFIX]`: personal-data scan described above.
-- `node tools/export-public-spec.mjs`: writes a cleaned copy of the private `spec/` requirements package to versioned `spec-public/`, omitting owner quotes and replacing local private terms, paths and installed skill ids. Run it while the private package is available, then run the privacy check.
+- `node tools/export-public-spec.mjs [OUT_DIR] [--src SPEC_DIR]`: writes a cleaned copy of the private `spec/` requirements package to versioned `spec-public/`, omitting owner quotes, Spanish text, session and line references and who shared a skill, and replacing local private terms, paths and installed skill ids. The output is the same on every run. Run it while the private package is available, then run the privacy check.
+- `node tools/migrate-data.mjs [--data DIR] [--dry-run]`: converts a data folder written by an earlier version to the new names, with a backup (see above).
 - `node tools/regenerate-reports.mjs <watchlist id>...`: asks the running app to write new reports for those entries, one analysis at a time (each uses quota; an entry keeps its status). `--status` shows the queue.
 - `node --test test/*.test.mjs updates.test.mjs`: the automated tests (no network, no analysis, only temporary folders).
 - `node tools/demo/make-demo.mjs`: rebuilds the two README screenshots using an isolated temporary home, fictional skills of omp, Claude Code and Codex, and 30 days of simulated usage from each one's logs. Requires Google Chrome (override its path with `CHROME_BIN`); the demo listens only on `127.0.0.1:4182`, disables agent/GitHub CLI execution, stops its processes and removes its temporary files on exit. The normal catalog and local data are untouched.

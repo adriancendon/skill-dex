@@ -163,18 +163,18 @@ export function classify(x, reviewed = [], rootDir = null, scanned = null) {
     (r.pattern == null || r.pattern === x.pattern) &&
     (r.snippet == null || x.snippet.includes(r.snippet))
   );
-  const auto = () => { const cond = autoCondition(x, rootDir); return cond && { kind: 'ruido', why: CONDITIONS[cond], by: 'auto', closed: date(scanned), cond }; };
+  const auto = () => { const cond = autoCondition(x, rootDir); return cond && { kind: 'noise', why: CONDITIONS[cond], by: 'auto', closed: date(scanned), cond }; };
   if (candidates.length) {
     // An entry that no longer holds sends the finding back to review, unless the code criterion closes it on its own.
     const full = candidates.find(r => r.file && r.line != null && r.severity && r.category && r.file_sha256);
     const hash = full && fileHash(rootDir, x.file);
     if (!full || !hash || hash !== full.file_sha256)
-      return auto() || { kind: 'caducada', why: 'The earlier review no longer applies: the file changed or the review has no file fingerprint. Check it again.' };
+      return auto() || { kind: 'stale', why: 'The earlier review no longer applies: the file changed or the review has no file fingerprint. Check it again.' };
     const cond = validCondition(full.condition) ? full.condition : null;
-    if (full.by === 'owner') return { kind: 'revisada', why: full.reason, by: 'owner', closed: date(full.reviewed_at), cond };
-    if (REQUIRE_CONDITION && !cond) return auto() || { kind: 'caducada', why: 'Closed before the false-positive criterion existed and names no condition. Check it again.' };
-    if (x.sev === 'CRITICAL') return { kind: 'caducada', why: EXCLUSIONS.critical };
-    return { kind: 'revisada', why: full.reason, by: 'agent', closed: date(full.reviewed_at), cond };
+    if (full.by === 'owner') return { kind: 'reviewed', why: full.reason, by: 'owner', closed: date(full.reviewed_at), cond };
+    if (REQUIRE_CONDITION && !cond) return auto() || { kind: 'stale', why: 'Closed before the false-positive criterion existed and names no condition. Check it again.' };
+    if (x.sev === 'CRITICAL') return { kind: 'stale', why: EXCLUSIONS.critical };
+    return { kind: 'reviewed', why: full.reason, by: 'agent', closed: date(full.reviewed_at), cond };
   }
   const closed = auto();
   if (closed) return closed;
@@ -182,18 +182,20 @@ export function classify(x, reviewed = [], rootDir = null, scanned = null) {
   const gapWhy = 'The scanner could not fully analyse this part, and no condition of the false-positive criterion covers that.';
   if (x.sev === 'LOW' || x.sev === 'MEDIUM' || (gap && COVERAGE_GAPS_AS_NOTICES))
     return { kind: 'info', why: gap ? gapWhy : `Medium or low severity: shown as a minor notice.${ex ? ' ' + EXCLUSIONS[ex] : ''}` };
-  return { kind: 'revisar', why: ex ? EXCLUSIONS[ex] : gap ? gapWhy : 'No condition of the false-positive criterion applies, so it waits for your decision.' };
+  return { kind: 'review', why: ex ? EXCLUSIONS[ex] : gap ? gapWhy : 'No condition of the false-positive criterion applies, so it waits for your decision.' };
 }
 
+// Groups: review (waits for a decision), info (minor notice), noise (closed by the code criterion), reviewed (closed by a
+// recorded review), stale (a recorded review that no longer applies). Level: clean, info, review or critical.
 export function triage(c, reviewed = [], rootDir = null) {
-  const out = { revisar: [], info: [], ruido: [], revisada: [], caducada: [] };
+  const out = { review: [], info: [], noise: [], reviewed: [], stale: [] };
   for (const x of c.issues) {
     const { kind, why, ...k } = classify(x, reviewed, rootDir, c.scanned);
     out[kind].push({ ...x, why2: why, ...k, ...(k.cond ? { condText: CONDITIONS[k.cond] } : {}) });
   }
-  const allRevisar = out.revisar.concat(out.caducada);
-  const maxRev = allRevisar.reduce((m, x) => Math.max(m, SEVN[x.sev] || 0), 0);
-  const level = allRevisar.length ? (maxRev >= 4 ? 'critico' : 'revisar') : out.info.length ? 'info' : 'limpia';
+  const pending = out.review.concat(out.stale);
+  const maxSev = pending.reduce((m, x) => Math.max(m, SEVN[x.sev] || 0), 0);
+  const level = pending.length ? (maxSev >= 4 ? 'critical' : 'review') : out.info.length ? 'info' : 'clean';
   // Every list is complete: pending findings must all be shown (REQ-SEC-006), closures all recorded (REQ-SEC-005).
   return { level, counts: Object.fromEntries(Object.entries(out).map(([k, v]) => [k, v.length])), ...out };
 }
@@ -204,8 +206,8 @@ export function triage(c, reviewed = [], rootDir = null) {
 export function skillIdFromSrc(src, isUrl = false) {
   if (isUrl) return null;
   try {
-    // Usamos path.resolve (no realpath) para conservar la ruta de instalación: ~/.omp/agent/skills/X
-    // puede ser un symlink al repo real y la identidad de skill viene de la ruta instalada.
+    // path.resolve, not realpath, keeps the installed path: ~/.omp/agent/skills/X may be a symlink to the real
+    // repository, and the skill's identity comes from the installed path.
     const normalized = path.resolve(src);
     const home = os.homedir();
     const under = base => { const rel = path.relative(base, normalized); return rel && !rel.startsWith('..') && !path.isAbsolute(rel) ? rel.split(path.sep)[0] : null; };

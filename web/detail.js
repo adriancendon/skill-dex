@@ -50,7 +50,7 @@
   function fullReport(s, installed) {
     return `<section class="drawer-section" aria-labelledby="detail-report-title"><h3 id="detail-report-title">Full analysis</h3>${s.report
       ? `<details class="disclosure"${installed ? '' : ' open'}><summary>Read the full report<span>Sources, reviews, activation and recommendation</span></summary><div class="md">${md(s.report)}</div></details>`
-      : `<p>${installed ? 'This skill has no analysis report of its own.' : s.status === 'analizando' ? 'The report will appear here when the analysis finishes. Analysing never installs the skill.' : 'No report for this entry yet.'}</p>`}</section>`;
+      : `<p>${installed ? 'This skill has no analysis report of its own.' : s.status === 'analysing' ? 'The report will appear here when the analysis finishes. Analysing never installs the skill.' : 'No report for this entry yet.'}</p>`}</section>`;
   }
 
   function finding(f) {
@@ -70,11 +70,11 @@
     let content;
     if (!x) content = `<div class="sec-summary"><strong>No security scan</strong><p>${installed ? 'This skill has not been scanned yet. Not having a scan does not mean it is safe.' : 'No SkillSpector scan is attached to this entry. Check the security part of the report before considering it.'}</p></div>`;
     else {
-      const c = x.counts || {}, pend = (x.revisar || []).concat(x.caducada || []), info = x.info || [];
-      const closed = (x.revisada || []).concat(x.ruido || []), nClosed = (c.revisada || 0) + (c.ruido || 0), nPend = (c.revisar || 0) + (c.caducada || 0);
-      const labels = { limpia: 'No security alerts', info: 'Minor notices only', revisar: 'Needs your review', critico: 'Critical findings' };
-      const attention = pend.length > 0 || ['revisar', 'critico'].includes(x.level);
-      content = `<div class="sec-summary ${attention ? 'attention-box' : x.level === 'limpia' ? 'clean' : ''}"><strong>${text(labels[x.level] || 'Scan recorded')}</strong><p>${num(nPend)} to check · ${num(c.info)} minor notices · ${num(nClosed)} closed as false positives. A static scan is not a guarantee of safety.</p></div>
+      const c = x.counts || {}, pend = (x.review || []).concat(x.stale || []), info = x.info || [];
+      const closed = (x.reviewed || []).concat(x.noise || []), nClosed = (c.reviewed || 0) + (c.noise || 0), nPend = (c.review || 0) + (c.stale || 0);
+      const labels = { clean: 'No security alerts', info: 'Minor notices only', review: 'Needs your review', critical: 'Critical findings' };
+      const attention = pend.length > 0 || ['review', 'critical'].includes(x.level);
+      content = `<div class="sec-summary ${attention ? 'attention-box' : x.level === 'clean' ? 'clean' : ''}"><strong>${text(labels[x.level] || 'Scan recorded')}</strong><p>${num(nPend)} to check · ${num(c.info)} minor notices · ${num(nClosed)} closed as false positives. A static scan is not a guarantee of safety.</p></div>
         ${pend.length ? `<ul class="findings" aria-label="Findings waiting for your decision">${pend.map(finding).join('')}</ul>` : ''}
         <details class="disclosure"><summary>Scan and triage data<span>SkillSpector · coverage ${text(x.coverage ?? '?')}%</span></summary><dl class="facts">${metric(x.level || 'None', 'Level after triage')}${metric(x.raw || 'Not recorded', 'Raw result')}${metric(num(x.rawIssues), 'Raw findings')}${metric(`${x.coverage ?? '?'}%`, 'Coverage')}${metric(longDate(x.scanned), 'Scanned')}</dl><p>The raw result does not include triage. Findings still pending need your decision.</p></details>
         ${info.length ? `<details class="disclosure"><summary>Minor notices (${num(c.info)})</summary><ul class="findings">${info.map(finding).join('')}</ul></details>` : ''}
@@ -101,10 +101,10 @@
     </section>`;
   }
 
-  // The skill's own level from its season uses, and its rarity from its size (REQ-USE-009, REQ-USE-013).
+  // The skill's own level from its season uses, and its rarity from how uncommon it is on GitHub (REQ-USE-009, REQ-USE-013).
   function levelLine(s) {
-    const lv = skillLevel(s), next = (lv + 1) ** 2 - season(s);
-    return `<p class="skill-level"><span class="skill-mark">${rarityDot(s)}Level ${lv} · ${rarity(s)}</span> ${plural(next, 'more season use')} to level ${lv + 1}. Rarity comes from its size: ${num(s.lines)} lines, ${plural(s.files || 0, 'file')}.</p>`;
+    const lv = skillLevel(s), next = (lv + 1) ** 2 - season(s), known = Number.isInteger(s.rarity?.repos);
+    return `<p class="skill-level"><span class="skill-mark">${rarityDot(s)}Level ${lv} · ${rarity(s)}</span> ${plural(next, 'more season use')} to level ${lv + 1}. Rarity is how uncommon the skill is on GitHub: ${text(rarityBasis(s))}${known ? '' : ', so it counts as Common'}.</p>`;
   }
 
   const favouriteAction = s => {
@@ -129,9 +129,10 @@
   }
 
   function watchDetail(s) {
+    // Spanish headings too: reports written before reports were in English keep them.
     const reviews = reportSection(s.report, /reseñas|reviews|puntuación|score/i);
     const activation = reportSection(s.report, /activa|cómo se usa|activation|trigger/i);
-    const discarded = s.status === 'descartada';
+    const discarded = s.status === 'discarded';
     return `${tile(s)}<h2 id="detail-title" tabindex="-1">${text(s.name)}</h2><p class="full-description">${text(s.description || s.note || 'No description recorded.')}</p>
       <div class="badges"><span class="badge">${text(statusName(s))}</span><span class="badge">Not installed</span>${s.analyzed_at ? `<span class="badge">Analysed ${text(longDate(s.analyzed_at))}</span>` : ''}</div>
       ${discarded ? `<div class="notice-box"><strong>Discarded${s.discarded_at ? ' on ' + text(longDate(s.discarded_at)) : ''}</strong><p>${text(s.discard_reason || s.verdict || 'No reason recorded.')}</p><p>The investigation is kept so you do not repeat it.</p></div>` : ''}
@@ -149,7 +150,7 @@
     const installed = kind !== 'w', s = (installed ? D.skills : D.watchlist).find(x => x.id === id);
     if (!s) return;
     if (!drawer.open) opener = document.activeElement;
-    $('detail-category').textContent = `${catName(s.category)} / ${installed ? (s.project ? `Project ${s.project}` : 'Installed') : s.status === 'descartada' ? 'Discarded' : 'Watchlist'}`;
+    $('detail-category').textContent = `${catName(s.category)} / ${installed ? (s.project ? `Project ${s.project}` : 'Installed') : s.status === 'discarded' ? 'Discarded' : 'Watchlist'}`;
     body.dataset.kind = installed ? 's' : 'w'; body.dataset.id = s.id;
     body.innerHTML = installed ? installedDetail(s) : watchDetail(s);
     if (!drawer.open) drawer.showModal();

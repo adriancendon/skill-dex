@@ -1,5 +1,5 @@
 // node --test updates.test.mjs — check, skip and update against a fixture skill and a fake source repository in the
-// system temp folder. Never touches ~/.omp or Seguimiento/: every path is injected.
+// system temp folder. Never touches ~/.omp or the data folder: every path is injected.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -13,7 +13,7 @@ const w = (p, s, mode) => { fs.mkdirSync(path.dirname(p), { recursive: true }); 
 const git = (cwd, ...a) => execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...a], { cwd, encoding: 'utf8' }).trim();
 const read = p => fs.readFileSync(p, 'utf8');
 const SRC = path.join(T, 'src'), SRC2 = path.join(T, 'src2');
-const SKILLS = path.join(T, 'skills'), TER = path.join(T, 'terceros'), FIX = path.join(TER, 'fix');
+const SKILLS = path.join(T, 'skills'), TER = path.join(T, 'vendor'), FIX = path.join(TER, 'fix');
 const spector = path.join(T, 'fake-skillspector');
 let c1, c2;
 
@@ -26,20 +26,21 @@ test.before(() => {
   w(path.join(SRC, 'skills/fix/scripts/a.sh'), 'echo a\n', 0o755);
   git(SRC, 'init', '-q', '-b', 'main'); git(SRC, 'add', '.'); git(SRC, 'commit', '-qm', 'first');
   c1 = git(SRC, 'rev-parse', 'HEAD');
-  // Installed copy: his own edit to notes.md and a LICENSE he added; recorded in the parent ORIGEN.md table
+  // Installed copy: his own edit to notes.md and a LICENSE he added; recorded in the parent folder's table, in an older
+  // ORIGEN.md with Spanish labels (still read)
   fs.cpSync(path.join(SRC, 'skills/fix'), FIX, { recursive: true });
   w(path.join(FIX, 'notes.md'), 'notes v1 + my edit\n');
   w(path.join(FIX, 'LICENSE'), 'MIT\n');
   fs.rmSync(path.join(FIX, 'extra.md')); // he deleted this one
   w(path.join(TER, 'ORIGEN.md'), `# Skills\n\n| Skill | Repositorio | Ruta en el repositorio | Commit | Cambios locales |\n|---|---|---|---|---|\n| fix | ${SRC} | skills/fix | ${c1.slice(0, 7)} | LICENSE copiada |\n`);
   fs.mkdirSync(SKILLS); fs.symlinkSync(FIX, path.join(SKILLS, 'fix'));
-  // A skill of his own (symlink to his folder, no source), a plain folder with no source, and one with its own ORIGEN.md
+  // A skill of his own (symlink to his folder, no source), a plain folder with no source, and one with its own ORIGIN.md
   w(path.join(T, 'mine/own/SKILL.md'), '---\nname: own\n---\n'); fs.symlinkSync(path.join(T, 'mine/own'), path.join(SKILLS, 'own'));
   w(path.join(SKILLS, 'plain/SKILL.md'), '---\nname: plain\n---\n');
   w(path.join(SRC2, 'SKILL.md'), '---\nname: inner\n---\nroot skill\n');
   git(SRC2, 'init', '-q', '-b', 'main'); git(SRC2, 'add', '.'); git(SRC2, 'commit', '-qm', 'one');
   fs.cpSync(SRC2, path.join(SKILLS, 'inner'), { recursive: true, filter: s => !s.includes('.git') });
-  w(path.join(SKILLS, 'inner/ORIGEN.md'), `# Origen\n\n- Fuente: ${SRC2}\n- Commit: ${git(SRC2, 'rev-parse', 'HEAD')}\n`);
+  w(path.join(SKILLS, 'inner/ORIGIN.md'), `# Origin\n\n- Source: ${SRC2}\n- Commit: ${git(SRC2, 'rev-parse', 'HEAD')}\n`);
   w(path.join(T, 'managed/learned/SKILL.md'), '---\nname: learned\n---\n');
   // New upstream version: SKILL.md and notes.md change, a.sh goes, b.py comes; then an unrelated commit
   w(path.join(SRC, 'skills/fix/SKILL.md'), '---\nname: fix\ndescription: Fixture\nmetadata:\n  version: "1.1"\n---\nBody v2\n');
@@ -78,7 +79,7 @@ test('check lists the update with its files, versions, local edits and security,
   assert.equal(fix.files.find(f => f.path === 'notes.md').yours, 'edited');
   assert.equal(fix.files.find(f => f.path === 'SKILL.md').yours, null);
   assert.deepEqual(fix.localEdits.added, ['LICENSE']);
-  assert.equal(fix.security.status, 'done'); assert.equal(fix.security.level, 'limpia');
+  assert.equal(fix.security.status, 'done'); assert.equal(fix.security.level, 'clean');
   assert.equal(fix.can.ok, true);
   assert.match(fix.summary, /Clearer notes/);
   assert.equal(item(u, 'inner').status, 'up-to-date');
@@ -142,7 +143,7 @@ test('a critical finding blocks Update', async () => {
   const u = make(), before = snapshot(FIX);
   await u.check();
   const fix = item(u, 'fix');
-  assert.equal(fix.security.level, 'critico');
+  assert.equal(fix.security.level, 'critical');
   assert.equal(fix.can.ok, false);
   await assert.rejects(u.apply('fix', fix.latest.commit, true), /critical/);
   assert.equal(snapshot(FIX), before);
@@ -154,7 +155,7 @@ test('no-source metadata overrides recorded sources, is shown before checking, a
     const skillsDir = path.join(dir, 'skills'), metaPath = path.join(dir, 'meta.json');
     for (const id of ['gift', 'offline']) {
       w(path.join(skillsDir, id, 'SKILL.md'), `---\nname: ${id}\n---\nFixture\n`);
-      w(path.join(skillsDir, id, 'ORIGEN.md'), '- Source: https://github.com/example/not-contacted\n- Commit: abcdef1234567\n');
+      w(path.join(skillsDir, id, 'ORIGIN.md'), '- Source: https://github.com/example/not-contacted\n- Commit: abcdef1234567\n');
     }
     w(metaPath, JSON.stringify({ gift: { update_source: 'none', from: 'A contributor' }, offline: { update_source: 'none', from: ' ' } }));
     const u = createUpdates({ skillsDir, managedDir: path.join(dir, 'managed'), metaPath,

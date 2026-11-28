@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { runAgent } from './runner.mjs';
 import { dataFile, shownPath } from './paths.mjs';
+import { originName } from './names.mjs';
 
 const OUTCOMES = ['keep-one', 'adapt', 'separate'];
 let cfg = null; // { file, dataFile, cacheDir, runner (→ chooseRunner() result), busy }
@@ -35,7 +36,7 @@ function missingPairs(skipTried) {
     .map(p => ({ key: pairKey(p.a, p.b), sim: p.sim, a: byId.get(p.a), b: byId.get(p.b) }))
     .filter(p => p.a && p.b && !Object.hasOwn(have, p.key) && !(skipTried && tried.has(p.key)));
 }
-const brief = s => ({ id: s.id, name: s.name, origin: { tercero: 'third-party', usuario: 'own', 'auto-aprendida': 'self-learned' }[s.origin] || s.origin, description: String(s.description || '').slice(0, 900), season_uses: s.usage?.since || 0, all_time_uses: s.usage?.total || 0, last_used: s.usage?.last || null, tokens_when_activated: s.bodyTokens || 0 });
+const brief = s => ({ id: s.id, name: s.name, origin: { user: 'own' }[originName(s.origin)] || originName(s.origin), description: String(s.description || '').slice(0, 900), season_uses: s.usage?.since || 0, all_time_uses: s.usage?.total || 0, last_used: s.usage?.last || null, tokens_when_activated: s.bodyTokens || 0 });
 
 function prompt(pairs) {
   return `You advise on a personal catalogue of AI agent skills. Each pair below was flagged because their descriptions share many words. That does not prove they do the same job.

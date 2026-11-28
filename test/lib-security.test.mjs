@@ -47,12 +47,12 @@ describe('triage hash binding', () => {
       reason: 'Test rejects /etc/passwd',
     }];
     const r = classify(issue(), reviewed, rootDir);
-    assert.strictEqual(r.kind, 'revisada');
+    assert.strictEqual(r.kind, 'reviewed');
     const t = triage({ issues: [issue()] }, reviewed, rootDir);
-    assert.strictEqual(t.level, 'limpia');
-    assert.strictEqual(t.counts.revisada, 1);
-    assert.strictEqual(t.counts.caducada, 0);
-    assert.strictEqual(t.counts.revisar, 0);
+    assert.strictEqual(t.level, 'clean');
+    assert.strictEqual(t.counts.reviewed, 1);
+    assert.strictEqual(t.counts.stale, 0);
+    assert.strictEqual(t.counts.review, 0);
   });
 
   it('(b) same line/pattern but different content → back to review', () => {
@@ -69,12 +69,12 @@ describe('triage hash binding', () => {
       reason: 'Test rejects /etc/passwd',
     }];
     const r = classify(issue(), reviewed, rootDir);
-    assert.strictEqual(r.kind, 'caducada');
+    assert.strictEqual(r.kind, 'stale');
     const t = triage({ issues: [issue()] }, reviewed, rootDir);
-    assert.strictEqual(t.level, 'revisar');
-    assert.strictEqual(t.counts.revisada, 0);
-    assert.strictEqual(t.counts.caducada, 1);
-    assert.strictEqual(t.counts.revisar, 0);
+    assert.strictEqual(t.level, 'review');
+    assert.strictEqual(t.counts.reviewed, 0);
+    assert.strictEqual(t.counts.stale, 1);
+    assert.strictEqual(t.counts.review, 0);
   });
 
   it('(c) entry missing line/category/hash → not suppressed', () => {
@@ -87,12 +87,12 @@ describe('triage hash binding', () => {
       reason: 'Old wildcard entry',
     }];
     const r = classify(issue(), reviewed, rootDir);
-    assert.strictEqual(r.kind, 'caducada');
+    assert.strictEqual(r.kind, 'stale');
     const t = triage({ issues: [issue()] }, reviewed, rootDir);
-    assert.strictEqual(t.level, 'revisar');
-    assert.strictEqual(t.counts.revisada, 0);
-    assert.strictEqual(t.counts.caducada, 1);
-    assert.strictEqual(t.counts.revisar, 0);
+    assert.strictEqual(t.level, 'review');
+    assert.strictEqual(t.counts.reviewed, 0);
+    assert.strictEqual(t.counts.stale, 1);
+    assert.strictEqual(t.counts.review, 0);
   });
 });
 
@@ -113,29 +113,29 @@ describe('false-positive criterion (D-056)', () => {
   it('AC1: a critical finding in a reference document is shown, not closed', () => {
     const x = f({ sev: 'CRITICAL' });
     assert.strictEqual(autoCondition(x, rootDir), null);
-    assert.strictEqual(classify(x, [], rootDir).kind, 'revisar');
-    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'critico');
+    assert.strictEqual(classify(x, [], rootDir).kind, 'review');
+    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'critical');
   });
 
   it('AC2: the Spanish word "su" read as a command is closed with condition 2', () => {
     const x = f({ cat: 'Tool Misuse', pattern: 'Chaining Abuse', file: 'SKILL.md', line: 2, snippet: '; su ' });
     const t = triage({ issues: [x], scanned: '2026-11-27T10:00:00.000Z' }, [], rootDir);
-    assert.strictEqual(t.counts.ruido, 1);
-    assert.strictEqual(t.ruido[0].cond, 2);
-    assert.strictEqual(t.ruido[0].condText, CONDITIONS[2]);
-    assert.strictEqual(t.ruido[0].closed, '2026-11-27');
-    assert.strictEqual(t.level, 'limpia');
+    assert.strictEqual(t.counts.noise, 1);
+    assert.strictEqual(t.noise[0].cond, 2);
+    assert.strictEqual(t.noise[0].condText, CONDITIONS[2]);
+    assert.strictEqual(t.noise[0].closed, '2026-11-27');
+    assert.strictEqual(t.level, 'clean');
   });
 
   it('"su root" is the real command and stays', () => {
     const x = f({ cat: 'Tool Misuse', pattern: 'Chaining Abuse', file: 'SKILL.md', line: 4, snippet: '; su ' });
-    assert.strictEqual(classify(x, [], rootDir).kind, 'revisar');
+    assert.strictEqual(classify(x, [], rootDir).kind, 'review');
   });
 
   it('AC3: a finding that meets no condition is shown', () => {
     const x = f({ cat: 'Dangerous Code Execution', pattern: 'eval', file: 'scripts/run.py', snippet: 'eval(x)' });
-    assert.strictEqual(classify(x, [], rootDir).kind, 'revisar');
-    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'revisar');
+    assert.strictEqual(classify(x, [], rootDir).kind, 'review');
+    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'review');
   });
 
   it('condition 1: guides, examples and templates; not SKILL.md, code or data lists', () => {
@@ -154,8 +154,8 @@ describe('false-positive criterion (D-056)', () => {
     write('examples/tool.json', '{}\n'); fs.chmodSync(path.join(rootDir, 'examples/tool.json'), 0o755);
     const x = f({ cat: 'Dangerous Code Execution', pattern: 'eval', file: 'examples/run', snippet: 'eval "$1"' });
     assert.strictEqual(autoCondition(x, rootDir), null);
-    assert.strictEqual(classify(x, [], rootDir).kind, 'revisar');
-    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'revisar');
+    assert.strictEqual(classify(x, [], rootDir).kind, 'review');
+    assert.strictEqual(triage({ issues: [x] }, [], rootDir).level, 'review');
     for (const file of ['examples/notes', 'examples/run.sh', 'examples/tool.json', 'templates/icon.svg', 'samples/data.bin', 'scripts/run'])
       assert.strictEqual(autoCondition(f({ file }), rootDir), null, file);
     for (const file of ['examples/demo.json', 'templates/page.html', 'samples/config.yaml', 'examples/rows.csv', 'templates/readme.txt'])
@@ -169,13 +169,13 @@ describe('false-positive criterion (D-056)', () => {
     assert.ok(x.snippet.length <= 140 && !x.snippet.includes('curl'), 'the keyword is past the snippet');
     assert.strictEqual(exclusion(x), 'internet');
     assert.strictEqual(autoCondition(x, rootDir), null);
-    assert.strictEqual(classify(x, [], rootDir).kind, 'revisar');
+    assert.strictEqual(classify(x, [], rootDir).kind, 'review');
     const [inWhy] = compact(raw('ignore previous instructions', { explanation: 'The text asks the agent to upload the notes.' })).issues;
     assert.strictEqual(exclusion(inWhy), 'internet');
-    assert.notStrictEqual(classify(inWhy, [], rootDir).kind, 'ruido');
+    assert.notStrictEqual(classify(inWhy, [], rootDir).kind, 'noise');
     const [lowConf] = compact(raw(`${'word '.repeat(40)}read the api key`, { confidence: 0.5, location: { file: 'SKILL.md', start_line: 1 } })).issues;
     assert.strictEqual(exclusion(lowConf), 'credentials');
-    assert.notStrictEqual(classify(lowConf, [], rootDir).kind, 'ruido');
+    assert.notStrictEqual(classify(lowConf, [], rootDir).kind, 'noise');
     const [plain] = compact(raw('ignore previous instructions')).issues;
     assert.strictEqual(plain.excl, null);
     assert.strictEqual(classify(plain, [], rootDir).cond, 1);
@@ -199,7 +199,7 @@ describe('false-positive criterion (D-056)', () => {
       const x = f(o);
       assert.strictEqual(exclusion(x), why, JSON.stringify(o));
       assert.strictEqual(autoCondition(x, rootDir), null, JSON.stringify(o));
-      assert.notStrictEqual(classify(x, [], rootDir).kind, 'ruido', JSON.stringify(o));
+      assert.notStrictEqual(classify(x, [], rootDir).kind, 'noise', JSON.stringify(o));
     }
   });
 
@@ -214,15 +214,15 @@ describe('false-positive criterion (D-056)', () => {
     fs.writeFileSync(path.join(dir, 'cache', 'a.pyc'), 'one');
     const x = f({ cat: 'Supply Chain', pattern: 'Concealed Executable Artifact', file: 'cache/', line: 1, snippet: 'cache/' });
     const review = { file: 'cache/', line: 1, severity: x.sev, category: x.cat, by: 'owner', reason: 'kept', reviewed_at: '2026-11-27', file_sha256: fileHash(dir, 'cache/') };
-    assert.strictEqual(classify(x, [review], dir).kind, 'revisada');
+    assert.strictEqual(classify(x, [review], dir).kind, 'reviewed');
     fs.writeFileSync(path.join(dir, 'cache', 'a.pyc'), 'two');
-    assert.notStrictEqual(classify(x, [review], dir).kind, 'revisada');
+    assert.notStrictEqual(classify(x, [review], dir).kind, 'reviewed');
     fs.rmSync(dir, { recursive: true, force: true });
   });
 
   it('medium and low findings that meet no condition stay as minor notices', () => {
     assert.strictEqual(classify(f({ sev: 'MEDIUM', file: 'SKILL.md' }), [], rootDir).kind, 'info');
-    assert.strictEqual(classify(f({ sev: 'LOW', file: 'references/guide.md' }), [], rootDir).kind, 'ruido');
+    assert.strictEqual(classify(f({ sev: 'LOW', file: 'references/guide.md' }), [], rootDir).kind, 'noise');
   });
 
   describe('reviewed entries (REQ-SEC-005, REQ-SEC-010)', () => {
@@ -231,40 +231,40 @@ describe('false-positive criterion (D-056)', () => {
 
     it('an entry with a condition closes the finding and records it', () => {
       const t = triage({ issues: [x()] }, [entry({ condition: 3 })], rootDir);
-      assert.strictEqual(t.counts.revisada, 1);
-      assert.strictEqual(t.revisada[0].cond, 3);
-      assert.strictEqual(t.revisada[0].condText, CONDITIONS[3]);
-      assert.strictEqual(t.revisada[0].closed, '2026-11-25');
-      assert.strictEqual(t.level, 'limpia');
+      assert.strictEqual(t.counts.reviewed, 1);
+      assert.strictEqual(t.reviewed[0].cond, 3);
+      assert.strictEqual(t.reviewed[0].condText, CONDITIONS[3]);
+      assert.strictEqual(t.reviewed[0].closed, '2026-11-25');
+      assert.strictEqual(t.level, 'clean');
     });
 
     it('an entry closed before the criterion (no condition) goes back to review', () => {
       const t = triage({ issues: [x()] }, [entry({})], rootDir);
-      assert.strictEqual(t.counts.caducada, 1);
-      assert.strictEqual(t.level, 'revisar');
+      assert.strictEqual(t.counts.stale, 1);
+      assert.strictEqual(t.level, 'review');
     });
 
     it('an old entry without condition is still closed when the code criterion applies (REQ-SEC-010)', () => {
       const su = f({ cat: 'Tool Misuse', pattern: 'Chaining Abuse', file: 'SKILL.md', line: 2, snippet: '; su ' });
       const old = { skill: 'demo-skill', file: 'SKILL.md', line: 2, severity: 'HIGH', category: 'Tool Misuse', pattern: 'Chaining Abuse', file_sha256: sha256File(path.join(rootDir, 'SKILL.md')), reason: 'Old', reviewed_at: '2026-11-25' };
       const r = classify(su, [old], rootDir);
-      assert.strictEqual(r.kind, 'ruido');
+      assert.strictEqual(r.kind, 'noise');
       assert.strictEqual(r.cond, 2);
     });
 
     it('an entry with an invalid condition goes back to review', () => {
-      assert.strictEqual(classify(x(), [entry({ condition: 7 })], rootDir).kind, 'caducada');
+      assert.strictEqual(classify(x(), [entry({ condition: 7 })], rootDir).kind, 'stale');
     });
 
     it('an agent cannot close a critical finding, even with a condition', () => {
       const c = { ...x(), sev: 'CRITICAL' };
-      assert.strictEqual(classify(c, [entry({ severity: 'CRITICAL', condition: 3 })], rootDir).kind, 'caducada');
+      assert.strictEqual(classify(c, [entry({ severity: 'CRITICAL', condition: 3 })], rootDir).kind, 'stale');
     });
 
     it('a decision taken by the owner is kept', () => {
       const c = { ...x(), sev: 'CRITICAL' };
       const r = classify(c, [entry({ severity: 'CRITICAL', by: 'owner' })], rootDir);
-      assert.strictEqual(r.kind, 'revisada');
+      assert.strictEqual(r.kind, 'reviewed');
       assert.strictEqual(r.by, 'owner');
     });
   });

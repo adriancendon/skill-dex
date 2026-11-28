@@ -9,7 +9,7 @@
   const seasonUses = () => D.skills.reduce((a, s) => a + season(s), 0);
   const heading = level => `Level ${level} · ${levelTitle(level)}`;
   const names = list => { const n = list.map(s => s.name); return n.length <= 1 ? n.join('') : `${n.slice(0, -1).join(', ')} and ${n[n.length - 1]}`; };
-  const snapshot = level => ({ level, inicio: D.inicio, uses: seasonUses(), used: used().map(s => s.id) });
+  const snapshot = level => ({ level, seasonStart: D.seasonStart, uses: seasonUses(), used: used().map(s => s.id) });
   const readSeen = () => { try { return JSON.parse(localStorage.getItem(SEEN) || 'null'); } catch { return null; } };
   const writeSeen = s => { try { localStorage.setItem(SEEN, JSON.stringify(s)); } catch {} };
 
@@ -60,7 +60,7 @@
   // Shown once per new level. A first visit, or a new season start, only records the level without a card.
   function check() {
     const { level } = levelState(), seen = readSeen();
-    if (!seen || seen.inicio !== D.inicio || !Array.isArray(seen.used) || !(level >= seen.level)) { writeSeen(snapshot(level)); return; }
+    if (!seen || (seen.seasonStart ?? seen.inicio) !== D.seasonStart || !Array.isArray(seen.used) || !(level >= seen.level)) { writeSeen(snapshot(level)); return; }
     if (level === seen.level) return;
     show({ level, label: '', why: reason(level, seen) });
     writeSeen(snapshot(level)); // once: closing it, or reloading, never shows it again for this level

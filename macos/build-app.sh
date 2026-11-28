@@ -9,7 +9,7 @@ set -e
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 OUT="${1:-$HOME/Applications}"
 REPO="$(cd "${2:-$HERE/..}" && pwd -P)"
-[ -x "$REPO/lanzar.sh" ] || { echo "lanzar.sh not found in $REPO" >&2; exit 1; }
+[ -x "$REPO/launch.sh" ] || { echo "launch.sh not found in $REPO" >&2; exit 1; }
 mkdir -p "$OUT"
 APP="$OUT/Skill Dex.app"
 [ -e "$APP" ] && { echo "$APP already exists; remove it first." >&2; exit 1; }

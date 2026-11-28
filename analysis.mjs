@@ -1,6 +1,8 @@
 // What an analysis asks for and how its answer is read (REQ-ANA-007, REQ-ANA-009, REQ-ANA-026).
 // Reports are in English with six sections: the owner's four questions in his order (D-007) plus security and overlaps (D-043).
 // Reports written before this change stay as they are until they are analysed again (tools/regenerate-reports.mjs).
+import { watchStatus } from './names.mjs';
+
 // The three verdicts (D-084): install, install with changes, do not install. Longest first so prefixes match correctly.
 export const VERDICTS = ['Install with changes', 'Do not install', 'Install'];
 export const REPORT_SECTIONS = [
@@ -49,7 +51,7 @@ ${REPORT_SECTIONS.map(([h, what], i) => `${i + 1}. "## ${h}": ${what}`).join('\n
 
 Your final answer must contain EXACTLY these two blocks and nothing else:
 <<<RESULT
-{"name":"readable name","source":"official URL","category":"one of: ${categories.join(' | ')}","status":"recomendada" if the verdict is Install or Install with changes; "en-analisis" in any other case (NEVER "descartada"),"score":number out of 10,"verdict":"one sentence starting with Install, Install with changes or Do not install","note":"2 sentences with the essentials"}
+{"name":"readable name","source":"official URL","category":"one of: ${categories.join(' | ')}","status":"recommended" if the verdict is Install or Install with changes; "awaiting-analysis" in any other case (NEVER "discarded"),"score":number out of 10,"verdict":"one sentence starting with Install, Install with changes or Do not install","note":"2 sentences with the essentials"}
 RESULT>>>
 <<<REPORT
 (the full report in English, markdown, with the six sections above in that order)
@@ -82,14 +84,14 @@ export function parseAnalysis(out) {
   return { result, report, format: checkReport(report) };
 }
 
-// The watchlist fields an analysis fills in (REQ-ANA-009). The status follows the verdict; it is never "descartada".
+// The watchlist fields an analysis fills in (REQ-ANA-009). The status follows the verdict; it is never "discarded".
 // cats: { keys, fallback } from categories.mjs; a category outside the keys becomes the fallback.
 export function entryFields(r, prev, today, cats) {
   const verdict = String(r.verdict || '').slice(0, 300), v = verdictOf(verdict);
-  const recommended = v ? v !== 'Do not install' : r.status === 'recomendada';
+  const recommended = v ? v !== 'Do not install' : watchStatus(r.status) === 'recommended';
   return {
     name: String(r.name || prev.name).slice(0, 120), source: /^https?:\/\//.test(r.source || '') ? r.source : (prev.source || ''),
-    category: cats.keys.includes(r.category) ? r.category : cats.fallback, status: recommended ? 'recomendada' : 'en-analisis',
+    category: cats.keys.includes(r.category) ? r.category : cats.fallback, status: recommended ? 'recommended' : 'awaiting-analysis',
     score: Number(r.score) || null, verdict, note: String(r.note || '').slice(0, 400), analyzed_at: today,
   };
 }

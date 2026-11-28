@@ -11,6 +11,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { DATA } from '../paths.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repo = path.resolve(here, '..');
@@ -23,8 +24,7 @@ export function personalSkillTerms() {
     const dir = path.join(os.homedir(), '.omp/agent', sub);
     try { for (const e of fs.readdirSync(dir)) add(e); } catch {}
   }
-  const dataDir = process.env.SKILLDEX_DATA || path.join(repo, '..', 'Seguimiento');
-  try { for (const w of JSON.parse(fs.readFileSync(path.join(dataDir, 'watchlist.json'), 'utf8'))) { add(w.id); add(w.name); } } catch {}
+  try { for (const w of JSON.parse(fs.readFileSync(path.join(DATA, 'watchlist.json'), 'utf8'))) { add(w.id); add(w.name); } } catch {}
   return [...terms];
 }
 

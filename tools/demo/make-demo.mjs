@@ -73,7 +73,7 @@ try {
   meta['note-weaver'] = { ...meta['note-weaver'], update_source: 'none', from: 'A contributor' };
   const today = new Date(); today.setUTCHours(12, 0, 0, 0);
   const startDay = new Date(today); startDay.setUTCDate(startDay.getUTCDate() - 29);
-  json(path.join(data, 'config.json'), { inicio: startDay.toISOString().slice(0, 10) });
+  json(path.join(data, 'config.json'), { season_start: startDay.toISOString().slice(0, 10) });
   const lines = [JSON.stringify({ type: 'session', cwd: home })];
   let call = 0;
   for (let day = 0; day < 30; day++) {
@@ -113,10 +113,10 @@ try {
   put(path.join(home, '.claude/projects/-demo/demo.jsonl'), claude.join('\n') + '\n');
   put(path.join(home, '.codex/sessions', 'demo', 'rollout-demo.jsonl'), codex.join('\n') + '\n');
   const watchlist = [
-    { id: 'table-scout', name: 'table-scout', note: 'Turn a small dataset into a useful table', category: 'Development', status: 'en-analisis' },
-    { id: 'motion-notes', name: 'motion-notes', note: 'Plan gentle motion for interface feedback', category: 'Design', status: 'recomendada' },
-    { id: 'brief-builder', name: 'brief-builder', note: 'Shape project notes into a focused brief', category: 'Marketing', status: 'en-analisis' },
-    { id: 'archive-helper', name: 'archive-helper', note: 'Sort old notes into a simple archive', category: 'Other', status: 'descartada', discard_reason: 'Overlaps with the existing notes workflow' },
+    { id: 'table-scout', name: 'table-scout', note: 'Turn a small dataset into a useful table', category: 'Development', status: 'awaiting-analysis' },
+    { id: 'motion-notes', name: 'motion-notes', note: 'Plan gentle motion for interface feedback', category: 'Design', status: 'recommended' },
+    { id: 'brief-builder', name: 'brief-builder', note: 'Shape project notes into a focused brief', category: 'Marketing', status: 'awaiting-analysis' },
+    { id: 'archive-helper', name: 'archive-helper', note: 'Sort old notes into a simple archive', category: 'Other', status: 'discarded', discard_reason: 'Overlaps with the existing notes workflow' },
   ];
   for (const entry of watchlist) shorts[entry.id] = entry.note;
   json(path.join(data, 'watchlist.json'), watchlist);

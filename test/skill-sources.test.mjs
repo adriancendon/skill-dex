@@ -14,9 +14,9 @@ describe('project skill uses', () => {
     const mk = p => { fs.mkdirSync(p, { recursive: true }); fs.writeFileSync(path.join(p, 'SKILL.md'), '---\nname: x\n---\n'); return p; };
     const g = mk(path.join(tmp, 'global/skills/seo')), a = mk(path.join(tmp, 'A/.omp/skills/kb')), b = mk(path.join(tmp, 'B/.omp/skills/kb'));
     skills = [
-      { id: 'seo', origin: 'usuario', path: g },
-      { id: 'kb@A', skill: 'kb', origin: 'proyecto', project: 'A', projectPath: path.join(tmp, 'A'), path: a },
-      { id: 'kb@B', skill: 'kb', origin: 'proyecto', project: 'B', projectPath: path.join(tmp, 'B'), path: b },
+      { id: 'seo', origin: 'user', path: g },
+      { id: 'kb@A', skill: 'kb', origin: 'project', project: 'A', projectPath: path.join(tmp, 'A'), path: a },
+      { id: 'kb@B', skill: 'kb', origin: 'project', project: 'B', projectPath: path.join(tmp, 'B'), path: b },
     ];
   });
   after(() => fs.rmSync(tmp, { recursive: true, force: true }));

@@ -8,6 +8,7 @@ import { execFile } from 'node:child_process';
 import { WATCHLIST } from './paths.mjs';
 import { loadMeta } from './categories.mjs';
 import { readWatchlist, writeWatchlist } from './watchlist.mjs';
+import { ORIGIN_FILES, originName } from './names.mjs';
 
 const TTL_SEARCH = 6 * 3600e3, TTL_POPULAR = 24 * 3600e3, TTL_PARTIAL = 10 * 60e3, CACHE_KEEP = 7 * 24 * 3600e3; // results left incomplete by limits are kept 10 minutes
 const POPULAR_SIZE = 30; // the popular pick comes from this many of the most-starred skill repositories
@@ -241,23 +242,26 @@ export function createDiscover({ here, rescan }) {
   function knowledge() {
     let skills = [];
     try { const t = fs.readFileSync(DATA, 'utf8'); skills = JSON.parse(t.slice(t.indexOf('=') + 1).trim().replace(/;\s*$/, '')).skills || []; } catch {}
-    // Third-party copies list their source repository and folder in an ORIGEN.md table next to them, when present.
+    // Third-party copies list their source repository and folder in an ORIGIN.md (older: ORIGEN.md) table next to them.
     const origins = new Map();
     for (const dir of new Set(skills.map(s => s.path && path.dirname(s.path)).filter(Boolean))) {
-      let txt = ''; try { txt = fs.readFileSync(path.join(dir, 'ORIGEN.md'), 'utf8'); } catch { continue; }
+      let txt = '';
+      for (const f of ORIGIN_FILES) { try { txt = fs.readFileSync(path.join(dir, f), 'utf8'); break; } catch {} }
+      if (!txt) continue;
       for (const line of txt.split('\n')) {
         const c = line.split('|').map(x => x.trim());
         if (c.length > 4 && /^[\w.-]+\/[\w.-]+$/.test(c[2]) && /^[\w.@/-]+/.test(c[3])) origins.set(`${dir}\u0000${c[1]}`, { repo: c[2].toLowerCase(), dir: c[3].split(/\s/)[0].replace(/\/+$/, '').toLowerCase() });
       }
     }
-    const installed = skills.map(s => ({ id: s.id, name: s.name, origin: s.origin, src: s.path ? origins.get(`${path.dirname(s.path)}\u0000${s.id}`) || null : null }));
-    return { installed, wl: readJSON(WL, []) };
+    const installed = skills.map(s => ({ id: s.id, name: s.name, origin: originName(s.origin), src: s.path ? origins.get(`${path.dirname(s.path)}\u0000${s.id}`) || null : null }));
+    let wl = []; try { wl = readWatchlist(WL); } catch {}
+    return { installed, wl: Array.isArray(wl) ? wl : [] };
   }
   function labelFor(it, K) {
     const repo = it.repo.toLowerCase(), repoUrl = `https://github.com/${repo}`, url = norm(it.url), nm = String(it.name || '').toLowerCase();
     const dir = it.kind === 'skill' ? path.posix.dirname(it.path || '').toLowerCase() : '';
     const inst = K.installed.filter(s => s.src ? s.src.repo === repo && (it.kind === 'repo' || s.src.dir === dir)
-      : s.origin === 'tercero' && [s.id, s.name].some(v => String(v).toLowerCase() === nm));
+      : s.origin === 'third-party' && [s.id, s.name].some(v => String(v).toLowerCase() === nm));
     if (inst.length) return { label: 'installed', info: { ids: inst.map(s => s.id) } };
     const w = K.wl.find(x => {
       const s = norm(x.source);
@@ -265,7 +269,7 @@ export function createDiscover({ here, rescan }) {
       return [x.id, x.name].some(v => String(v || '').toLowerCase() === nm);
     });
     if (!w) return { label: null, info: null };
-    return { label: w.status === 'descartada' ? 'discarded' : 'watchlist', info: { id: w.id, name: w.name, source: w.source || '', status: w.status || 'en-analisis', reason: w.discard_reason || (w.status === 'descartada' ? w.verdict || '' : ''), date: w.discarded_at || w.analyzed_at || '' } };
+    return { label: w.status === 'discarded' ? 'discarded' : 'watchlist', info: { id: w.id, name: w.name, source: w.source || '', status: w.status || 'awaiting-analysis', reason: w.discard_reason || (w.status === 'discarded' ? w.verdict || '' : ''), date: w.discarded_at || w.analyzed_at || '' } };
   }
   const labelled = (items, K) => items.map(it => ({ ...it, ...labelFor(it, K) }));
 
@@ -358,7 +362,7 @@ export function createDiscover({ here, rescan }) {
     if (list.some(w => w.id === id)) id = `${base}-${slugify(m[1])}`.slice(0, 80);
     for (let n = 2; list.some(w => w.id === id); n++) id = `${base}-${n}`;
     list.push({
-      id, name, source: url, category: loadMeta().valid(b.category), status: 'en-analisis',
+      id, name, source: url, category: loadMeta().valid(b.category), status: 'awaiting-analysis',
       note: clip(String(b.description || ''), 400), added_at: new Date().toISOString().slice(0, 10), added_from: 'discover',
     });
     writeWatchlist(WL, list);

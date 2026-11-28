@@ -28,25 +28,25 @@ function removeClone() {
 for (const sig of ['SIGINT', 'SIGTERM', 'SIGHUP']) process.on(sig, () => { removeClone(); process.exit(130); });
 
 function report(dir, c, t) {
-  const L = { limpia: '🟢 CLEAN', info: '🟡 MINOR NOTICES ONLY', revisar: '🟠 REVIEW BY HAND', critico: '🔴 CRITICAL — REVIEW BEFORE ANYTHING ELSE' }[t.level];
-  const byCond = t.ruido.reduce((a, x) => ({ ...a, [x.cond]: (a[x.cond] || 0) + 1 }), {});
+  const L = { clean: '🟢 CLEAN', info: '🟡 MINOR NOTICES ONLY', review: '🟠 REVIEW BY HAND', critical: '🔴 CRITICAL — REVIEW BEFORE ANYTHING ELSE' }[t.level];
+  const byCond = t.noise.reduce((a, x) => ({ ...a, [x.cond]: (a[x.cond] || 0) + 1 }), {});
   console.log(`\nSkillSpector (static, no AI) on ${dir}`);
   console.log(`Verdict after triage: ${L}`);
   console.log(`Raw scanner result: ${c.recommendation} (score ${c.score}) · coverage ${c.coverage}% · ${c.issues.length} findings`);
-  console.log(`Triage: ${t.counts.revisar} to review · ${t.counts.info} notices · ${t.counts.ruido} closed as false positives (criterion D-056${t.counts.ruido ? ': ' + Object.entries(byCond).map(([n, k]) => `condition ${n} ×${k}`).join(', ') : ''})`);
-  for (const x of t.revisar) console.log(`  ⚠ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}\n     "${x.snippet}"\n     ${x.why}\n     → ${x.why2}`);
+  console.log(`Triage: ${t.counts.review} to review · ${t.counts.info} notices · ${t.counts.noise} closed as false positives (criterion D-056${t.counts.noise ? ': ' + Object.entries(byCond).map(([n, k]) => `condition ${n} ×${k}`).join(', ') : ''})`);
+  for (const x of t.review) console.log(`  ⚠ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}\n     "${x.snippet}"\n     ${x.why}\n     → ${x.why2}`);
   for (const x of t.info) console.log(`  · [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}`);
-  if (t.caducada.length) {
-    console.log(`\n↻ Reviews that no longer apply (file changed, no fingerprint or no condition): ${t.counts.caducada} — review again`);
-    for (const x of t.caducada) console.log(`  ↻ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}\n     ${x.why2}`);
+  if (t.stale.length) {
+    console.log(`\n↻ Reviews that no longer apply (file changed, no fingerprint or no condition): ${t.counts.stale} — review again`);
+    for (const x of t.stale) console.log(`  ↻ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}\n     ${x.why2}`);
   }
-  if (t.revisada.length) {
-    console.log(`\n✓ Already reviewed (false positive): ${t.counts.revisada}`);
-    for (const x of t.revisada) console.log(`  ✓ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}${x.cond ? ` · condition ${x.cond}` : ''}\n     ${x.why2}`);
+  if (t.reviewed.length) {
+    console.log(`\n✓ Already reviewed (false positive): ${t.counts.reviewed}`);
+    for (const x of t.reviewed) console.log(`  ✓ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'}${x.cond ? ` · condition ${x.cond}` : ''}\n     ${x.why2}`);
   }
-  if (t.ruido.length) {
-    console.log(`\n✓ Closed automatically (false positive, criterion D-056): ${t.counts.ruido}`);
-    for (const x of t.ruido) console.log(`  ✓ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'} · condition ${x.cond}`);
+  if (t.noise.length) {
+    console.log(`\n✓ Closed automatically (false positive, criterion D-056): ${t.counts.noise}`);
+    for (const x of t.noise) console.log(`  ✓ [${x.sev}] ${x.cat}: ${x.pattern} — ${x.file}:${x.line ?? '?'} · condition ${x.cond}`);
   }
   console.log('\nTo close a finding by hand, its entry in security-triage.json (data folder) needs "condition": 1-6 and file_sha256; never a CRITICAL one, nor one that sends data to the internet, deletes files outside its folder, asks for passwords or keys, or installs programs.');
   console.log('Note: this is heuristic; "clean" is not a certificate. Read SKILL.md and the scripts too.');
