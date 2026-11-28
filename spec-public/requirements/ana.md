@@ -36,7 +36,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-003 Only one analysis at a time
 - pattern: unwanted
 - statement: If the user starts an **análisis** while another one is running, then Skill Dex shall refuse the new one with a message saying that only one runs at a time.
-- rationale: D-016. `Tecnico/server.mjs` line 125.
+- rationale: D-016. `Tecnico/server.mjs`.
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "if (job) return send(res, 409" server.mjs`] GIVEN the server code WHEN it is searched THEN the analyse request is answered with status 409 whenever a job is running
   - AC2 [judgement] GIVEN an analysis running WHEN <private> starts a second one THEN he sees the message and no second entry appears
@@ -52,7 +52,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-004 Limited permissions
 - pattern: ubiquitous
 - statement: Skill Dex shall run each **análisis** with only the read, bash, web search, grep and glob tools, from a new temporary folder, with no writing to the project by the agent.
-- rationale: D-017, confirmed as built by D-043. `Tecnico/server.mjs` line 61 (`--tools read,bash,web_search,grep,glob`) and line 60 (working folder from `mkdtemp`); the prompt (`buildPrompt`) forbids writing project files, installing, running code of the analysed repository and `rm`. The app writes the result itself (REQ-ANA-008, REQ-ANA-009). The agent had proposed "solo lectura salvo la carpeta del proyecto"; what is built is stricter.
+- rationale: D-017, confirmed as built by D-043. `Tecnico/server.mjs` (`--tools read,bash,web_search,grep,glob`) and (working folder from `mkdtemp`); the prompt (`buildPrompt`) forbids writing project files, installing, running code of the analysed repository and `rm`. The app writes the result itself (REQ-ANA-008, REQ-ANA-009). The agent had proposed [quote omitted]; what is built is stricter.
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "'--tools', 'read,bash,web_search,grep,glob'" server.mjs`] GIVEN the server code WHEN it is searched THEN the analysis is started with exactly these five tools
   - AC2 [judgement] GIVEN a finished analysis WHEN the project folder is compared before and after THEN only the report, `watchlist.json`, `web/data.js` and the job log changed, all written by the app
@@ -68,7 +68,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-005 Time and cost limit
 - pattern: ubiquitous
 - statement: Skill Dex shall stop an **análisis** that runs longer than 20 minutes or costs more than 1.5 dollars.
-- rationale: `Tecnico/server.mjs` line 61 (`--max-time 20m`, `--max-cost 1.5`); the README and the dialog tell <private> these limits, and D-043 confirms them. D-036 asks to avoid waste. <private> was told an analysis costs about 0.10 to 0.30 dollars (D-015 context).
+- rationale: `Tecnico/server.mjs` (`--max-time 20m`, `--max-cost 1.5`); the README and the dialog tell <private> these limits, and D-043 confirms them. D-036 asks to avoid waste. <private> was told an analysis costs about 0.10 to 0.30 dollars (D-015 context).
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "'--max-time', '20m', '--max-cost', '1.5'" server.mjs`] GIVEN the server code WHEN it is searched THEN the analysis is started with these two limits
 - scope: Analyses launched from the app.
@@ -146,7 +146,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-010 An analysis never discards by itself
 - pattern: ubiquitous
 - statement: Skill Dex shall not mark an entry as **descartada** as the result of an **análisis**.
-- rationale: `Tecnico/server.mjs`, `buildPrompt` ("NUNCA descartada") and `startJob` (only "recomendada" or "en-analisis"); README: "la decisión de descartar es tuya". Fits D-010, where <private> discards; D-043 confirms it. The six entries discarded by an agent earlier were confirmed by <private> (D-044).
+- rationale: `Tecnico/server.mjs`, `buildPrompt` ("NUNCA descartada") and `startJob` (only "recomendada" or "en-analisis"); README: [quote omitted]. Fits D-010, where <private> discards; D-043 confirms it. The six entries discarded by an agent earlier were confirmed by <private> (D-044).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an analysis whose verdict is "No instalar" WHEN it finishes THEN the entry stays in the Watchlist tab as "Por analizar", not under Descartadas
 - scope: Analyses launched from the app.
@@ -161,7 +161,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-011 Already investigated skills are recognised
 - pattern: event
 - statement: When the user asks to analyse a skill that is already in the **watchlist**, Skill Dex shall show its status and verdict, and for a **descartada** entry the date and reason, without starting a new **análisis**.
-- rationale: D-010: a later question about the same skill is answered with when and why it was discarded. `Tecnico/server.mjs` lines 126 to 130 match by id, source URL or name; the README says this costs nothing.
+- rationale: D-010: a later question about the same skill is answered with when and why it was discarded. `Tecnico/server.mjs` match by id, source URL or name; the README says this costs nothing.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discarded entry with a reason WHEN <private> enters its URL in "Analizar skill" THEN a dialog "Ya investigada" names the date and the reason, offers "Ver informe", and no analysis starts
 - scope: The "Analizar skill" dialog.
@@ -176,7 +176,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-012 Analyse a known skill again
 - pattern: event
 - statement: When the user confirms "Analizar de nuevo" for a skill already in the **watchlist**, Skill Dex shall start a new **análisis** of that same entry.
-- rationale: `Tecnico/web/catalog.js`, `runAnalyze(true, …)`; `Tecnico/server.mjs` line 132 reuses the entry. Today it also deletes the discard reason and date; D-044 asks to keep them as history (REQ-ANA-024). The button warns that it consumes quota.
+- rationale: `Tecnico/web/catalog.js`, `runAnalyze(true, …)`; `Tecnico/server.mjs` reuses the entry. Today it also deletes the discard reason and date; D-044 asks to keep them as history (REQ-ANA-024). The button warns that it consumes quota.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the "Ya investigada" dialog WHEN <private> presses "Analizar de nuevo (consume cuota)" THEN the same entry goes to "Analizando…" and no second entry appears
 - scope: The "Analizar skill" dialog.
@@ -221,7 +221,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-015 Only failed attempts can be removed
 - pattern: unwanted
 - statement: If a request asks to remove a **watchlist** entry whose **análisis** did not fail, then Skill Dex shall refuse it and keep the entry.
-- rationale: D-010 keeps investigated and discarded entries. `Tecnico/server.mjs` line 143.
+- rationale: D-010 keeps investigated and discarded entries. `Tecnico/server.mjs`.
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "solo se pueden quitar análisis fallidos" server.mjs`] GIVEN the server code WHEN it is searched THEN the remove request is refused unless the entry's status is `error`
   - AC2 [judgement] GIVEN a recommended or discarded entry WHEN <private> looks at its card THEN it offers no way to remove it
@@ -237,9 +237,9 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-016 An analysis cut off by closing the app is marked failed
 - pattern: event
 - statement: When the local server starts and finds an entry still marked as analysing, Skill Dex shall mark that entry as failed with the reason that the app closed during the **análisis**.
-- rationale: `Tecnico/server.mjs` line 161.
+- rationale: `Tecnico/server.mjs`.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN an entry left as "analizando" in `watchlist.json` WHEN <private> opens `Skill Dex.app` THEN its card shows "Interrumpido (la app se cerró durante el análisis)" with "Reintentar"
+  - AC1 [judgement] GIVEN an entry left as "analizando" in `watchlist.json` WHEN <private> opens `Skill Dex.app` THEN its card shows [quote omitted] with "Reintentar"
 - scope: The local server.
 - conditions: none
 - exceptions: none
@@ -252,7 +252,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-017 A discard needs a reason
 - pattern: unwanted
 - statement: If the user tries to discard a **watchlist** entry without giving a reason, then Skill Dex shall refuse the discard.
-- rationale: D-010 wants to be told later "la descartamos por X razón". `Tecnico/server.mjs` line 114; `Tecnico/web/catalog.js`, `discard`, asks for the reason with the verdict filled in.
+- rationale: D-010 wants to be told later [quote omitted]. `Tecnico/server.mjs`; `Tecnico/web/catalog.js`, `discard`, asks for the reason with the verdict filled in.
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "falta el motivo" server.mjs`] GIVEN the server code WHEN it is searched THEN a discard without a reason is answered with an error
   - AC2 [judgement] GIVEN a watchlist entry WHEN <private> presses "Descartar con motivo" and leaves the reason empty THEN the entry stays in the Watchlist tab
@@ -283,7 +283,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-019 Recover a discarded entry
 - pattern: event
 - statement: When the user presses "Recuperar en watchlist" on a **descartada** entry, Skill Dex shall return it to the **watchlist** as "Por analizar".
-- rationale: `Tecnico/web/catalog.js`, `wlActs`; `Tecnico/server.mjs` line 117. Today it also deletes the discard reason and date; D-044 asks to keep them as history (REQ-ANA-024).
+- rationale: `Tecnico/web/catalog.js`, `wlActs`; `Tecnico/server.mjs`. Today it also deletes the discard reason and date; D-044 asks to keep them as history (REQ-ANA-024).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discarded entry WHEN <private> presses "Recuperar en watchlist" THEN it shows again in the Watchlist tab and not under Descartadas
 - scope: The Descartadas tab.
@@ -298,7 +298,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-020 An installed skill leaves the watchlist view
 - pattern: state
 - statement: While a **watchlist** entry has the same id as an installed skill, Skill Dex shall show it only among the installed skills.
-- rationale: `Tecnico/scan.mjs` line 129 filters such entries out of the watchlist view; the entry stays in `watchlist.json`. The first version promised "Si la instalas, pasa sola de la watchlist a las instaladas" (session A, assistant message at line 32).
+- rationale: `Tecnico/scan.mjs` filters such entries out of the watchlist view; the entry stays in `watchlist.json`. The first version promised [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a watchlist entry whose skill <private> installs under the same folder name WHEN Skill Dex is rescanned THEN it appears under Instaladas and no longer under Watchlist
 - scope: The catalogue.
@@ -328,9 +328,9 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-022 SkillSpector runs inside every analysis
 - pattern: ubiquitous
 - statement: Skill Dex shall include a SkillSpector scan through `Tecnico/skillcheck.mjs` in every **análisis** of a skill that has a `SKILL.md`.
-- rationale: D-012. Step 3 of `<skill>` makes it compulsory; the app's prompt allows `node …/skillcheck.mjs` and asks to check every "revisar" or "crítico" finding in the real code.
+- rationale: D-012. Step 3 of `<skill>` makes it compulsory; the app's prompt allows `node …/skillcheck.mjs` and asks to check every "revisar" or [quote omitted] finding in the real code.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a finished analysis of a skill with a `SKILL.md` WHEN <private> reads the security part of its **informe** THEN it gives the `skillcheck.mjs` verdict and says for each "revisar" or "crítico" finding whether it is a **falso positivo** and why
+  - AC1 [judgement] GIVEN a finished analysis of a skill with a `SKILL.md` WHEN <private> reads the security part of its **informe** THEN it gives the `skillcheck.mjs` verdict and says for each "revisar" or [quote omitted] finding whether it is a **falso positivo** and why
 - scope: Analyses launched from the app and from an omp conversation.
 - conditions: none
 - exceptions: Tools that are not skills (a CLI, a proxy) are reviewed by hand instead.
@@ -343,7 +343,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-024 The previous discard reason is kept as history
 - pattern: event
 - statement: When a **descartada** entry is recovered or analysed again, Skill Dex shall keep its previous discard reason and date as history of that entry.
-- rationale: D-044. Not built: `Tecnico/server.mjs` lines 117 and 132 delete `discard_reason` and `discarded_at`. Keeps what D-010 asked for: a later question about the skill can still be answered with why it was discarded before.
+- rationale: D-044. Not built: `Tecnico/server.mjs` delete `discard_reason` and `discarded_at`. Keeps what D-010 asked for: a later question about the skill can still be answered with why it was discarded before.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discarded entry with a reason WHEN <private> presses "Recuperar en watchlist" THEN its **ficha** still shows the earlier reason and date as history
   - AC2 [judgement] GIVEN the same entry analysed again WHEN <private> or omp looks it up THEN the earlier reason and date are still in `Seguimiento/watchlist.json`
@@ -376,7 +376,7 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
 ### REQ-ANA-026 Analysis reports are written in English
 - pattern: ubiquitous
 - statement: Skill Dex shall have each **informe** written in English.
-- rationale: D-084 ([quote omitted]: yes, like the rest of the app). Not built: the prompt in `Tecnico/server.mjs` asks for a report in Spanish and `<skill>` writes in Spanish. Reports already in `Seguimiento/analisis/` are in Spanish and are analysed again (D-092, REQ-ANA-027).
+- rationale: D-084 (owner answer: yes, like the rest of the app). Not built: the prompt in `Tecnico/server.mjs` asks for a report in Spanish and `<skill>` writes in Spanish. Reports already in `Seguimiento/analisis/` are in Spanish and are analysed again (D-092, REQ-ANA-027).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an analysis started after this is built WHEN <private> reads its **informe** in the **ficha** THEN the whole report is in English
 - scope: Reports of analyses run from the app or with `<skill>`.
@@ -409,3 +409,48 @@ Drafted from `Tecnico/server.mjs`, `Tecnico/web/catalog.js`, `Tecnico/web/detail
   - v2 D-100: <skill> keeps its Spanish report
 - builder_choice: the order of the runs, and whether the Spanish report is kept apart until the English one exists
 - note: 11 of 12 reports regenerated in English with the six headings (D-098); <skill> excepted by D-100.
+
+### REQ-ANA-028 Agent tasks run with whichever CLI is available
+- pattern: ubiquitous
+- statement: Skill Dex shall run analyses, short descriptions and pair advice with whichever of the omp, claude and codex command-line tools is available.
+- rationale: D-117 (option 1). Where omp is used it keeps its explicit model; the choice of runner decides the rest.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a Mac with only the codex CLI WHEN the user starts an analysis THEN it runs with codex
+- scope: Analyses, short descriptions and pair advice.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-ANA-029 Agent tasks are disabled when no CLI is available
+- pattern: state
+- statement: While none of the omp, claude and codex tools is available, Skill Dex shall disable analyses, short descriptions and pair advice and say why.
+- rationale: D-117: the rest of the app keeps working without an agent.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a Mac with none of the three tools WHEN the user opens the app THEN the catalogue works and the analysis buttons are disabled with an explanation
+- scope: Analyses, short descriptions and pair advice.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-ANA-030 The model of each runner is configurable
+- pattern: ubiquitous
+- statement: Skill Dex shall let the user set the model of each runner in the configuration or in an environment variable.
+- rationale: D-123: the model was hardcoded; the README now documents the setting.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a model set in `models` of the configuration for a runner WHEN an analysis runs with it THEN that model is used
+- scope: Agent tasks.
+- conditions: none
+- exceptions: none
+- source: D-123
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-119 v1

@@ -4,20 +4,21 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-001 Installed skills are listed
 - pattern: ubiquitous
-- statement: Skill Dex shall list as installed every folder under `~/.omp/agent/skills` and `~/.omp/agent/managed-skills` that holds a `SKILL.md`.
-- rationale: D-001 and D-003 ask for a list of all installed skills. The two folders are those of `Tecnico/scan.mjs` lines 10 to 13; D-048 adds each project's skills (REQ-CAT-015).
+- statement: Skill Dex shall list as installed every folder that holds a `SKILL.md` in the skill folders it reads (REQ-CAT-024).
+- rationale: D-001 and D-003 ask for a list of all installed skills; D-117 widens the folders from the two of omp to those of any agent. Project skills are REQ-CAT-015.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN a skill folder with a `SKILL.md` in either folder WHEN <private> opens Skill Dex after a rescan THEN the skill appears under Instaladas with the name and description from its `SKILL.md`
-  - AC2 [judgement] GIVEN a folder without `SKILL.md` in either folder WHEN Skill Dex is rescanned THEN it does not appear
+  - AC1 [judgement] GIVEN a skill folder with a `SKILL.md` in any folder it reads WHEN <private> opens Skill Dex after a rescan THEN the skill appears under Instaladas with the name and description from its `SKILL.md`
+  - AC2 [judgement] GIVEN a folder without `SKILL.md` in any folder it reads WHEN Skill Dex is rescanned THEN it does not appear
 - scope: The Instaladas tab.
 - conditions: none
 - exceptions: Project skills are REQ-CAT-015.
-- source: D-001, D-003, D-048
-- status: active
-- version: 1
+- source: D-001, D-003, D-048, D-117
+- status: ready
+- version: 2
 - priority: 2
-- ratified_by: D-048 v1
-
+- ratified_by: D-117 v2
+- changes:
+  - v2 D-117: the folders are no longer only the two of omp
 ### REQ-CAT-002 The list follows what is installed now
 - pattern: event
 - statement: When the skills are rescanned, Skill Dex shall list the skills that are installed at that moment.
@@ -37,7 +38,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-003 Each skill has a category
 - pattern: ubiquitous
 - statement: Skill Dex shall give each installed skill the category set for it in `Seguimiento/skills-meta.json`, or else the category its name suggests.
-- rationale: `Tecnico/scan.mjs` lines 31 to 39 guess one of SEO, Marketing y Ads, Rendimiento y calidad, Diseño y UI, Agencia web, Personal y sistema or Otras from the name; line 56 lets `skills-meta.json` override it. Supports the ordered list of D-001. The emoji setting in the same file is replaced by the skill's own icon (D-039, REQ-CAT-011).
+- rationale: `Tecnico/scan.mjs` guess one of SEO, Marketing y Ads, Rendimiento y calidad, Diseño y UI, Agencia web, Personal y sistema or Otras from the name; lets `skills-meta.json` override it. Supports the ordered list of D-001. The emoji setting in the same file is replaced by the skill's own icon (D-039, REQ-CAT-011).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill named `<skill>` and no entry in `skills-meta.json` WHEN <private> opens its card THEN its category is SEO
   - AC2 [judgement] GIVEN an entry in `skills-meta.json` that sets another category for a skill WHEN Skill Dex is rescanned THEN that category is shown
@@ -87,8 +88,8 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - statement: Skill Dex shall let the user order the installed skills by category, by most uses, by most recent use or by name.
 - rationale: The orders of the select `srt` in `Tecnico/web/index.html` and of `render` in `Tecnico/web/catalog.js` ("Vista general" keeps the scan order). Supports the ordered list of D-001.
 - acceptance_criteria:
-  - AC1 [judgement] GIVEN the Instaladas tab WHEN <private> chooses "Más utilizadas" THEN the skill with the most season uses comes first
-  - AC2 [judgement] GIVEN the same tab WHEN he chooses "Por categoría" THEN the skills are grouped under one heading per category with the share used this season
+  - AC1 [judgement] GIVEN the Instaladas tab WHEN <private> chooses [quote omitted] THEN the skill with the most season uses comes first
+  - AC2 [judgement] GIVEN the same tab WHEN he chooses [quote omitted] THEN the skills are grouped under one heading per category with the share used this season
 - scope: The Instaladas tab; on the watchlist tabs only "Nombre" applies.
 - conditions: none
 - exceptions: none
@@ -122,7 +123,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - rationale: D-018. Built in `Tecnico/web/catalog.js` (click handler on `.card`) and `Tecnico/web/detail.js` (`detail`).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN any card in any tab WHEN <private> clicks it THEN a dialog with that skill's **ficha** opens on top of the catalogue
-- scope: Cards of all three tabs and the "Las más usadas" entries.
+- scope: Cards of all three tabs and the [quote omitted] entries.
 - conditions: none
 - exceptions: A click on a button or link inside the card does what that button or link does.
 - source: D-018, D-048
@@ -135,7 +136,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-009 The detail shows the full analysis
 - pattern: event
 - statement: When the user opens the **ficha** of a skill that has an **informe**, Skill Dex shall show the complete **informe** inside the app.
-- rationale: D-018 asks to see the detailed analysis in the app. `Tecnico/web/detail.js`, `fullReport`, renders the Markdown of `Seguimiento/analisis/<id>.md`, folded under "Leer el informe íntegro".
+- rationale: D-018 asks to see the detailed analysis in the app. `Tecnico/web/detail.js`, `fullReport`, renders the Markdown of `Seguimiento/analisis/<id>.md`, folded under [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a watchlist entry with a report in `Seguimiento/analisis/` WHEN <private> opens its **ficha** THEN he can read the whole report there, without opening another program
   - AC2 [judgement] GIVEN a skill without a report WHEN he opens its **ficha** THEN it says that there is no report yet
@@ -151,7 +152,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-010 Closing the detail
 - pattern: event
 - statement: When the user presses Escape, clicks outside the dialog or presses its close button, Skill Dex shall close the **ficha** and return to the catalogue.
-- rationale: `Tecnico/web/catalog.js`, `closeModal` and its key and click handlers; README "La ficha se abre al pulsar una skill y se cierra con Esc".
+- rationale: `Tecnico/web/catalog.js`, `closeModal` and its key and click handlers; README [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an open **ficha** WHEN <private> presses Escape THEN it closes and the catalogue is where he left it
 - scope: The **ficha** dialog.
@@ -200,7 +201,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-013 The catalogue scrolls instead of shrinking
 - pattern: ubiquitous
 - statement: Skill Dex shall let the catalogue run beyond one screen, with every skill reachable by scrolling, rather than shrink cards to fit the screen.
-- rationale: D-027: more than 100 skills may come and they need not fit. The applied redesign aimed at all 31 skills in one screen (session B, assistant message at line 149).
+- rationale: D-027: more than 100 skills may come and they need not fit. The applied redesign aimed at all 31 skills in one screen.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a catalogue with more skills than fit in the window WHEN <private> scrolls THEN he reaches every skill and the cards keep their size and content
 - scope: The catalogue.
@@ -216,7 +217,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-014 Favourite mark
 - pattern: event
 - statement: When the user presses "Guardar favorita" in a **ficha**, Skill Dex shall switch the favourite mark on or off for the skill.
-- rationale: `Tecnico/web/detail.js` lines 139 to 140 and `Tecnico/web/catalog.js`, `tg`. The "Marcar dominada" button goes with the mastered mark (D-090). Where the marks are stored is REQ-DAT-001. The button label becomes English with the interface (D-063).
+- rationale: `Tecnico/web/detail.js` and `Tecnico/web/catalog.js`, `tg`. The "Marcar dominada" button goes with the mastered mark (D-090). Where the marks are stored is REQ-DAT-001. The button label becomes English with the interface (D-063).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an installed skill WHEN <private> presses "Guardar favorita" in its **ficha** THEN it appears under the Favoritas filter, and pressing again removes it
 - scope: The **ficha** of installed skills.
@@ -233,26 +234,26 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 
 ### REQ-CAT-015 Each project's skills are listed with their project
 - pattern: ubiquitous
-- statement: Skill Dex shall also list the skills that live inside each of the user's projects, each labelled with the name of its project.
-- rationale: D-048. Not built: `Tecnico/scan.mjs` reads only `~/.omp/agent/skills` and `~/.omp/agent/managed-skills`. Example: the six keelblocks skills in this project's `.omp/skills/`.
+- statement: Skill Dex shall also list the skills that live in the skill folders of each of the user's projects, each labelled with the name of its project.
+- rationale: D-048; D-117 widens the project folders to `.omp`, `.claude`, `.agents` and `.codex` skills (REQ-CAT-025) instead of only `.omp/skills` under `~/Developer`.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the keelblocks skills in `~/Developer/Skills/.omp/skills/` WHEN <private> opens Skill Dex after a rescan THEN they appear in the catalogue, each labelled with the project "Skills"
   - AC2 [judgement] GIVEN a skill with the same name in two projects WHEN he looks at the catalogue THEN both appear and he can tell them apart by their project label
 - scope: The catalogue, its search and its filters.
 - conditions: none
 - exceptions: none
-- source: D-048
-- status: active
-- version: 1
+- source: D-048, D-117
+- status: ready
+- version: 2
 - priority: 2
-- ratified_by: D-048 v1
-- builder_choice: how projects are found (for example from the project folders named by the omp sessions); whether the project label is also a filter
-- note: built in 749b7e7, confirmed by D-094.
-
+- ratified_by: D-117 v2
+- changes:
+  - v2 D-117: project skill folders of every agent, not only `.omp/skills`
+- builder_choice: how projects are found; whether the project label is also a filter
 ### REQ-CAT-016 One global list ranked by use
 - pattern: ubiquitous
 - statement: Skill Dex shall show all installed skills in one list ordered by default by their all-time uses, with the top 10 places numbered.
-- rationale: D-068 (see the most used skills globally, not per section) and design D (D-070), which sorts by all-time uses by default; the agent explained the choice: the season began on 2026-11-24 and few skills have season uses yet (session B, line 426).
+- rationale: D-068 (see the most used skills globally, not per section) and design D (D-070), which sorts by all-time uses by default; the agent explained the choice: the season began on 2026-11-24 and few skills have season uses yet.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN skills of several categories WHEN <private> opens the library THEN the skill with the most uses overall is first whatever its category, and the first ten show their place number
 - scope: The library of installed skills.
@@ -301,7 +302,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-019 Short descriptions in the list
 - pattern: ubiquitous
 - statement: Skill Dex shall show in the list and in the cards a short description of each skill in natural, direct language, and its full original description only in the **ficha**.
-- rationale: D-071 ([quote omitted]). Where the short texts come from and their language: D-076, REQ-CAT-022.
+- rationale: D-071. Where the short texts come from and their language: D-076, REQ-CAT-022.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the list WHEN <private> reads the descriptions THEN each fits in one short line, says plainly what the skill is for, and none is the long original text
   - AC2 [judgement] GIVEN a skill's **ficha** WHEN he opens it THEN its full original description is there
@@ -318,7 +319,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 ### REQ-CAT-020 List view or cards view
 - pattern: event
 - statement: When the user chooses the list view or the cards view, Skill Dex shall show the skills in the chosen view.
-- rationale: D-073 ([quote omitted]). Both views keep the same order, filters and grouping, and show what REQ-CAT-012 asks.
+- rationale: D-073. Both views keep the same order, filters and grouping, and show what REQ-CAT-012 asks.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the library in list view WHEN <private> chooses the cards view THEN the same skills appear as cards, in the same order and with the same filters, and he can switch back
 - scope: The library of installed skills.
@@ -364,7 +365,7 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - priority: 2
 - ratified_by: D-076 v1
 - builder_choice: the name and format of the file, and where it is kept so that it stays out of the repository (REQ-DAT-008)
-- note: The agent that writes them runs on an OpenAI model only (architecture rule of this project). Built in 749b7e7, confirmed by D-094.
+- note: The agent that writes them runs with the CLI chosen by REQ-ANA-028; omp keeps its explicit model (D-117). Built in 749b7e7, confirmed by D-094.
 
 ### REQ-CAT-023 A new skill gets its short description when it appears
 - pattern: event
@@ -382,3 +383,94 @@ Drafted from `Tecnico/scan.mjs`, `Tecnico/web/index.html`, `Tecnico/web/catalog.
 - ratified_by: D-076 v1
 - builder_choice: whether the description is written at the scan or when the skill is first shown
 - note: built in 749b7e7, confirmed by D-094.
+
+### REQ-CAT-024 Skills are read from the folders of any agent
+- pattern: ubiquitous
+- statement: Skill Dex shall read the skill folders of omp, Claude Code and Codex, the shared `~/.agents/skills` folder and any custom folder the user adds.
+- rationale: D-117 (option 1): Skill Dex is for anyone who uses `SKILL.md` skills, with or without omp (D-116).
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN skills in `~/.claude/skills` and `~/.codex/skills` WHEN the user opens Skill Dex after a rescan THEN both appear in the catalogue
+  - AC2 [judgement] GIVEN a custom folder added in the settings WHEN Skill Dex is rescanned THEN its skills appear
+- scope: The catalogue.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-CAT-025 Project skill folders of every agent are read
+- pattern: ubiquitous
+- statement: Skill Dex shall read the `.omp`, `.claude`, `.agents` and `.codex` skill folders of each of the user's projects.
+- rationale: D-117; replaces the choice in D-099 that only `.omp/skills` under `~/Developer` count.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a project with `.claude/skills` and one with `.codex/skills` WHEN Skill Dex is rescanned THEN their skills appear, each labelled with its project
+- scope: The catalogue.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-CAT-026 A skill found in several places is listed once
+- pattern: ubiquitous
+- statement: Skill Dex shall list a skill that is reached through several folders or links once, naming every agent that can use it.
+- rationale: D-117: the shared `~/.agents/skills` folder and links make the same skill appear in more than one place.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN one skill folder linked from two agent folders WHEN Skill Dex is rescanned THEN it appears once and shows both agents
+- scope: The catalogue.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-CAT-027 Each skill shows the agent it belongs to
+- pattern: ubiquitous
+- statement: Skill Dex shall show on each skill a badge for each agent that can use it.
+- rationale: D-117 (agent badges).
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a skill in the Claude Code folder WHEN the user looks at the list and the cards THEN it carries a Claude Code badge
+- scope: The list, the cards and the ficha.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-CAT-028 The catalogue can be filtered by agent
+- pattern: event
+- statement: When the user chooses an agent in the agent filter, Skill Dex shall show only the skills of that agent.
+- rationale: D-117 (agent filter).
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN skills of two agents WHEN the user chooses one agent in the filter THEN only its skills are listed
+- scope: The library.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-CAT-029 An empty catalogue says where it looked
+- pattern: state
+- statement: While no skill folder with a `SKILL.md` is found, Skill Dex shall tell the user which folders it looked in and how to add a custom folder.
+- rationale: D-117 and D-116: a person without omp must not meet a blank screen.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a Mac with no skill folders WHEN the user opens Skill Dex THEN a message names the folders searched and explains how to add one
+- scope: The library.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1

@@ -2,11 +2,7 @@
 
 The only place where a decision is recorded. Owner quotes are verbatim. Entry format: `README.md`.
 
-Where the quotes come from. Every quote is <private>'s own text, copied from one of these files; `context` names the file and the line of the JSONL file that holds the message, with its time stamp (UTC, as stored):
-
-- session A: `<session path>` (first build of Skill Dex)
-- session B: `<session path>` (redesign, intermediate proposal, this adoption)
-- global instructions: `~/.omp/agent/AGENTS.md`, written by <private>
+Quotes of the owner and their context are omitted from this public copy.
 
 A line break inside one of his messages is written here as ` / `; nothing else in a quote is changed, typos included. These files live outside the repository (R-001). Dates below are Madrid dates. Choices that only appear in agent-written documents (`Seguimiento/README.md`, `Seguimiento/estado.md`, the `<skill>` skill) or in the code are not recorded as decisions; where they matter they are open points.
 
@@ -160,7 +156,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - quote: (omitted from the public copy)
 - context: (omitted from the public copy)
 - decision: Skill Dex looks nicer, is easier to understand and better structured, and follows a minimalist design that works well. More detail about a skill is reached by clicking it.
-- superseded_by: D-027 (the part "sin hacer tanto scroll")
+- superseded_by: D-027 (the part [quote omitted])
 
 ### D-022 Simple filters
 - date: 2026-11-24
@@ -182,7 +178,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - quote: (omitted from the public copy)
 - context: (omitted from the public copy)
 - decision: Skill Dex is a command center of the installed skills from which <private> can take decisions at a glance.
-- superseded_by: D-027 (the part "que de un vistazo pueda ver todas")
+- superseded_by: D-027 (the part [quote omitted])
 
 ### D-025 No change to the app without prior approval
 - date: 2026-11-25
@@ -204,7 +200,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - quote: (omitted from the public copy)
 - context: (omitted from the public copy)
 - decision: The catalogue does not have to fit all skills into one screen; scrolling is fine, because the collection may grow beyond 100 skills.
-- supersedes: D-021 (the part "sin hacer tanto scroll"); D-024 (the part "que de un vistazo pueda ver todas")
+- supersedes: D-021 (the part [quote omitted]); D-024 (the part [quote omitted])
 
 ### D-028 More information about each skill at a glance
 - date: 2026-11-25
@@ -692,6 +688,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - context: (omitted from the public copy)
 - decision: Each skill keeps its own level and the size-based rarity. The achievements are not kept.
 - affects: REQ-USE-009; REQ-USE-010; REQ-USE-013
+- superseded_by: D-121 (the rarity)
 
 ### D-090 The mastered mark is removed
 - date: 2026-11-27
@@ -770,10 +767,10 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - date: 2026-11-27
 - origin: derived
 - basis: D-094
-- decision: The new version keeps these choices of the builders, listed to him on line 639 under [quote omitted], and open to his correction: update sources come from the `ORIGEN.md` files; a critical finding in the new version blocks "Update"; files he deleted on purpose stay deleted; `<skill>` shows "Source unknown"; in Discover "popular" is GitHub stars and the explanation is GitHub's own description; project skills are only those in `.omp/skills` of the folders under `~/Developer` and count for XP and "To review"; the level of a skill is the whole square root of its season uses and the rarity depends on size; the first opening of the new version congratulates for no old level; "Preview level-up" is shown on desktop only; parts the scanner could not read stay pending; tokens are treated as keys and never closed by themselves; favourites are saved in `Seguimiento/marks.json`.
+- decision: The new version keeps these choices of the builders, listed to him under [quote omitted], and open to his correction: update sources come from the `ORIGEN.md` files; a critical finding in the new version blocks "Update"; files he deleted on purpose stay deleted; `<skill>` shows "Source unknown"; in Discover "popular" is GitHub stars and the explanation is GitHub's own description; project skills are only those in `.omp/skills` of the folders under `~/Developer` and count for XP and "To review"; the level of a skill is the whole square root of its season uses and the rarity depends on size; the first opening of the new version congratulates for no old level; "Preview level-up" is shown on desktop only; parts the scanner could not read stay pending; tokens are treated as keys and never closed by themselves; favourites are saved in `Seguimiento/marks.json`.
 - affects: REQ-UPD-003; REQ-UPD-005; REQ-UPD-009; REQ-DIS-005; REQ-DIS-006; REQ-CAT-015; REQ-USE-009; REQ-USE-013; REQ-SEC-004; REQ-DAT-001
-- note: "Sí a todo" followed a message that listed these, so they stand until he changes one; he did not discuss them one by one.
-- superseded_by: D-102 (the choice on coverage gaps)
+- note: The owner's approval followed a message that listed these, so they stand until he changes one; he did not discuss them one by one.
+- superseded_by: D-102 (the choice on coverage gaps), D-117 (the choice on project skills)
 
 ### D-100 The <skill> report stays in Spanish; the entry stays discarded
 - date: 2026-11-27
@@ -824,12 +821,12 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: The publication is prepared with the MIT licence, holder <private>.
 - affects: REQ-DAT-008; REQ-DAT-009; REQ-LAU-012
 
-### D-106 <skill> comes from his friend <private>
+### D-106 <skill> comes from a third party
 - date: 2026-11-27
 - origin: owner
 - quote: (omitted from the public copy)
 - context: (omitted from the public copy)
-- decision: <skill> is a third-party skill from his friend <private>, shared directly, with no repository to update from. The friend's name stays in his private data (`skills-meta.json`), not in public code.
+- decision: <skill> is a third-party skill, shared directly, with no repository to update from. The name stays in his private data (`skills-meta.json`), not in public code.
 - affects: REQ-UPD-013
 
 ### D-107 Two repositories: public code, private full package
@@ -864,36 +861,142 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 - decision: A skill can be marked in `skills-meta.json` as having no update source, with who it came from; Updates then shows "from <name>, no update source" instead of unknown.
 - affects: REQ-UPD-013
 
+### D-111 A full security audit comes before publishing
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The optional security audit is run first and the repository is published after it.
+- affects: REQ-DAT-008; REQ-SEC-012; REQ-SEC-013; REQ-SEC-014; REQ-SEC-015
+
+### D-112 The history of the public repository is cleaned
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The public history is to be cleaned of private names; the way was left to the options that followed (D-113).
+- affects: REQ-DAT-008
+
+### D-113 Skill Dex is published as it stands, with three private names in the first commit
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: Option 3: the public repository stands as published, and its first commit still names <private>, <private> and <private>. Every further push to it needs his OK.
+- affects: REQ-DAT-008; REQ-DAT-009
+
+### D-114 The four audit fixes are approved
+- date: 2026-11-27
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The four fixes of the security audit are approved.
+- affects: REQ-SEC-012; REQ-SEC-013; REQ-SEC-014; REQ-SEC-015
+
+### D-115 No Docker, colima or virtual machines without his OK
+- date: 2026-11-27
+- origin: constraint
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: No Docker, colima or virtual machines are used on his Mac without his OK.
+- affects: REQ-LAU-001
+
+### D-116 Anyone, even without omp, can use Skill Dex
+- date: 2026-11-27
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: Skill Dex is not limited to omp: anyone, even without omp, can use it, and the published text is corrected to say so.
+- affects: REQ-LAU-012; REQ-LAU-014
+
+### D-117 Skill Dex works for any agent that uses SKILL.md
+- date: 2026-11-27
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: Skill Dex lists and measures the skills of any agent that uses `SKILL.md` folders, and runs its agent tasks with whichever of omp, claude or codex is available, or disables them.
+- supersedes: D-099 (project skills only in `.omp/skills` under `~/Developer`)
+- affects: REQ-CAT-001; REQ-CAT-015; REQ-CAT-024; REQ-CAT-025; REQ-CAT-026; REQ-CAT-027; REQ-CAT-028; REQ-CAT-029; REQ-USE-001; REQ-USE-024; REQ-ANA-028; REQ-ANA-029; REQ-DAT-010; REQ-LAU-014
+
+### D-118 This change is pushed directly, without showing it first
+- date: 2026-11-27
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The multi-agent change is pushed to the public repository directly after verification, as a one-off.
+- affects: REQ-LAU-014
+
+### D-119 The points of an external review are to be fixed
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The eight points of the review are to be fixed or answered.
+- affects: REQ-DAT-008; REQ-LAU-011; REQ-LAU-014; REQ-LAU-015; REQ-ANA-030; REQ-DAT-011; REQ-USE-013
+
+### D-120 Everything goes to English names, with the old names still read
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: Names in the project are in English; the old Spanish names are still read and his files are converted to the new ones with a backup copy.
+- affects: REQ-DAT-011
+
+### D-121 Rarity is how uncommon a skill is on GitHub
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: The rarity of a skill is how uncommon it is on GitHub, by the four tiers; unknown is Common. This replaces the size-based rarity.
+- supersedes: D-089 (the size-based rarity)
+- affects: REQ-USE-013
+
+### D-122 The result is accepted by area, with screenshots
+- date: 2026-11-28
+- origin: owner
+- quote: (omitted from the public copy)
+- context: (omitted from the public copy)
+- decision: He accepts the work area by area, from screenshots, answering yes or no to each. The fresh-Mac test is not part of it.
+- affects: REQ-LAU-011
+
+### D-123 Builder changes made for the review
+- date: 2026-11-28
+- origin: derived
+- basis: D-119
+- context: (omitted from the public copy)
+- decision: These builder choices stand until he changes them.
+- affects: REQ-ANA-030; REQ-LAU-015; REQ-DAT-012; REQ-LAU-012
+
 ## Open points
 
 ### OP-001 Which design does the app follow?
 - status: decided
-- question: No design is chosen (D-037), and the redesign now in the app is not accepted. Three versions exist to compare. (a) The redesign applied on 2026-11-24 without his approval, in `Tecnico/web/`: compact cards with a two-letter category code and one usage line; "Las más usadas" at the side; the chart, health panel and achievements behind "Actividad y salud". (b) The previous version, rebuilt read-only in `Seguimiento/versiones/antes/` (level and figures on top, achievements, health and the chart on the main screen, emoji per skill, cards further down). (c) The intermediate proposal in `Seguimiento/versiones/propuesta-intermedia/` with screenshots `dia.png`, `noche.png`, `movil.png` (chart of uses per day and "Más usadas" on top, "Para decidir" notices, cards with own icon, description, uses, mini chart and security, grouped by category). The new design must be very visual, easy to understand and uncluttered (D-038) yet show more about each skill at a glance (D-028); it must keep the uses-per-day chart (D-030), give each skill its own icon (D-029), be ready for publication on GitHub (D-055) and leave room for more features such as "Descubre skills" (D-052) and the level-up message (D-051). What design does <private> approve? It is shown to him as a proposal before the app changes (D-025, D-026).
+- question: No design is chosen (D-037), and the redesign now in the app is not accepted. Three versions exist to compare. (a) The redesign applied on 2026-11-24 without his approval, in `Tecnico/web/`: compact cards with a two-letter category code and one usage line; [quote omitted] at the side; the chart, health panel and achievements behind "Actividad y salud". (b) The previous version, rebuilt read-only in `Seguimiento/versiones/antes/` (level and figures on top, achievements, health and the chart on the main screen, emoji per skill, cards further down). (c) The intermediate proposal in `Seguimiento/versiones/propuesta-intermedia/` with screenshots `dia.png`, `noche.png`, `movil.png` (chart of uses per day and [quote omitted] on top, "Para decidir" notices, cards with own icon, description, uses, mini chart and security, grouped by category). The new design must be very visual, easy to understand and uncluttered (D-038) yet show more about each skill at a glance (D-028); it must keep the uses-per-day chart (D-030), give each skill its own icon (D-029), be ready for publication on GitHub (D-055) and leave room for more features such as "Descubre skills" (D-052) and the level-up message (D-051). What design does <private> approve? It is shown to him as a proposal before the app changes (D-025, D-026).
 - depends: REQ-CAT-011, REQ-CAT-012, REQ-CAT-013, REQ-USE-003, REQ-SEC-003, REQ-UI-003 stay drafts; the game (OP-015) and the README correction (D-039) wait for it; publication waits for it (D-055).
 - decided_by: D-070
 - note: D-067, D-068 and D-069 say what he took from proposals A, B and C; D-070 approves D with the changes of D-071 to D-073. Applying it still needs his OK on the updated mockup (D-025).
 
 ### OP-002 What stays in the app until the design is chosen?
 - status: decided
-- question: After "No me gustó que modificaras la app sin mi aprobación previa, por ahora dejalo." the applied redesign (a in OP-001) was left in place, and D-037 says it does not convince him, without saying to remove it. Until the new design is approved, does the redesign stay in the app, or is the previous version (b) restored?
+- question: After [quote omitted] the applied redesign (a in OP-001) was left in place, and D-037 says it does not convince him, without saying to remove it. Until the new design is approved, does the redesign stay in the app, or is the previous version (b) restored?
 - depends: Which version of `Tecnico/web/` the drafts describe as today's behaviour.
 - decided_by: D-064
 
 ### OP-003 What happens to the old documents?
 - status: decided
-- question: `Seguimiento/README.md` (how to open and use the app) and `Seguimiento/estado.md` ("Hecho: escáner, web gamificada, watchlist. Pendiente: decidir qué skills quieres analizar primero.", out of date) were written by agents. Do they stay as they are, get a line pointing to `Tecnico/spec/`, or get rewritten from the package? Until decided they are not changed.
+- question: `Seguimiento/README.md` (how to open and use the app) and `Seguimiento/estado.md` ([quote omitted], out of date) were written by agents. Do they stay as they are, get a line pointing to `Tecnico/spec/`, or get rewritten from the package? Until decided they are not changed.
 - depends: Which file agents treat as the description of Skill Dex; OP-005 and OP-006.
 - decided_by: D-039
 
 ### OP-004 How is the level above single requirements written?
 - status: decided
-- question: User stories ("Como <private>, quiero …, para …"), requirements in the same EARS shape, or no upper level, with each area file grouping its requirements?
+- question: User stories, requirements in the same EARS shape, or no upper level, with each area file grouping its requirements?
 - depends: Whether requirements get a `parent`. Until decided, none has one.
 - decided_by: D-104
 
 ### OP-005 README text written during the unapproved redesign
 - status: decided
-- question: The redesign session also edited `Seguimiento/README.md` (line 7 "Abre **Actividad y salud** …", the section "Cómo usar el centro de mando", lines 10 to 13 on "uso registrado", "Temporada", "histórico" and "Seguridad"). These describe the redesign that was applied without approval (D-025). Do these edits stay, or does the README go back to describing the version chosen in OP-001?
+- question: The redesign session also edited `Seguimiento/README.md` ("Abre **Actividad y salud** …", the section [quote omitted] on "uso registrado", "Temporada", [quote omitted] and "Seguridad"). These describe the redesign that was applied without approval (D-025). Do these edits stay, or does the README go back to describing the version chosen in OP-001?
 - depends: OP-003; whether the README describes the app truthfully.
 - decided_by: D-039
 
@@ -906,14 +1009,14 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-007 The remaining security alerts were closed by the agent, not by <private>
 - status: decided
-- question: D-013 says he wants to review the alerts left after false positives are removed. The agent then reviewed the 19 remaining findings itself, judged all of them false positives and recorded that in `Seguimiento/security-triage.json` (7 entries with reason), so the app shows "0 por revisar" (session A, assistant message at line 378). Does the agent's review count, or should those findings be shown to him again until he confirms each? And in future: may an agent add entries to `security-triage.json`, as the `<skill>` skill tells it to, or only after he agrees?
+- question: D-013 says he wants to review the alerts left after false positives are removed. The agent then reviewed the 19 remaining findings itself, judged all of them false positives and recorded that in `Seguimiento/security-triage.json` (7 entries with reason), so the app shows "0 por revisar". Does the agent's review count, or should those findings be shown to him again until he confirms each? And in future: may an agent add entries to `security-triage.json`, as the `<skill>` skill tells it to, or only after he agrees?
 - depends: REQ-SEC-005, REQ-SEC-006.
 - decided_by: D-045
 - note: The seven findings already recorded by the agent are to be checked against the criterion once <private> approves it (OP-023).
 
 ### OP-008 Where does "only OpenAI models" apply?
 - status: decided
-- question: D-019 was written at the top of the redesign request. Does it hold only for that redesign, for all agent work on Skill Dex, and also for the analyses the app launches? Today `Tecnico/server.mjs` line 61 runs `omp -p` without `--model`, so an analysis runs on whatever model omp uses by default, which may not be OpenAI. The global instructions (line 14) say "Don't pick models by hand unless I ask" and let `<private>` route subagents across Claude, OpenAI and OpenCode Go.
+- question: D-019 was written at the top of the redesign request. Does it hold only for that redesign, for all agent work on Skill Dex, and also for the analyses the app launches? Today `Tecnico/server.mjs` runs `omp -p` without `--model`, so an analysis runs on whatever model omp uses by default, which may not be OpenAI. The global instructions say "Don't pick models by hand unless I ask" and let `<private>` route subagents across Claude, OpenAI and OpenCode Go.
 - depends: A draft requirement that analyses run on an OpenAI model; removed after the decision.
 - decided_by: D-040
 
@@ -925,26 +1028,26 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-010 Earlier uses: ignored, or kept apart?
 - status: decided
-- question: Option 1, which he chose (D-005), said [quote omitted]. What was built keeps the earlier uses visible: each card's counter shows the historical total (README "Cómo usar el centro de mando"), each detail shows "Usos históricos", and the chart of the last 30 days includes days before the start date. The agent had recommended keeping the history apart as "usos totales". Is keeping the history visible, without XP, what he wants?
+- question: Option 1, which he chose (D-005), said [quote omitted]. What was built keeps the earlier uses visible: each card's counter shows the historical total (README [quote omitted]), each detail shows [quote omitted], and the chart of the last 30 days includes days before the start date. The agent had recommended keeping the history apart as "usos totales". Is keeping the history visible, without XP, what he wants?
 - depends: REQ-USE-002, REQ-USE-006.
 - decided_by: D-047
 
 ### OP-011 Which skills count as "all my skills"?
 - status: decided
-- question: D-001 asks for a list of "todas mis skills". The scanner (`Tecnico/scan.mjs` lines 10 to 13) reads only `~/.omp/agent/skills` and `~/.omp/agent/managed-skills`. Skills elsewhere are not listed: for example the project skills under a project's `.omp/skills/` (such as the six keelblocks skills of this project), or `cua-driver` and `ghostex-visuals`, which appear in the usage history but not in those folders (session A, assistant message at line 57). Should Skill Dex list them too?
+- question: D-001 asks for a list of [quote omitted]. The scanner (`Tecnico/scan.mjs`) reads only `~/.omp/agent/skills` and `~/.omp/agent/managed-skills`. Skills elsewhere are not listed: for example the project skills under a project's `.omp/skills/` (such as the six keelblocks skills of this project), or `cua-driver` and `ghostex-visuals`, which appear in the usage history but not in those folders. Should Skill Dex list them too?
 - depends: REQ-CAT-001, REQ-USE-001.
 - decided_by: D-048
 - note: Project skills are listed (REQ-CAT-015). Skills only seen in the usage history, such as `cua-driver` and `ghostex-visuals`, were not part of the question and stay unlisted unless they sit in a scanned folder.
 
 ### OP-012 Six watchlist entries are discarded without a reason
 - status: decided
-- question: In `Seguimiento/watchlist.json`, six entries have `status: descartada` (<skill>, <skill>, <skill>, <private>, <private>, <skill>) but no `discard_reason` and no `discarded_at`. They were set by the agent at analysis time, before the discard button existed [INFERENCE from the session A verdict table at line 176]. The README says "la decisión de descartar es tuya" and the app now requires a reason. Did <private> decide these discards? If yes, is the verdict of each report the reason to record; if not, do they go back to "por analizar"?
+- question: In `Seguimiento/watchlist.json`, six entries have `status: descartada` (<skill>, <skill>, <skill>, <private>, <private>, <skill>) but no `discard_reason` and no `discarded_at`. They were set by the agent at analysis time, before the discard button existed [INFERENCE]. The README says [quote omitted] and the app now requires a reason. Did <private> decide these discards? If yes, is the verdict of each report the reason to record; if not, do they go back to "por analizar"?
 - depends: REQ-ANA-010, REQ-ANA-018.
 - decided_by: D-044
 
 ### OP-013 Are the similar-skill pairs a problem?
 - status: decided
-- question: The health panel lists pairs of installed skills with similar descriptions (for example `<skill>` / `performance`, `<skill>` / `copywriting`, `<skill>` / `<skill>`). The agent asked whether he sees them as a problem (session A, line 378) and got no answer. Should Skill Dex only show them, or also recommend keeping one of each pair?
+- question: The health panel lists pairs of installed skills with similar descriptions (for example `<skill>` / `performance`, `<skill>` / `copywriting`, `<skill>` / `<skill>`). The agent asked whether he sees them as a problem and got no answer. Should Skill Dex only show them, or also recommend keeping one of each pair?
 - depends: REQ-USE-016.
 - decided_by: D-046
 
@@ -996,7 +1099,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-021 Recovering or re-analysing a discarded entry erases its reason
 - status: decided
-- question: D-010 keeps discarded entries so that a later question is answered with the reason. Today "Recuperar en watchlist" and "Analizar de nuevo" on a discarded entry delete `discard_reason` and `discarded_at` (`Tecnico/server.mjs` lines 117 and 132), so the record of why it was discarded is lost. Should the old reason be kept as history when an entry is recovered or analysed again?
+- question: D-010 keeps discarded entries so that a later question is answered with the reason. Today "Recuperar en watchlist" and "Analizar de nuevo" on a discarded entry delete `discard_reason` and `discarded_at` (`Tecnico/server.mjs`), so the record of why it was discarded is lost. Should the old reason be kept as history when an entry is recovered or analysed again?
 - depends: REQ-ANA-019, REQ-ANA-012.
 - decided_by: D-044
 
@@ -1009,14 +1112,14 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-023 Which findings count as false positives?
 - status: decided
-- question: D-045 asks for a clear criterion that <private> approves once. Proposed text, in plain Spanish: [quote omitted] en español leído como el comando [quote omitted]; (3) el código hace justo lo contrario de lo que el aviso teme, por ejemplo una lista que bloquea direcciones peligrosas; (4) es un consejo escrito para personas ([quote omitted], [quote omitted]), no una orden que el agente vaya a obedecer; (5) lee datos solo dentro de tu Mac y no los envía fuera, por ejemplo para arrancar un programa local; (6) el propio escáner dice que está poco seguro (menos del 60 %). Nunca es falso positivo, y siempre te lo enseña: algo que envía tus datos o archivos a internet sin que la skill lo explique; algo que borra archivos fuera de su carpeta; algo que pide contraseñas, claves o tokens; algo que instala programas por su cuenta; y cualquier aviso [quote omitted]. Si el agente duda, no lo cierra: te lo enseña. Cada falso positivo queda anotado con la fecha, la skill y el número de la condición que lo justifica, y lo puedes ver en la ficha. Los avisos de gravedad media o baja no son alertas: se muestran como avisos menores.» Does he approve it, or what does he change? Once approved, the seven findings already closed are checked against it.
+- question: D-045 asks for a clear criterion that <private> approves once. Proposed text, in plain language (translated from the Spanish form): "A security scanner finding is a false positive, and the agent may close it without asking you, only if it meets at least one of these conditions: (1) it is in a text that the skill does not run or follow as an instruction: guides, examples, templates or data lists, not in a program or its main instructions (SKILL.md); (2) it is an ordinary word read as a command, for example Spanish 'su' read as the command 'su'; (3) the code does exactly the opposite of what the finding fears, for example a list that blocks dangerous addresses; (4) it is advice written for people ('never judge…', 'without warning'), not an order the agent will obey; (5) it reads data only inside your Mac and does not send it out, for example to start a local program; (6) the scanner itself says it is unsure (under 60 %). It is never a false positive, and is always shown to you: something that sends your data or files to the internet without the skill explaining it; something that deletes files outside its folder; something that asks for passwords, keys or tokens; something that installs programs by itself; and any 'critical' finding. If the agent doubts, it does not close it: it shows it to you. Each false positive is recorded with the date, the skill and the number of the condition that justifies it, and you can see it in the ficha. Medium or low severity findings are not alerts: they are shown as minor notices." Does he approve it, or what does he change? Once approved, the seven findings already closed are checked against it.
 - depends: REQ-SEC-004, REQ-SEC-005, REQ-SEC-006 stay drafts.
 - decided_by: D-056
 - note: <private> approved the shorter text shown in the final form (quoted in D-056), not the longer draft above.
 
 ### OP-024 What kind of level-up message?
 - status: decided
-- question: D-051 asks for a proposal. Proposal: when a scan or refresh shows that the collection has gone up a level, a card appears in the middle of the screen once, with a short celebration (the new level and title, what made it rise, and a next goal) and an "¡Genial!" button to close it; nothing plays a sound. Alternatives: (B) a small notice in a corner that fades out after a few seconds; (C) only a highlighted line next to the level. Because the app will be public (D-055), the texts do not use his name. Example texts to choose from: [quote omitted] / [quote omitted] / [quote omitted] Which kind (A, B or C) and which tone does he choose?
+- question: D-051 asks for a proposal. Proposal: when a scan or refresh shows that the collection has gone up a level, a card appears in the middle of the screen once, with a short celebration (the new level and title, what made it rise, and a next goal) and an [quote omitted] button to close it; nothing plays a sound. Alternatives: (B) a small notice in a corner that fades out after a few seconds; (C) only a highlighted line next to the level. Because the app will be public (D-055), the texts do not use his name. Example texts to choose from: "You reach level 4 · Strategist! You have used 12 different skills this season. Next challenge: try one you have not used yet." / "Level 5 reached! Your star skill was <skill>, with 9 uses. You need 480 XP for level 6." / "Congratulations, you are now a Master! What lifted you most: 3 skills used for the first time." Which kind (A, B or C) and which tone does he choose?
 - depends: REQ-USE-019 is ratified; its form and texts wait for this answer.
 - decided_by: D-057
 - note: The texts will be in English (D-063); the example texts above are only a guide to tone.
@@ -1048,71 +1151,95 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### OP-029 How do skills he already knows appear among the discoveries?
 - status: decided
-- question: In plain Spanish: [quote omitted] His answer to the first version of this question (D-060) explained how the watchlist works; it did not answer this.
+- question: When "Descubre skills" suggests a skill that is already installed, already in the watchlist or already discarded, what happens to it in the list of suggestions? Recommended: show it with a label ("Installed", "In watchlist", "Discarded") so that it is not analysed twice; the other option is not to show it. His answer to the first version of this question (D-060) explained how the watchlist works; it did not answer this.
 - depends: A requirement on how discovery results show known skills.
 - decided_by: D-086
 
 ### OP-030 Are the analysis reports also in English?
 - status: decided
-- question: D-063 wants the app entirely in English. The analysis reports shown in the app are written in Spanish today (the prompt in `Tecnico/server.mjs` asks for "informe completo en español", and `<skill>` writes in Spanish). Should new reports be written in English, or stay in Spanish because they are for <private>?
+- question: D-063 wants the app entirely in English. The analysis reports shown in the app are written in Spanish today (the prompt in `Tecnico/server.mjs` asks for [quote omitted], and `<skill>` writes in Spanish). Should new reports be written in English, or stay in Spanish because they are for <private>?
 - depends: REQ-UI-005 (whether reports count as interface), REQ-ANA-007.
 - decided_by: D-084
 - note: Reports written before this decision are in Spanish; whether they are translated is OP-039.
 
-### OP-031 ¿De dónde salen las actualizaciones de una skill?
+### OP-031 Where do the updates of a skill come from?
 - status: decided
-- question: Para saber si una skill tiene una versión nueva, Skill Dex puede mirar (a) el repositorio de GitHub de donde vino, comparando sus archivos con los tuyos; (b) el número de versión que algunas skills escriben en su `SKILL.md`; o (c) las dos cosas. Recomendado: (c), y enseñarte qué archivos cambian. Muchas skills no guardan de dónde vinieron; esas no se podrían revisar. ¿Qué prefieres?
+- question: To know whether a skill has a newer version, Skill Dex can look at (a) the GitHub repository it came from, comparing its files with the installed ones; (b) the version number some skills write in their `SKILL.md`; or (c) both. Recommended: (c), and show which files change. Many skills do not record where they came from; those could not be checked. Which does he prefer?
 - depends: REQ-UPD-004 and how REQ-UPD-001 finds updates.
 - decided_by: D-077
 
-### OP-032 ¿Cada cuánto se buscan actualizaciones?
+### OP-032 How often are updates looked for?
 - status: decided
-- question: ¿Skill Dex busca actualizaciones cada vez que abres la app, una vez al día, o solo cuando pulsas un botón [quote omitted]? Recomendado: solo con el botón, para no gastar nada sin que lo pidas.
+- question: Does Skill Dex look for updates every time the app opens, once a day, or only when he presses a "Check for updates" button? Recommended: only with the button, so that nothing is spent unless he asks.
 - depends: REQ-UPD-001.
 - decided_by: D-078
 
-### OP-033 ¿Toda actualización pasa antes el control de seguridad?
+### OP-033 Does every update pass the security check first?
 - status: decided
-- question: Una versión nueva puede traer cambios peligrosos. ¿Cada actualización pasa por el escáner de seguridad (con el criterio de falsos positivos que aprobaste) antes de que puedas aplicarla? Recomendado: sí, siempre.
+- question: A new version may bring dangerous changes. Does each update pass the security scanner (with the false-positive criterion he approved) before he can apply it? Recommended: yes, always.
 - depends: REQ-UPD-003.
 - decided_by: D-079
 
-### OP-034 ¿Se incluyen las skills que escribiste tú?
+### OP-034 Are the skills he wrote himself included?
 - status: decided
-- question: Algunas skills las creaste tú o las aprendió omp solo (las [quote omitted]); no vienen de ningún repositorio. ¿Aparecen en la sección de actualizaciones? Recomendado: no, solo las que vienen de fuera.
+- question: Some skills were created by him or learned by omp on its own ("self-learned"); they come from no repository. Do they appear in the updates section? Recommended: no, only those that come from outside.
 - depends: REQ-UPD-001 scope.
 - decided_by: D-080
 
-### OP-035 ¿Qué pasa con tus cambios propios al actualizar?
+### OP-035 What happens to his own changes when updating?
 - status: decided
-- question: Si cambiaste a mano una skill de fuera y luego sale una versión nueva, actualizar podría borrar tus cambios. ¿Qué hacemos? (a) Avisarte y no actualizar esa skill sin que lo confirmes; (b) guardar una copia de tu versión antes de actualizar; (c) las dos. Recomendado: (c).
+- question: If he changed an external skill by hand and a newer version comes out, updating could erase his changes. What happens? (a) Warn him and do not update that skill until he confirms; (b) save a copy of his version before updating; (c) both. Recommended: (c).
 - depends: REQ-UPD-002.
 - decided_by: D-081
 
-### OP-036 ¿Skill Dex aplica la actualización o solo te la enseña?
+### OP-036 Does Skill Dex apply the update or only show it?
 - status: decided
-- question: Cuando hay una actualización, ¿Skill Dex la instala cuando pulsas un botón, o solo te la enseña y la aplica un agente cuando se lo pidas? En los dos casos, nada se actualiza sin que tú lo decidas. Recomendado: un botón [quote omitted] que pide confirmación.
+- question: When there is an update, does Skill Dex install it when he presses a button, or only show it and let an agent apply it when he asks? In both cases nothing is updated unless he decides. Recommended: an "Update" button that asks for confirmation.
 - depends: REQ-UPD-002.
 - decided_by: D-082
 
-### OP-037 ¿De dónde salen las descripciones cortas?
+### OP-037 Where do the short descriptions come from?
 - status: decided
-- question: La lista mostrará una descripción corta de cada skill (D-071). Opciones: (a) un agente la escribe una vez por skill y se guarda en un archivo que puedes editar; las skills nuevas reciben la suya al aparecer; (b) se genera de nuevo en cada escaneo, que cuesta algo cada vez y puede cambiar el texto. Recomendado: (a). Como la app irá en inglés (D-063), ¿se escriben en inglés? Recomendado: sí.
+- question: The list will show a short description of each skill (D-071). Options: (a) an agent writes it once per skill and it is saved in a file he can edit, new skills getting theirs when they appear; (b) it is generated again at every scan, which costs something each time and may change the text. Recommended: (a). Since the app will be in English (D-063), are they written in English? Recommended: yes.
 - depends: REQ-CAT-019.
 - decided_by: D-076
 
-### OP-038 ¿Qué pasa con lo que la propuesta D no enseña?
+### OP-038 What happens to what proposal D does not show?
 - status: decided
-- question: La propuesta D no enseña el panel de salud del catálogo (tokens, skills pesadas, avisos de carga), las parejas de skills parecidas con su recomendación, que ya aprobaste (REQ-USE-016, REQ-USE-017), ni la marca de [quote omitted]. ¿Se quedan en la app nueva (por ejemplo, en un apartado propio o en la ficha de cada skill) o se quitan? Recomendado: las parejas parecidas y el panel de salud, en un apartado de la barra lateral; la marca de [quote omitted] se decide con el juego (OP-015).
+- question: Proposal D does not show the catalogue health panel (tokens, heavy skills, load warnings), the pairs of similar skills with their recommendation, which he already approved (REQ-USE-016, REQ-USE-017), or the "mastered" mark. Do they stay in the new app (for example in a section of their own or in each skill's ficha) or are they removed? Recommended: the similar pairs and the health panel in a sidebar section; the "mastered" mark is decided with the game (OP-015).
 - depends: REQ-USE-015, REQ-USE-016, REQ-USE-017, REQ-CAT-014 in the new design.
 - decided_by: D-083
 - note: The row of the table also named the mastered mark, so it goes to the Health section too (REQ-USE-023); what "mastered" means is not defined (glossary).
 
-### OP-039 ¿Se traducen los informes de análisis que ya están en español?
+### OP-039 Are the analysis reports that are already in Spanish translated?
 - status: decided
-- question: Los informes nuevos van en inglés (D-084). Los que ya existen en `Seguimiento/analisis/` están en español. ¿Se traducen al inglés, se vuelven a generar o se dejan como están?
+- question: New reports are in English (D-084). Those that already exist in `Seguimiento/analisis/` are in Spanish. Are they translated into English, generated again, or left as they are?
 - depends: Whether REQ-ANA-026 also covers the reports that already exist.
 - decided_by: D-092
+
+### OP-040 Should this audit finding be fixed: the malformed request URL that crashes the server?
+- status: decided
+- question: The security audit (`<home>/security-audit-skill/skill-dex/run-1/`) confirmed, with low severity: the malformed request URL that crashes the server. Is it fixed in the public repository? Recommended: yes. Every push to the public repository needs his OK.
+- depends: REQ-SEC-012 stays a draft until he answers.
+- decided_by: D-114
+
+### OP-041 Should this audit finding be fixed: the loopback API trusting the Origin header?
+- status: decided
+- question: The security audit (`<home>/security-audit-skill/skill-dex/run-1/`) confirmed, with low severity: the loopback API trusting the Origin header. Is it fixed in the public repository? Recommended: yes. Every push to the public repository needs his OK.
+- depends: REQ-SEC-013 stays a draft until he answers.
+- decided_by: D-114
+
+### OP-042 Should this audit finding be fixed: triage exclusions looking only at a 140-character snippet?
+- status: decided
+- question: The security audit (`<home>/security-audit-skill/skill-dex/run-1/`) confirmed, with low severity: triage exclusions looking only at a 140-character snippet. Is it fixed in the public repository? Recommended: yes. Every push to the public repository needs his OK.
+- depends: REQ-SEC-014 stays a draft until he answers.
+- decided_by: D-114
+
+### OP-043 Should this audit finding be fixed: templates, examples and samples folders treated as inert even for runnable files?
+- status: decided
+- question: The security audit (`<home>/security-audit-skill/skill-dex/run-1/`) confirmed, with low severity: templates, examples and samples folders treated as inert even for runnable files. Is it fixed in the public repository? Recommended: yes. Every push to the public repository needs his OK.
+- depends: REQ-SEC-015 stays a draft until he answers.
+- decided_by: D-114
 
 ## Risks
 
@@ -1127,7 +1254,7 @@ A line break inside one of his messages is written here as ` / `; nothing else i
 
 ### R-003 Favourite and mastered marks lived only in the browser
 - from: D-003
-- risk: The favourite and mastered marks are kept in the browser's local storage (`Tecnico/web/catalog.js` line 1 to 5); another browser, a cleared cache or a new Mac starts empty, and the XP that depends on mastered skills changes with them.
+- risk: The favourite and mastered marks are kept in the browser's local storage (`Tecnico/web/catalog.js`); another browser, a cleared cache or a new Mac starts empty, and the XP that depends on mastered skills changes with them.
 - mitigation: REQ-DAT-001 also saves them to a file (D-054); until that is built, the risk stands.
 
 ### R-004 The security scan is heuristic

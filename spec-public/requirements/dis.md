@@ -22,7 +22,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-002 A discovered skill can be opened on GitHub
 - pattern: event
 - statement: When the user chooses to open a skill found in "Descubre skills", Skill Dex shall open its page on GitHub.
-- rationale: D-058 ([quote omitted]).
+- rationale: D-058.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discovered skill WHEN <private> chooses to open it THEN its GitHub page opens in the browser
 - scope: "Descubre skills".
@@ -38,7 +38,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-003 A discovered skill can be analysed
 - pattern: event
 - statement: When the user chooses to analyse a skill found in "Descubre skills", Skill Dex shall start an **análisis** of it as "Analizar skill" does.
-- rationale: D-058 ([quote omitted]) and D-059 (the user decides whether to analyse it). Keeps one way of analysing (D-015, REQ-ANA-001), with its limits: one at a time, already investigated skills recognised (REQ-ANA-011).
+- rationale: D-058 and D-059 (the user decides whether to analyse it). Keeps one way of analysing (D-015, REQ-ANA-001), with its limits: one at a time, already investigated skills recognised (REQ-ANA-011).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discovered skill not in the watchlist WHEN <private> chooses to analyse it THEN it appears in the Watchlist tab as being analysed
   - AC2 [judgement] GIVEN a discovered skill that was already discarded WHEN he chooses to analyse it THEN he is told when and why it was discarded, as REQ-ANA-011 does
@@ -55,7 +55,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-004 Discovering never installs
 - pattern: ubiquitous
 - statement: Skill Dex shall not install a skill found in "Descubre skills".
-- rationale: D-006 and D-058 ([quote omitted]). Installing happens only when <private> asks for it afterwards.
+- rationale: D-006 and D-058. Installing happens only when <private> asks for it afterwards.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN any use of "Descubre skills" WHEN the skill folders are compared before and after THEN they are unchanged
 - scope: "Descubre skills".
@@ -71,7 +71,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-005 Suggestions from what the user uses
 - pattern: ubiquitous
 - statement: Skill Dex shall suggest in "Descubre skills" skills from GitHub that fit what the user uses.
-- rationale: D-059 ([quote omitted]). Usage comes from REQ-USE-001.
+- rationale: D-059. Usage comes from REQ-USE-001.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN <private>'s most used skills are about SEO WHEN he opens "Descubre skills" THEN the suggestions include SEO-related skills he does not have
 - scope: "Descubre skills".
@@ -88,7 +88,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-006 A random popular skill
 - pattern: event
 - statement: When the user asks for a popular skill in "Descubre skills", Skill Dex shall show one skill picked at random from the most used skills on GitHub, with a short explanation of what it is used for.
-- rationale: D-059 ([quote omitted]). The user then analyses it or adds it to the watchlist (REQ-DIS-003, REQ-DIS-007).
+- rationale: D-059. The user then analyses it or adds it to the watchlist (REQ-DIS-003, REQ-DIS-007).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN "Descubre skills" WHEN <private> asks for a popular skill twice THEN each time one skill appears with a short explanation and the options to analyse it or add it to the watchlist, and the two picks can differ
 - scope: "Descubre skills".
@@ -105,7 +105,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-007 A discovered skill can go to the watchlist without an analysis
 - pattern: event
 - statement: When the user chooses to add a skill found in "Descubre skills" to the **watchlist**, Skill Dex shall add it there without analysing it.
-- rationale: D-058 ([quote omitted]) and D-059 ([quote omitted]). It costs nothing; an analysis can follow later.
+- rationale: D-058 and D-059. It costs nothing; an analysis can follow later.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a discovered skill WHEN <private> adds it to the watchlist THEN it appears in the Watchlist tab with its GitHub link and no report, and no analysis starts
 - scope: "Descubre skills" and the watchlist.
@@ -121,7 +121,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-008 GitHub is searched with the login already on the Mac
 - pattern: ubiquitous
 - statement: Skill Dex shall search GitHub with the GitHub session already open on the user's Mac when there is one, without storing any key in its repository.
-- rationale: D-061 ([quote omitted]); the key stays on the Mac (REQ-DAT-008). Without a session it still works (D-093, REQ-DIS-011).
+- rationale: D-061; the key stays on the Mac (REQ-DAT-008). Without a session it still works (D-093, REQ-DIS-011).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN <private>'s Mac with his GitHub session open WHEN "Descubre skills" searches THEN it works without asking him for a key
   - AC2 [judgement] GIVEN the repository WHEN it is searched for GitHub tokens or keys THEN none is found
@@ -141,7 +141,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-009 A box to type what to look for
 - pattern: event
 - statement: When the user types words in the search box of "Descubre skills" and submits them, Skill Dex shall show the skills found on GitHub for those words.
-- rationale: D-085 ([quote omitted]: yes). Complements the suggestions of REQ-DIS-005 and REQ-DIS-006.
+- rationale: D-085 (owner answer: yes). Complements the suggestions of REQ-DIS-005 and REQ-DIS-006.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the discovery section WHEN <private> types "seo" in the box and submits THEN he sees skills found on GitHub for that word, each with the actions of REQ-DIS-002, REQ-DIS-003 and REQ-DIS-007
 - scope: "Descubre skills".
@@ -160,7 +160,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-010 Skills the user already knows carry a label
 - pattern: ubiquitous
 - statement: Skill Dex shall mark each skill shown in "Descubre skills" that is already installed, in the watchlist or discarded with the label "Installed", "In watchlist" or "Discarded".
-- rationale: D-086 ([quote omitted]): shown with a label, not hidden, so that <private> does not analyse the same skill twice. A discarded skill's reason is told when he tries to analyse it (REQ-DIS-003 AC2).
+- rationale: D-086: shown with a label, not hidden, so that <private> does not analyse the same skill twice. A discarded skill's reason is told when he tries to analyse it (REQ-DIS-003 AC2).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN suggestions that include an installed skill, one in the watchlist and a discarded one WHEN <private> looks at the results THEN each carries its label and none is hidden
   - AC2 [judgement] GIVEN a skill he does not have at all WHEN it appears in the results THEN it carries no label
@@ -194,7 +194,7 @@ A new section <private> asked for (D-052). Nothing of it is built. He decided wh
 ### REQ-DIS-012 A notice explains how to sign in for a higher limit
 - pattern: state
 - statement: While no GitHub session is open on the Mac, Skill Dex shall show in "Descubre skills" a notice that explains how to sign in to GitHub to search more.
-- rationale: D-093 ([quote omitted]).
+- rationale: D-093.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a Mac with no GitHub session WHEN the user opens "Descubre skills" THEN a notice says that signing in raises the limit and how to do it, in English
   - AC2 [judgement] GIVEN a Mac with a GitHub session WHEN the user opens it THEN the notice is not shown

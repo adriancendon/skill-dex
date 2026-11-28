@@ -5,7 +5,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-001 No Terminal window
 - pattern: event
 - statement: When <private> opens `Skill Dex.app`, Skill Dex shall open in the browser without opening a Terminal window.
-- rationale: D-014. The app's script runs `Tecnico/lanzar.sh` in the background with its output discarded; the session A message at line 413 reports that Terminal did not open in the agent's test.
+- rationale: D-014. The app's script runs `Tecnico/lanzar.sh` in the background with its output discarded; reports that Terminal did not open in the agent's test.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN Skill Dex closed WHEN <private> double-clicks `Skill Dex.app` THEN the browser opens Skill Dex and no Terminal window appears
   - AC2 [judgement] GIVEN he has finished WHEN he closes the browser tab THEN there is nothing else left to close
@@ -52,7 +52,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-004 The server is reachable only from this Mac
 - pattern: ubiquitous
 - statement: Skill Dex shall accept connections only on `127.0.0.1`, port 4173 unless `PORT` says otherwise.
-- rationale: `Tecnico/server.mjs` lines 14 and 158. D-053: a server that only works inside the Mac is fine, despite "No servers" in the global instructions (D-035).
+- rationale: `Tecnico/server.mjs`. D-053: a server that only works inside the Mac is fine, despite "No servers" in the global instructions (D-035).
 - acceptance_criteria:
   - AC1 [mechanical: `cd Tecnico && grep -n "listen(PORT, '127.0.0.1'" server.mjs`] GIVEN the server code WHEN it is searched THEN the server listens on `127.0.0.1` only
   - AC2 [judgement] GIVEN Skill Dex running WHEN another device on the same network opens the Mac's address on port 4173 THEN it gets no answer
@@ -68,7 +68,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-005 Changes come only from Skill Dex's own page
 - pattern: unwanted
 - statement: If a request to change data does not come from a Skill Dex page on `localhost` or `127.0.0.1` with a JSON body, then Skill Dex shall reject it.
-- rationale: `Tecnico/server.mjs` lines 98 to 101 check `Origin` and `Content-Type` on every POST. Protects `watchlist.json` and the analysis launcher from other web pages.
+- rationale: `Tecnico/server.mjs` check `Origin` and `Content-Type` on every POST. Protects `watchlist.json` and the analysis launcher from other web pages.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN Skill Dex running WHEN another web page tries to send a discard or an analysis request THEN the server answers 403 and nothing changes
 - scope: The local server.
@@ -83,7 +83,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-006 The server stops when the tab closes
 - pattern: event
 - statement: When the last Skill Dex tab is closed, Skill Dex shall stop its local server.
-- rationale: D-014: only the tab should need closing. `Tecnico/server.mjs` lines 164 to 169: about 6 seconds after the page says goodbye, or 3 minutes without a ping from a page (README: "si el navegador está en segundo plano").
+- rationale: D-014: only the tab should need closing. `Tecnico/server.mjs`: about 6 seconds after the page says goodbye, or 3 minutes without a ping from a page (README: [quote omitted]).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN one open Skill Dex tab and no analysis running WHEN <private> closes it THEN within about 10 seconds nothing answers on port 4173
 - scope: The local server.
@@ -98,7 +98,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-007 An analysis keeps running after the tab closes
 - pattern: complex
 - statement: While an **análisis** runs, when the last Skill Dex tab is closed, Skill Dex shall keep its server running until the **análisis** ends.
-- rationale: `Tecnico/server.mjs` line 166 skips the shutdown while a job exists; README: "Puedes cerrar la pestaña: la app sigue hasta terminar".
+- rationale: `Tecnico/server.mjs` skips the shutdown while a job exists; README: [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an analysis running WHEN <private> closes the tab and opens Skill Dex again ten minutes later THEN the analysis has finished and its result is in the watchlist
 - scope: The local server.
@@ -113,7 +113,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-008 Missing Node.js is reported
 - pattern: unwanted
 - statement: If Node.js cannot be found when `Skill Dex.app` starts, then Skill Dex shall show a dialog saying that it needs Node.js.
-- rationale: `Tecnico/lanzar.sh` line 7.
+- rationale: `Tecnico/lanzar.sh`.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a Mac without Node.js in the known places WHEN <private> opens `Skill Dex.app` THEN a dialog says "No encuentro Node.js. Skill Dex lo necesita."
 - scope: Starting the app.
@@ -128,7 +128,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-009 Refresh on demand
 - pattern: event
 - statement: When the user presses "Refrescar datos", Skill Dex shall rescan the skills and session logs and reload the page.
-- rationale: <private> asked how the data updates (session A, line 36: "Esto como se actualiza?"). `Tecnico/web/catalog.js`, `refresh`; `Tecnico/server.mjs`, `/api/refresh`. In the applied redesign the button sits in "Actividad y salud".
+- rationale: <private> asked how the data updates. `Tecnico/web/catalog.js`, `refresh`; `Tecnico/server.mjs`, `/api/refresh`. In the applied redesign the button sits in "Actividad y salud".
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill used in omp after the page was opened WHEN <private> presses "Refrescar datos" THEN the page reloads with that use counted
 - scope: The main page.
@@ -176,7 +176,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-012 Install instructions for anyone
 - pattern: ubiquitous
 - statement: Skill Dex shall come with instructions that let a person who is not <private> install it, open it and know what it needs.
-- rationale: D-055 ("Preparar la app para que cualquiera pueda instalarla"). Today the only note is `Seguimiento/README.md`, written for <private> and outside the repository. The language of the instructions is OP-026.
+- rationale: D-055. Today the only note is `Seguimiento/README.md`, written for <private> and outside the repository. The language of the instructions is OP-026.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the repository page WHEN someone who has never seen Skill Dex follows the instructions THEN they can install and open it without asking <private>
 - scope: The repository.
@@ -192,7 +192,7 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 ### REQ-LAU-013 The public instructions are in English
 - pattern: ubiquitous
 - statement: Skill Dex shall write the install instructions of its public repository in English only.
-- rationale: D-066 ([quote omitted]), an active choice over the preselected [quote omitted].
+- rationale: D-066, an active choice over the preselected [quote omitted].
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the public repository WHEN its install instructions are read THEN they are in English and there is no Spanish copy
 - scope: The repository's install instructions.
@@ -204,3 +204,33 @@ Drafted from `Skill Dex.app` (its script runs `Tecnico/lanzar.sh`), `Tecnico/lan
 - priority: 2
 - ratified_by: D-066 v1
 - note: built in 749b7e7, confirmed by D-094.
+
+### REQ-LAU-014 The README is for any SKILL.md agent
+- pattern: ubiquitous
+- statement: Skill Dex shall describe itself in its README as a tool for the skills of any agent that uses `SKILL.md`, and not only for omp.
+- rationale: D-116 and D-117; D-118 pushes it directly.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN the public README WHEN someone using Claude Code or Codex reads it THEN it says Skill Dex works for them
+- scope: The public repository README.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-LAU-015 The launcher works best-effort on Linux
+- pattern: ubiquitous
+- statement: Skill Dex shall start on Linux on a best-effort basis, while macOS is the tested platform and Windows is not supported.
+- rationale: D-123 (the review pointed at macOS only).
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN the README WHEN a Linux user reads it THEN it says macOS is tested, Linux is best-effort and Windows is unsupported
+- scope: The launcher and the README.
+- conditions: none
+- exceptions: none
+- source: D-123
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-119 v1

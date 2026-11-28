@@ -5,7 +5,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-001 A section to review skill updates
 - pattern: ubiquitous
 - statement: Skill Dex shall offer a section where the user can review the updates available for the installed skills.
-- rationale: D-072 ([quote omitted]). It is one more section of the sidebar (REQ-UI-006). How updates are found is REQ-UPD-005, when REQ-UPD-006, which skills are included REQ-UPD-007.
+- rationale: D-072. It is one more section of the sidebar (REQ-UI-006). How updates are found is REQ-UPD-005, when REQ-UPD-006, which skills are included REQ-UPD-007.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an installed skill whose source has a newer version WHEN <private> opens the updates section THEN that skill is listed as having an update
   - AC2 [judgement] GIVEN no skill with an update WHEN he opens the section THEN it says that everything is up to date
@@ -38,7 +38,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-003 Every update is security-checked before it can be applied
 - pattern: event
 - statement: When an update of a skill is found, Skill Dex shall check the new version with the security scan and its approved false-positive criterion before the user can apply it.
-- rationale: D-079 ([quote omitted]: yes, always); the security scan and criterion are REQ-SEC-004 and REQ-SEC-007.
+- rationale: D-079 (owner answer: yes, always); the security scan and criterion are REQ-SEC-004 and REQ-SEC-007.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an update with a finding to review WHEN <private> looks at it in the updates section THEN he sees the finding before any option to apply it
 - scope: The updates section.
@@ -140,7 +140,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-009 His version is saved before updating
 - pattern: event
 - statement: When the user confirms the update of a skill, Skill Dex shall save a copy of his current version of that skill before replacing it.
-- rationale: D-081 ([quote omitted]). The copy lets him get his edits back.
+- rationale: D-081. The copy lets him get his edits back.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill he edited by hand WHEN he confirms its update THEN a copy of his previous version exists, and he can say where it is
 - scope: The updates section.
@@ -157,7 +157,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-010 The "Update" button asks for confirmation
 - pattern: event
 - statement: When the user presses "Update" on a skill's update, Skill Dex shall ask him to confirm before changing the skill.
-- rationale: D-082 ([quote omitted], que pide confirmación»).
+- rationale: D-082.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN an update listed WHEN <private> presses "Update" and then cancels THEN the skill folder is unchanged
 - scope: The updates section.
@@ -206,7 +206,7 @@ A new section <private> asked for (D-072). Nothing of it is built. He decided ho
 ### REQ-UPD-013 A skill with no update source shows who it came from
 - pattern: ubiquitous
 - statement: Skill Dex shall show a skill that `skills-meta.json` marks as having no update source as coming from the person named there, with no update source, instead of as unknown.
-- rationale: D-110 and D-106: <skill> comes from his friend and has no repository. The name stays in his private data, not in public code.
+- rationale: D-110 and D-106: <skill> comes from a third party and has no repository. The name stays in his private data, not in public code.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill marked in `skills-meta.json` as having no update source and a giver WHEN <private> opens Updates THEN it reads "from" the giver's name with "no update source", not "Source unknown"
   - AC2 [judgement] GIVEN the public repository WHEN it is searched for the giver's name THEN it is not found

@@ -20,7 +20,7 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 ### REQ-UI-002 The chosen theme is remembered
 - pattern: ubiquitous
 - statement: Skill Dex shall open in the theme last chosen in that browser, or in the system's theme when none was chosen.
-- rationale: D-062 ([quote omitted]). The inline script in `Tecnico/web/index.html` reads `skilldex.theme` from local storage, else `prefers-color-scheme`.
+- rationale: D-062. The inline script in `Tecnico/web/index.html` reads `skilldex.theme` from local storage, else `prefers-color-scheme`.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN night mode chosen WHEN <private> closes and reopens Skill Dex in the same browser THEN it opens in night mode
 - scope: The whole page.
@@ -65,7 +65,7 @@ Drafted from `Tecnico/web/index.html`, `Tecnico/web/catalog.js`, `Tecnico/web/ca
 ### REQ-UI-005 The interface is in English
 - pattern: ubiquitous
 - statement: Skill Dex shall show all its interface text in English.
-- rationale: D-063 ([quote omitted]). Not built: every label in `Tecnico/web/` is Spanish (`<html lang="es">`). The level-up texts (REQ-USE-020) are written in English too. The analysis reports are in English as well (D-084, REQ-ANA-026).
+- rationale: D-063. Not built: every label in `Tecnico/web/` is Spanish (`<html lang="es">`). The level-up texts (REQ-USE-020) are written in English too. The analysis reports are in English as well (D-084, REQ-ANA-026).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN any screen of Skill Dex, dialogs and messages included WHEN <private> reads it THEN every label, button and message is in English
 - scope: The whole app interface.

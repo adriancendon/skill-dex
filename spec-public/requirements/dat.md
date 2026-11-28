@@ -5,7 +5,7 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 ### REQ-DAT-001 Favourite marks are saved to a file
 - pattern: ubiquitous
 - statement: Skill Dex shall save the **favorita** marks in a file of the user's data, so that they survive another browser or a cleared cache.
-- rationale: D-054, without the mastered mark that D-090 removes. Today the marks live only in the browser's local storage (`Tecnico/web/catalog.js` lines 1 to 5, key `skilldex.v1`; R-003). The file must stay out of the repository (REQ-DAT-008).
+- rationale: D-054, without the mastered mark that D-090 removes. Today the marks live only in the browser's local storage (`Tecnico/web/catalog.js`, key `skilldex.v1`; R-003). The file must stay out of the repository (REQ-DAT-008).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a skill marked as favourite in one browser WHEN <private> opens Skill Dex in another browser THEN the mark is there
   - AC2 [judgement] GIVEN marks set before this change WHEN the new version first opens in the browser that holds them THEN they are kept, not lost
@@ -87,7 +87,7 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 ### REQ-DAT-006 SkillSpector only contacts the vulnerability database
 - pattern: ubiquitous
 - statement: Skill Dex shall let SkillSpector contact no service other than `api.osv.dev`, for dependency checks.
-- rationale: README section "Qué hace": "solo consulta dependencias a api.osv.dev". Not checked in the code or by watching the network; it rests on SkillSpector's static mode (REQ-SEC-002).
+- rationale: README section [quote omitted]: "solo consulta dependencias a api.osv.dev". Not checked in the code or by watching the network; it rests on SkillSpector's static mode (REQ-SEC-002).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a security scan running WHEN its network traffic is watched THEN the only outside host contacted is `api.osv.dev`
 - scope: Security scans.
@@ -102,7 +102,7 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 ### REQ-DAT-007 Session logs are read on this Mac only
 - pattern: ubiquitous
 - statement: Skill Dex shall read the omp session logs only on this Mac, to count uses, and send nothing from them elsewhere.
-- rationale: `Tecnico/scan.mjs` lines 66 to 88 read the logs and write the counts to `Tecnico/web/data.js`; nothing in the scan uses the network.
+- rationale: `Tecnico/scan.mjs` read the logs and write the counts to `Tecnico/web/data.js`; nothing in the scan uses the network.
 - acceptance_criteria:
   - AC1 [judgement] GIVEN a rescan WHEN the code of `scan.mjs` is read THEN it opens no network connection and writes only `Tecnico/web/data.js`
 - scope: The usage scan.
@@ -117,18 +117,18 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 ### REQ-DAT-008 None of <private>'s data goes into the repository
 - pattern: ubiquitous
 - statement: Skill Dex shall keep the user's skills list, usage counts, watchlist, analysis reports, security reviews and marks out of its repository.
-- rationale: D-055 ("sin mis datos dentro"). Today these live in `Seguimiento/` (outside `Tecnico/`), `Tecnico/web/data.js` and `Tecnico/cache/` (ignored, REQ-DAT-004), and the browser. The `<skill>` skill and `Tecnico/server.mjs` write into `Seguimiento/`, a folder name of <private>'s own layout; a public copy needs its own data folder (REQ-LAU-011).
+- rationale: D-055. Today these live in `Seguimiento/` (outside `Tecnico/`), `Tecnico/web/data.js` and `Tecnico/cache/` (ignored, REQ-DAT-004), and the browser. The `<skill>` skill and `Tecnico/server.mjs` write into `Seguimiento/`, a folder name of <private>'s own layout; a public copy needs its own data folder (REQ-LAU-011).
 - acceptance_criteria:
   - AC1 [judgement] GIVEN the repository before it is made public WHEN its files and its history are searched for watchlist entries, report texts, usage counts and the names of <private>'s personal skills THEN none is found
 - scope: The repository and its history.
 - conditions: none
 - exceptions: none
 - source: D-055
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-055 v1
-- note: The requirements package in `Tecnico/spec/` quotes <private> and names his skills and watchlist entries; only a clean version of it goes public (D-065, REQ-DAT-009). Built in 749b7e7 (data folder configurable, his name and skill list out of the code), but kept ready: the git history still holds personal data, so the public repository must be a fresh one with a single clean commit. Plan (D-108, D-109): the public repository starts with fresh history in one clean commit, the old one is kept private as `skill-dex-archivo`, and the README screenshot uses example data. Publishing needs his explicit "publícalo".
+- note: Built and published (D-113): `<private>/skill-dex` is public since 2026-11-28. Accepted exception: its first public commit still names <private>, <private> and <private> (D-113). The requirements package quotes <private> and stays private (REQ-DAT-009).
 
 ### REQ-DAT-009 Only a clean version of this package goes public
 - pattern: event
@@ -141,9 +141,55 @@ Drafted from `Tecnico/web/catalog.js`, `Tecnico/server.mjs`, `Tecnico/scan.mjs`,
 - conditions: none
 - exceptions: none
 - source: D-065
-- status: ready
+- status: active
 - version: 1
 - priority: 2
 - ratified_by: D-065 v1
 - builder_choice: where the full package is kept private (for example a private repository or a private branch) and how the clean version is produced
-- note: The export and privacy-check tools are built in 749b7e7 (`Tecnico/tools/`), but kept ready: nothing is published yet, and the public repository is to be a fresh one. Plan (D-107): the full package moves to its own private repository `skill-dex-spec`; the public repository carries only the clean export (for example `spec-public/`).
+- note: Built and published (D-113): the public repository carries only the clean export; the full package is the private repository `skill-dex-spec`, and the exporter never copies its `.git`.
+
+### REQ-DAT-010 Custom skill folders are configured in the data folder
+- pattern: ubiquitous
+- statement: Skill Dex shall keep the custom skill folders the user adds in its configuration in the user's data folder, out of the repository.
+- rationale: D-117 (custom folders) and D-055 (no personal data in the repository).
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a custom folder added WHEN the repository is searched for its path THEN it is not found
+- scope: The configuration.
+- conditions: none
+- exceptions: none
+- source: D-117
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-117 v1
+
+### REQ-DAT-011 Data names are in English and the old names are still read
+- pattern: ubiquitous
+- statement: Skill Dex shall use English names for its files, folders, statuses, origins and settings while still reading the old Spanish names.
+- rationale: D-120.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN a data folder with the old names WHEN Skill Dex starts THEN it reads them and converts them to the new names after saving a backup copy
+  - AC2 [judgement] GIVEN a fresh install WHEN the data folder is created THEN it uses only English names
+- scope: Files, statuses, origins and configuration.
+- conditions: none
+- exceptions: none
+- source: D-120
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-120 v1
+
+### REQ-DAT-012 The public export carries no process or personal traces
+- pattern: ubiquitous
+- statement: Skill Dex shall strip session and line references, mentions of who shared a skill and the Spanish approval text from the public export of this package.
+- rationale: D-123: the external review (D-119) found them in the public package.
+- acceptance_criteria:
+  - AC1 [judgement] GIVEN the public export WHEN it is searched for session line references, mentions of who shared a skill and Spanish approval text THEN none is found
+- scope: The public export.
+- conditions: none
+- exceptions: none
+- source: D-123
+- status: ready
+- version: 1
+- priority: 2
+- ratified_by: D-119 v1

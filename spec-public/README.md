@@ -65,7 +65,7 @@ Ids are never reused and never renumbered. Refer to an entry by its id anywhere 
 ### D-007 Entries are listed unread first
 - date: 2026-03-02
 - origin: owner
-- quote: (omitted from the public copy)
+- quote: "Unread on top. In both groups, newest first."
 - decision: The list shows unread entries before read ones; each group is ordered by date added, newest first.
 - supersedes: D-003 (the order by date alone)
 ```
@@ -373,7 +373,7 @@ An architecture decision record (ADR, after Michael Nygard: https://cognitect.co
 ### ADR-004 Reminders go through the mail provider's HTTP API
 - date: 2026-05-20
 - status: accepted
-- context: (omitted from the public copy)
+- context: The town's mail relay that ADR-002 relies on closes.
 - options:
   - the HTTP API of a mail provider
   - a mail server of our own
